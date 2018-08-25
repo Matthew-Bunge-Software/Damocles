@@ -436,7 +436,8 @@ class Game extends React.Component {
     }
 }
 
-var socket = io.connect('https://damoclesgame.herokuapp.com:3000');
+var socket = io.connect('https://damoclesgame.herokuapp.com');
+console.log(socket);
 socket.on('initialize', function(data) {
     let localData = Object.assign({}, data);
     socket.on('boardChange', function(data) {

@@ -11,7 +11,7 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', function(socket) {
-    console.log(socket.request.connection.remoteAddress);
+    console.log(socket.conn.remoteAddress);
     players.push(idCount);
     socket.emit('initialize', { 
         selectCards: selectCards.splice(0, 8), 
