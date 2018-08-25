@@ -1,0 +1,787 @@
+const COLORS = {
+  RED: "red",
+  BLUE: "blue",
+  GREEN: "green",
+  BLACK: "black",
+  GOLD: "gold"
+};
+
+var IDS = new Set();
+
+const NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
+
+const HEPINDEX = NAMES.map(name => name + "hep");
+
+var gold = COLORS.GOLD;
+var generate = "G";
+var blue = COLORS.BLUE;
+var red = COLORS.RED;
+var green = COLORS.GREEN;
+var gold = COLORS.GOLD;
+var black = COLORS.BLACK;
+var combust = "C";
+var oracle = "O";
+var reflex = "R";
+var conquer = "A";
+var haste = "H";
+var one = "1";
+var two = "2";
+var three = "3";
+
+const CARDS = [
+  {
+    type: generate,
+    one: gold,
+    four: blue,
+    five: blue
+  },
+  {
+    type: generate,
+    one: gold,
+    four: green,
+    five: green
+  },
+  {
+    type: generate,
+    one: blue,
+    four: black,
+    five: black
+  },
+  {
+    type: generate,
+    one: blue,
+    four: gold,
+    five: gold
+  },
+  {
+    type: generate,
+    one: green,
+    four: black,
+    five: black
+  },
+  {
+    type: generate,
+    one: green,
+    four: blue,
+    five: blue
+  },
+  {
+    type: generate,
+    one: red,
+    four: green,
+    five: green
+  },
+  {
+    type: generate,
+    one: red,
+    four: gold,
+    five: gold
+  },
+  {
+    type: generate,
+    one: black,
+    four: red,
+    five: red
+  },
+  {
+    type: generate,
+    one: black,
+    four: gold,
+    five: gold
+  },
+  {
+    type: combust,
+    one: red,
+    three: blue,
+    six: blue
+  },
+  {
+    type: combust,
+    one: red,
+    three: black,
+    six: black
+  },
+  {
+    type: combust,
+    one: blue,
+    three: green,
+    six: green
+  },
+  {
+    type: combust,
+    one: blue,
+    three: gold,
+    six: gold
+  },
+  {
+    type: combust,
+    one: green,
+    three: red,
+    six: red
+  },
+  {
+    type: combust,
+    one: green,
+    three: gold,
+    six: gold
+  },
+  {
+    type: combust,
+    one: black,
+    three: blue,
+    six: blue
+  },
+  {
+    type: combust,
+    one: black,
+    three: green,
+    six: green
+  },
+  {
+    type: combust,
+    one: gold,
+    three: black,
+    six: black
+  },
+  {
+    type: combust,
+    one: gold,
+    three: red,
+    six: red
+  },
+  {
+    type: oracle,
+    one: red,
+    two: black,
+    seven: green
+  },
+  {
+    type: oracle,
+    one: blue,
+    three: green,
+    seven: red
+  },
+  {
+    type: oracle,
+    one: gold,
+    two: black,
+    six: blue
+  },
+  {
+    type: oracle,
+    one: black,
+    four: red,
+    five: gold
+  },
+  {
+    type: oracle,
+    one: green,
+    three: gold,
+    six: blue
+  },
+  {
+    type: reflex,
+    one: green,
+    three: green
+  },
+  {
+    type: reflex,
+    one: red,
+    three: red
+  },
+  {
+    type: reflex,
+    one: blue,
+    three: blue
+  },
+  {
+    type: reflex,
+    one: black,
+    three: black
+  },
+  {
+    type: reflex,
+    one: gold,
+    three: gold
+  },
+  {
+    type: conquer,
+    one: green,
+    two: blue
+  },
+  {
+    type: conquer,
+    one: blue,
+    two: black
+  },
+  {
+    type: conquer,
+    one: black,
+    two: red
+  },
+  {
+    type: conquer,
+    one: red,
+    two: gold
+  },
+  {
+    type: conquer,
+    one: gold,
+    two: green
+  },
+  {
+    type: haste,
+    one: gold,
+  },
+  {
+    type: haste,
+    one: blue,
+  },
+  {
+    type: haste,
+    one: green,
+  },
+  {
+    type: haste,
+    one: red,
+  },
+  {
+    type: haste,
+    one: black,
+  },
+  {
+    type: one,
+    one: red,
+    two: red,
+  },
+  {
+    type: one,
+    one: gold,
+    two: gold,
+  },
+  {
+    type: one,
+    one: blue,
+    two: blue,
+  },
+  {
+    type: one,
+    one: green,
+    two: green,
+  },
+  {
+    type: one,
+    one: black,
+    two: black,
+  },
+  {
+    type: one,
+    one: red,
+    four: red,
+  },
+  {
+    type: one,
+    one: gold,
+    four: gold,
+  },
+  {
+    type: one,
+    one: green,
+    four: green,
+  },
+  {
+    type: one,
+    one: blue,
+    four: blue,
+  },
+  {
+    type: one,
+    one: black,
+    four: black,
+  },
+  {
+    type: two,
+    one: blue,
+    three: blue,
+    seven: red
+  },
+  {
+    type: two,
+    one: black,
+    three: black,
+    seven: green
+  },
+    {
+    type: two,
+    one: gold,
+    three: gold,
+    seven: black
+  },
+  {
+    type: two,
+    one: red,
+    three: red,
+    seven: gold
+  },  
+  {
+    type: two,
+    one: green,
+    three: green,
+    seven: blue
+  },
+  {
+    type: three,
+    two: gold,
+    three: black,
+    six: blue,
+    seven: red
+  },
+  {
+    type: three,
+    two: blue,
+    three: red,
+    six: black,
+    seven: green
+  },
+  {
+    type: three,
+    two: red,
+    three: gold,
+    six: green,
+    seven: blue
+  },
+  {
+    type: three,
+    two: green,
+    three: blue,
+    six: gold,
+    seven: black
+  },
+  {
+    type: three,
+    two: blue,
+    three: green,
+    six: red,
+    seven: gold
+  }
+];
+
+function OtherHands(props) {
+  return <p />;
+}
+
+function PlayedTiles(props) {
+  return <div className="playedtiles">{props.played}</div>;
+}
+
+function MyHand(props) {
+  return <div className="hand">
+            {props.cards}
+            <button onClick={() => props.playClicked()} className={"playbutton"}>{"Play Tiles"}</button>
+          </div>;
+}
+
+function Community(props) {
+  const basin = props.colorCounts;
+  const listBasin = basin.map(color => (
+    <button
+      className={"dot " + color.color}
+      key={color.color}
+      onClick={() => props.onClick(color)}
+    >
+      {color.count}
+    </button>
+  ));
+  return <ul>{listBasin}</ul>;
+}
+
+function Board(props) {
+  const spaces = props.spaces;
+  const listBoard = spaces.map((color, index) => (
+    <button
+      className={"dot " + color + " " + HEPINDEX[index]}
+      key={index}
+      onClick={() => props.onClick(color, index)}
+    >
+      {}
+    </button>
+  ));
+  return <ul className="board">{listBoard}</ul>;
+}
+
+function Lobby(props) {
+  return <button onClick={props.onClick}>{"Start Game"}</button>;
+}
+
+class Display extends React.Component {
+  renderSelector() {
+    return (
+      <Community
+        onClick={i => this.props.selectorClick(i)}
+        colorCounts={this.props.colorCounts}
+      />
+    );
+  }
+
+  render() {
+    return (
+      <div className="display">
+        {this.renderSelector()}
+        <Board
+          onClick={(i, j) => this.props.boardClick(i, j)}
+          spaces={this.props.spaces}
+        />
+        <PlayedTiles played={this.props.played}/>
+        <MyHand playClicked={() => this.props.playClicked()} cards={this.props.cards}/>
+      </div>
+    );
+  }
+}
+
+class Card extends React.Component {
+  constructor(props) {
+    super(props);
+    const spaces = Array(7).fill(null);
+    if (props.card.one != null) { spaces[0] = props.card.one; }
+    if (props.card.two != null) { spaces[1] = props.card.two; }
+    if (props.card.three != null) { spaces[2] = props.card.three; }
+    if (props.card.four != null) { spaces[3] = props.card.four; }
+    if (props.card.five != null) { spaces[4] = props.card.five; }
+    if (props.card.six != null) { spaces[5] = props.card.six; }
+    if (props.card.seven != null) { spaces[6] = props.card.seven; }
+    this.state = {
+       spaces: spaces,
+       card: props.card,
+    }
+  }
+  
+  rotateDisplay(event) {
+    let temp = this.state.spaces.slice();
+    if (event.keyCode === 81) {
+      let hold = temp[0];
+      for (i = 0; i < 6; i++) {
+        temp[i] = temp[i + 1];
+      }
+      temp[6] = hold;
+    } else if (event.keyCode === 69) {
+      let hold = temp[6];
+      for (i = 6; i > 0; i--) {
+        temp[i] = temp[i - 1];
+      }
+      temp[0] = hold;
+    }
+    this.setState({
+        spaces: temp
+    })
+  }
+  
+  render() {
+      let newSpaces = this.state.spaces.map((color, index) => <li key={index} className={"dot small " + color + " " + HEPINDEX[index]}>{}</li>);
+      newSpaces.push(<li key={7} className="cardType">{this.props.card.type}</li>);
+      return(<div onKeyDown={(e) => this.rotateDisplay(e)} 
+                  tabIndex="0"
+                  className="cardRotateContainer">
+             <ul  onClick={() => this.props.onClick(this.state.card)} 
+                  className={"card " + this.props.display + " " + this.props.selected}
+               >  {newSpaces} </ul></div>);
+  }
+}
+
+class Game extends React.Component {
+  constructor(props) {
+    super(props);
+    let selectCards = CARDS.map(card => {
+      let intAdded = false;
+      let randInt = -1;
+      while (!intAdded) {
+        randInt = Math.floor(Math.random() * 100000);
+        if (!IDS.has(randInt)) {
+          IDS.add(randInt);
+          intAdded = true;
+        }
+      }
+      card.ID = randInt;
+      return card;
+    });
+    selectCards = [selectCards[5], selectCards[10], selectCards[15], selectCards[20], selectCards[25], selectCards[30], selectCards[35], selectCards[40]];
+    let colorNames = Object.values(COLORS);
+    this.state = {
+      spaces: Array(7).fill(null),
+      playedRaw: [],
+      played: [],
+      colorCounts: colorNames.map(name => ({ color: name, count: 4 })),
+      selectedColor: null,
+      isSwap: false,
+      index: null,
+      gameState: "lobby",
+      rawCards: selectCards,
+      cards: selectCards.map((name, index) => 
+                             {return (<Card key={name.ID} onClick={(i) => this.handleCardClick(i)} display={""} card={name}/>) })
+    };
+  }
+  
+  handlePlayClick() {
+    let number = this.state.selectedNumberCard;
+    let action = this.state.selectedActionCard;
+    let spaceState = this.state.spaces.slice();
+    let played = this.state.playedRaw.slice();
+    let cardsToRemove = this.state.rawCards.slice();
+    if(number != null && action!= null) {
+      if(this.isActive(spaceState, number) && this.isActive(spaceState, action) && (action.type != "A" && action.type != "R" && action.type != "H")) {
+        let j = 0;
+        while (j < cardsToRemove.length) {
+          if (cardsToRemove[j] === number || cardsToRemove[j] === action) {
+            played.push(cardsToRemove.splice(j, 1)[0]);
+          } else {
+            j++;
+          }
+        }
+        this.setState({
+          playedRaw: played,
+          played: played.map((name, index) => {
+                             let active = this.isActive(this.state.spaces, name) ? "active" : "";
+                             return (<Card key={name.ID} selected={""} onClick={(i) => this.handleCardClick(i)} display={active} card={name}/>);}),
+          rawCards: cardsToRemove,
+          selectedNumberCard: null,
+          selectedActionCard: null,
+          cards: cardsToRemove.map((name, index) => {
+                             let active = this.isActive(this.state.spaces, name) ? "active" : "";
+                             return (<Card key={name.ID} selected={""} onClick={(i) => this.handleCardClick(i)} display={active} card={name}/>);}) 
+        });
+      }
+    } else if(action != null) {
+      if (this.isActive(spaceState, action) && (action.type === "A" || action.type === "R" || action.type === "H")) {
+        let j = 0;
+        while (j < cardsToRemove.length) {
+          if (cardsToRemove[j] === action) {
+            played.push(cardsToRemove.splice(j, 1)[0]);
+          } else {
+            j++;
+          }
+        }
+        this.setState({
+          playedRaw: played,
+          played: played.map((name, index) => {
+                             let active = this.isActive(this.state.spaces, name) ? "active" : "";
+                             return (<Card key={name.ID} selected={""} onClick={(i) => this.handleCardClick(i)} display={active} card={name}/>);}),
+          rawCards: cardsToRemove,
+          selectedNumberCard: null,
+          selectedActionCard: null,
+          cards: cardsToRemove.map((name, index) => {
+                             let active = this.isActive(this.state.spaces, name) ? "active" : "";
+                             return (<Card key={name.ID} selected={""} onClick={(i) => this.handleCardClick(i)} display={active} card={name}/>);}) 
+        });
+      }
+    }
+  }
+  
+  handleCardClick(i) {
+    let selectCards = this.state.rawCards.slice();
+    let played = this.state.playedRaw.slice();
+    let cardType = i.type;
+    if (cardType === ("1" || "2" || "3")) {
+      let newSelected = (i === this.state.selectedNumberCard) ? null : i;
+      this.setState({
+        selectedNumberCard: newSelected,
+        cards: selectCards.map((name, index) => {
+                              let active = this.isActive(this.state.spaces, name) ? "active" : "";
+                              let selected = (newSelected === name || this.state.selectedActionCard === name) ? "selectedCard" : "";
+                             return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name}/>);}),
+        played: played.map((name, index) => {
+                              let active = this.isActive(this.state.spaces, name) ? "active" : "";
+                              let selected = (name === newSelected || this.state.selectedActionCard === name) ? "selectedCard" : "";
+                             return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name}/>);})
+      });
+    } else {
+      let newSelected = (i === this.state.selectedActionCard) ? null : i;
+      this.setState({
+        selectedActionCard: newSelected,
+        cards: selectCards.map((name, index) => {
+                              let active = this.isActive(this.state.spaces, name) ? "active" : "";
+                              let selected = (newSelected === name || this.state.selectedNumberCard === name) ? "selectedCard" : "";
+                             return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name}/>);}),
+        played: played.map((name, index) => {
+                              let active = this.isActive(this.state.spaces, name) ? "active" : "";
+                              let selected = (newSelected === name || this.state.selectedNumberCard === name) ? "selectedCard" : "";
+                             return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name}/>);}) 
+      })
+    }
+  }
+
+  handleSelectorClick(i) {
+    if (i.count > 0) {
+      const prevState = this.state;
+      this.setState({
+        spaces: prevState.spaces,
+        colorCounts: prevState.colorCounts,
+        selectedColor: i.color,
+        isSwap: false,
+        index: null,
+      });
+    }
+  }
+
+  handleBoardClick(i, index) {
+    const prevState = this.state;
+    let selectCards = this.state.rawCards.slice();
+    let selectDisplay = this.state.playedRaw.slice();
+    if (this.state.gameState === "setup") {
+      if (prevState.selectedColor != null && prevState.spaces[index] === null) {
+        // swap with stack
+        newSpaces = prevState.spaces.slice();
+        newSpaces[index] = prevState.selectedColor;
+        newCounts = prevState.colorCounts.slice();
+        let setupcomplete = true;
+        for (j = 0; j < 7; j++) {
+          if (newSpaces[j] === null) {
+            setupcomplete = false;
+            break;
+          }
+        }
+        for (j = 0; j < newCounts.length; j++) {
+          if (newCounts[j].color === prevState.selectedColor) {
+            newCounts[j].count--;
+          }
+          if (
+            prevState.spaces[index] != null &&
+            prevState.spaces[index] === newCounts[j].color
+          ) {
+            newCounts[j].count++;
+          }
+        }
+        newCards = this.updateActiveCards(newSpaces, selectCards);
+        newDisplay = this.updateActiveCards(newSpaces, selectDisplay);
+        this.setState({
+          spaces: newSpaces,
+          played: newDisplay,
+          colorCounts: newCounts,
+          selectedColor: null,
+          isSwap: false,
+          index: null,
+          cards: newCards,
+          gameState: setupcomplete ? "" : "setup"
+        });
+      }
+    } else {
+      if (prevState.index === index) {
+        //Selecting already selected deselects
+        this.setState({
+          spaces: prevState.spaces,
+          colorCounts: prevState.colorCounts,
+          selectedColor: null,
+          isSwap: false,
+          index: null
+        });
+      } else if (prevState.selectedColor != null) {
+        // swap with stack
+        newSpaces = prevState.spaces.slice();
+        newSpaces[index] = prevState.selectedColor;
+        newCounts = prevState.colorCounts.slice();
+        for (j = 0; j < newCounts.length; j++) {
+          if (newCounts[j].color === prevState.selectedColor) {
+            newCounts[j].count--;
+          }
+          if (
+            prevState.spaces[index] != null &&
+            prevState.spaces[index] === newCounts[j].color
+          ) {
+            newCounts[j].count++;
+          }
+        }
+        newCards = this.updateActiveCards(newSpaces, selectCards);
+        newDisplay = this.updateActiveCards(newSpaces, selectDisplay);
+        this.setState({
+          spaces: newSpaces,
+          colorCounts: newCounts,
+          selectedColor: null,
+          isSwap: false,
+          index: null,
+          played: newDisplay,
+          cards: newCards
+        });
+      } else if (prevState.isSwap) {
+        //Swapping with active thing
+        newSpaces = prevState.spaces.slice();
+        let temp = newSpaces[index];
+        newSpaces[index] = newSpaces[prevState.index];
+        newSpaces[prevState.index] = temp;
+        newCards = this.updateActiveCards(newSpaces, selectCards);
+        newDisplay = this.updateActiveCards(newSpaces, selectDisplay);
+        this.setState({
+          spaces: newSpaces,
+          played: newDisplay,
+          colorCounts: prevState.colorCounts,
+          selectColor: null,
+          isSwap: false,
+          index: null,
+          cards: newCards,
+        });
+      } else {
+        //Selecting for swap
+        this.setState({
+          spaces: prevState.spaces,
+          colorCounts: prevState.colorCounts,
+          selectColor: null,
+          isSwap: true,
+          index: index
+        });
+      }
+    }
+  }
+  
+  updateActiveCards(newState, selectCards) {
+      return (selectCards.map((name, index) => {
+                              let active = this.isActive(newState, name) ? "active" : "";
+                              let selected = (this.state.selectedActionCard === name || this.state.selectedNumberCard === name) ? "selectedCard" : "";
+                              return (<Card key={name.ID} onClick={(i) => this.handleCardClick(i)} selected={selected} display={active} card={name}/>);
+    }));
+  }
+  
+  isActive(newState, name) {
+    let active = true;
+    let rotation = newState.slice();
+    for (j = 0; j < 7; j++) {
+      active = true;
+      for (i = 0; i < 7; i++) {
+        if (name[NAMES[i]] !== rotation[i] && name[NAMES[i]] != null) {
+          active = false;
+          break;
+        }
+      }
+      if (active) {
+        break;
+      }
+      let temp = rotation[0];
+      for (i = 0; i < 6; i++) {
+        rotation[i] = rotation[i + 1];
+      }
+      rotation[6] = temp;
+    }
+    return active;
+  }
+  
+  startGame() {
+    this.setState({
+      gameState: "setup"
+    })
+  }
+
+  render() {
+    let display = <Display
+        spaces={this.state.spaces} //[]
+        colorCounts={this.state.colorCounts} //[]
+        selectorClick={i => this.handleSelectorClick(i)} //function
+        boardClick={(i, j) => this.handleBoardClick(i, j)} //function
+        cards={this.state.cards} //[<Cards>]
+        played={this.state.played}//[<Cards>]
+        playClicked={() => this.handlePlayClick()} //function
+      />;
+    let lobby = <Lobby
+                  onClick={() => this.startGame()}
+                  />;
+    let showMe = this.state.gameState === "lobby" ? lobby : display;
+    return (showMe);
+  }
+}
+
+ReactDOM.render(<Game />, document.getElementById("root"));

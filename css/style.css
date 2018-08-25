@@ -1,0 +1,141 @@
+.dot {
+  height: 25px;
+  width: 25px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  color: White;
+  text-align: center;
+  user-select: none;
+}
+
+.dot:focus {
+  outline: none;
+}
+
+.small {
+  height: 12px;
+  width: 12px;
+}
+
+.red {
+  background-color: Red;
+}
+
+.blue {
+  background-color: Blue;
+}
+
+.green {
+  background-color: Green;
+}
+
+.black {
+  background-color:
+    Black;
+}
+
+.gold {
+  background-color: Gold;
+}
+
+.onehep {
+  position: absolute;
+  top: 0%;
+  left: 45%;
+}
+
+.twohep {
+  position: absolute;
+  top: 20%;
+  left: 75%;
+}
+
+.threehep {
+  position: absolute;
+  top: 60%;
+  left: 85%;
+  
+}
+
+.fourhep {
+  position: absolute;
+  top: 85%;
+  left: 60%;
+}
+
+.fivehep {
+  position: absolute;
+  top: 85%;
+  left: 30%;
+}
+
+.sixhep {
+  position: absolute;
+  top: 60%;
+  left: 5%;
+}
+
+.sevenhep {
+  position: absolute;
+  top: 20%;
+  left: 15%;
+}
+
+.hand {
+  position: relative;
+}
+
+.board {
+  position: relative;
+  height: 100px;
+  width: 100px;
+}
+
+.display {
+  position: relative;
+}
+
+.card {
+  position: relative;
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  border: 5px solid black;
+  padding: 0px 0px 0px 0px;
+  margin: 0px 5px 0px 0px;
+  user-select: none;
+}
+
+.active {
+  background-color: lightgray;
+}
+
+.cardType {
+  position: absolute;
+  list-style-type: none;
+  top: 40%;
+  left: 47.5%;
+   font-family: 'Abel';
+
+}
+
+.selectedButton {
+  
+}
+
+.selectedCard {
+  border: 5px solid red;
+}
+
+.cardRotateContainer {
+  display: inline-block;
+}
+
+.cardRotateContainer:focus {
+  outline: 0px;
+}
+
+.playbutton {
+  display: block;
+}
