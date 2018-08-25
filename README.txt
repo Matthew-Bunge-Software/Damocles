@@ -1,3 +1,1 @@
-A Pen created at CodePen.io. You can find this one at https://codepen.io/mattb555/pen/LBqZLK.
-
- 
+Implementation of an original board game designed by Joseph Mohammed.
