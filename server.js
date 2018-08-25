@@ -4,6 +4,8 @@ var app = express();
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 
+var port = process.env.PORT || 3000;
+
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
@@ -57,8 +59,8 @@ io.on('connection', function(socket) {
     });
 });
 
-server.listen(process.env.PORT, function() {
-    console.log('listening on *' + process.env.PORT);
+server.listen(port, function() {
+    console.log('listening on *' + port);
 });
 
 const COLORS = {
