@@ -436,7 +436,7 @@ Game = function (_React$Component3) {_inherits(Game, _React$Component3);
         } }]);return Game;}(React.Component);
 
 
-var socket = io.connect('http://localhost:3000');
+var socket = io.connect('https://damoclesgame.herokuapp.com:3000');
 socket.on('initialize', function (data) {
     var localData = Object.assign({}, data);
     socket.on('boardChange', function (data) {
