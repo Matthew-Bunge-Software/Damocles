@@ -23,14 +23,33 @@ io.on('connection', function(socket) {
         played: played
     });
     idCount++;
-    if (idCount == 4) {
-        currentPlayer = Math.floor(Math.random(players.length) + 1);
-        gameState = "setup";
-        io.emit('setupphase', {
+    if (idCount == 3) {
+        gameState = "discardphase";
+        io.emit('discardphase', {
             gameState: gameState,
-            currentPlayer: currentPlayer,
+            processCode: null,
+            discardCount: 2
         });
     }
+    socket.on('discardComplete', function(data) {
+        numDiscarded++;
+        socket.emit('cardUpdate', {
+            selectCards: data
+        });
+        if (numDiscarded === players.length) {
+            currentPlayer = Math.floor(Math.random(players.length) + 1);
+            gameState = "setup";
+            io.emit('setupphase', {
+                gameState: gameState,
+                currentPlayer: currentPlayer,
+            });
+        } else {
+            gameState = "standby";
+            socket.emit("standby", {
+                gameState: gameState
+            });
+        }
+    });
     console.log('a user connected');
     socket.on('boardChange', function(data) {
         spaces = data.newSpaces;
@@ -45,6 +64,19 @@ io.on('connection', function(socket) {
             played: played
         });
     });
+    socket.on('discardNormalHand', function(data) {
+        currentPlayer = ((currentPlayer % players.length) + 1);
+        gameState = spaces.includes(null) ? gameState : "";
+        let tempCards = data.slice();
+        socket.emit('boardChange', {
+            selectCards: tempCards
+        });
+        io.emit('boardChange', {
+            currentPlayer: currentPlayer,
+            gameState: gameState,
+
+        });
+    });
     socket.on('cardPlayed', function(data) {
         let newPlayed = played[data.pid - 1].slice();
         let interacted = handleCardInteractions(data.newPlayed);
@@ -53,6 +85,13 @@ io.on('connection', function(socket) {
         socket.emit('cardUpdate', {
             selectCards: data.rest.concat(interacted.newCards)
         });
+        if (interacted.processCode != null) {
+            socket.emit('discardphase', {
+                gameState: 'discardphase',
+                processCode: interacted.processCode,
+                discardCount: 2
+            })
+        }
         io.emit('cardPlayed', {
             played: played
         });
@@ -451,7 +490,8 @@ var players = [];
 var idCount = 1;
 var currentPlayer = null;
 var gameState = "lobby";
-var played = [[], [], []];
+var played = [[], []];
+var numDiscarded = 0;
 
 function shuffle(toShuffle) {
     let arr = toShuffle.slice();
@@ -468,7 +508,7 @@ function handleCardInteractions(played) {
     let returnToPublic = [];
     let returnMe = {
         newCards: [],
-        actionToTake: null,
+        processCode: null,
         played: []
     }
     let num = null;
@@ -494,7 +534,7 @@ function handleCardInteractions(played) {
         } else if (action === "O") {
             Object.assign(returnMe, {
                 newCards: selectCards.splice(0, num + 2),
-                actionToTake: 2
+                processCode: num + 2
             });
         } else if (action === "G" ) {
             Object.assign(returnMe, {

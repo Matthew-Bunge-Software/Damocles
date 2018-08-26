@@ -92,11 +92,21 @@ function PlayedTiles(props) {
     return <div className="playedtiles">{props.played}</div>;
 }
 
-function MyHand(props) {
-    return <div className="hand">
-        {props.cards}
-        <button disabled={(props.gameState === "setup") || !props.myTurn} onClick={() => props.playClicked()} className={"playbutton"}>{"Play Tiles"}</button>
-    </div>;
+class MyHand extends React.Component {
+    renderButton() {
+        if (this.props.gameState === 'discardphase') {
+            return <button onClick={() => this.props.discardClicked()} className={"playbutton"}>{"DiscardTiles"}</button>
+        } else {
+            return <button disabled={(this.props.gameState === "setup") || !this.props.myTurn} onClick={() => this.props.playClicked()} className={"playbutton"}>{"Play Tiles"}</button>
+        }
+    }
+
+    render() {
+        return <div className="hand">
+            {this.props.cards}
+            {this.renderButton()}
+        </div>;
+    }
 }
 
 function Community(props) {
@@ -120,9 +130,7 @@ function Board(props) {
             className={"dot " + color + " " + HEPINDEX[index]}
             key={index}
             onClick={() => props.onClick(color, index)}
-        >
-            {}
-        </button>
+        >{}</button>
     ));
     return <ul className="board">{listBoard}</ul>;
 }
@@ -161,6 +169,7 @@ class Display extends React.Component {
                 />
                 <PlayedTiles played={this.props.played} />
                 <MyHand playClicked={() => this.props.playClicked()} 
+                        discardClicked={() => this.props.discardClicked()}
                         cards={this.props.cards} 
                         myTurn={this.props.myTurn}
                         gameState={this.props.gameState}
@@ -182,7 +191,7 @@ class Game extends React.Component {
             isSwap: false,
             index: null,
             rawCards: selectCards,
-            cards: cards
+            cards: cards,
         };
     }
 
@@ -199,19 +208,57 @@ class Game extends React.Component {
                 played: this.updateActiveCards(this.props.spaces, this.props.played)
             });
         });
+        this.props.socket.on('cardUpdate', () => {
+            this.setState({
+                cards: this.updateActiveCards(this.props.spaces, this.props.selectCards),
+                played: this.updateActiveCards(this.props.spaces, this.props.played)
+            });
+        });
+        this.props.socket.on('discardphase', () => {
+           this.setState({
+               queuedForDiscard: Array(this.props.discardCount).fill(null)
+           }) 
+        });
     }
     
+    handleDiscardClick() {
+        let cardsToRemove = this.props.selectCards.slice();
+        let cardsToDiscard = this.state.queuedForDiscard.slice();
+        let j = 0;
+        if (!cardsToDiscard.includes(null)) {
+            while (j < cardsToRemove.length) {
+                let matched = false;
+                for (let k = 0; k < cardsToDiscard.length; k++) {
+                    if (cardsEqual(cardsToRemove[j], cardsToDiscard[k])) {
+                        cardsToRemove.splice(j, 1);
+                        cardsToDiscard.splice(k, 1);
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched) {
+                    j++;
+                }
+            }
+            if (this.props.processCode != null) {
+                socket.emit('discardComplete', cardsToRemove);
+            } else {
+                socket.emit('discardNormalHand', cardsToRemove);
+            }
+        }
+    }
+
     handlePlayClick() {
         let number = this.state.selectedNumberCard;
         let action = this.state.selectedActionCard;
         let spaceState = this.props.spaces.slice();
         let tempPlayed = [];
-        let cardsToRemove = this.state.rawCards.slice();
+        let cardsToRemove = this.props.selectCards.slice();
         if (number != null && action != null) {
             if (this.isActive(spaceState, number) && this.isActive(spaceState, action) && (action.type != "A" && action.type != "R" && action.type != "H")) {
                 let j = 0;
                 while (j < cardsToRemove.length) {
-                    if (cardsToRemove[j] === number || cardsToRemove[j] === action) {
+                    if (cardsEqual(cardsToRemove[j], number) || cardsEqual(cardsToRemove[j], action)) {
                         tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
                     } else {
                         j++;
@@ -222,7 +269,7 @@ class Game extends React.Component {
             if (this.isActive(spaceState, action) && (action.type === "A" || action.type === "R" || action.type === "H")) {
                 let j = 0;
                 while (j < cardsToRemove.length) {
-                    if (cardsToRemove[j] === action) {
+                    if (cardsEqual(cardsToRemove[j], action)) {
                         tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
                     } else {
                         j++;
@@ -245,36 +292,79 @@ class Game extends React.Component {
         let selectCards = this.props.selectCards.slice();
         let played = this.props.played.slice();
         let cardType = i.type;
-        if (cardType === "1" || cardType === "2" || cardType === "3") {
-            let newSelected = (i === this.state.selectedNumberCard) ? null : i;
-            this.setState({
-                selectedNumberCard: newSelected,
-                cards: selectCards.map((name) => {
-                    let active = this.isActive(this.props.spaces, name) ? "active" : "";
-                    let selected = (cardsEqual(name, newSelected) || cardsEqual(name, this.state.selectedActionCard)) ? "selectedCard" : "";
-                    return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name} />);
-                }),
-                played: played.map((name) => {
-                    let active = this.isActive(this.props.spaces, name) ? "active" : "";
-                    let selected = (cardsEqual(name, newSelected) || cardsEqual(name, this.state.selectedActionCard)) ? "selectedCard" : "";
-                    return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name} />);
+        let accessable = this.props.processCode === null ? selectCards.length : this.props.processCode;
+        let selectCardsIndex = -1;
+        for (let j = 0; j < selectCards.length; j++) {
+            if (cardsEqual(i, selectCards[j])) {
+                selectCardsIndex = j;
+                break;
+            }
+        }
+        if (this.props.gameState === 'discardphase') {
+            let tempDiscard = this.state.queuedForDiscard.slice();
+            if (selectCardsIndex >= selectCards.length - accessable) {
+                let found = false;
+                for (let j = 0; j < tempDiscard.length; j++) {
+                    if (cardsEqual(tempDiscard[j], i)) {
+                        tempDiscard[j] = null;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found && tempDiscard.includes(null)) {
+                    for (let j = 0; j < tempDiscard.length; j++) {
+                        if (tempDiscard[j] === null) {
+                            tempDiscard[j] = i;
+                            break;
+                        }
+                    }
+                }
+                this.setState({
+                    queuedForDiscard: tempDiscard,
+                    cards: selectCards.map((name) => {
+                        let selected = "";
+                        for (let j = 0; j < tempDiscard.length; j++) {
+                            if (cardsEqual(tempDiscard[j], name)) {
+                                selected = "selectedCard";
+                                break;
+                            }
+                        }
+                        return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={""} card={name} />);
+                    }),
                 })
-            });
+            }
         } else {
-            let newSelected = (i === this.state.selectedActionCard) ? null : i;
-            this.setState({
-                selectedActionCard: newSelected,
-                cards: selectCards.map((name) => {
-                    let active = this.isActive(this.props.spaces, name) ? "active" : "";
-                    let selected = (cardsEqual(name, newSelected) || cardsEqual(name, this.state.selectedNumberCard)) ? "selectedCard" : "";
-                    return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name} />);
-                }),
-                played: played.map((name) => {
-                    let active = this.isActive(this.props.spaces, name) ? "active" : "";
-                    let selected = (cardsEqual(name, newSelected) || cardsEqual(name, this.state.selectedNumberCard)) ? "selectedCard" : "";
-                    return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name} />);
+            if (cardType === "1" || cardType === "2" || cardType === "3") {
+                let newSelected = (i === this.state.selectedNumberCard) ? null : i;
+                this.setState({
+                    selectedNumberCard: newSelected,
+                    cards: selectCards.map((name) => {
+                        let active = this.isActive(this.props.spaces, name) ? "active" : "";
+                        let selected = (cardsEqual(name, newSelected) || cardsEqual(name, this.state.selectedActionCard)) ? "selectedCard" : "";
+                        return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name} />);
+                    }),
+                    played: played.map((name) => {
+                        let active = this.isActive(this.props.spaces, name) ? "active" : "";
+                        let selected = (cardsEqual(name, newSelected) || cardsEqual(name, this.state.selectedActionCard)) ? "selectedCard" : "";
+                        return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name} />);
+                    })
+                });
+            } else {
+                let newSelected = (i === this.state.selectedActionCard) ? null : i;
+                this.setState({
+                    selectedActionCard: newSelected,
+                    cards: selectCards.map((name) => {
+                        let active = this.isActive(this.props.spaces, name) ? "active" : "";
+                        let selected = (cardsEqual(name, newSelected) || cardsEqual(name, this.state.selectedNumberCard)) ? "selectedCard" : "";
+                        return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name} />);
+                    }),
+                    played: played.map((name) => {
+                        let active = this.isActive(this.props.spaces, name) ? "active" : "";
+                        let selected = (cardsEqual(name, newSelected) || cardsEqual(name, this.state.selectedNumberCard)) ? "selectedCard" : "";
+                        return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name} />);
+                    })
                 })
-            })
+            }
         }
     }
 
@@ -424,6 +514,7 @@ class Game extends React.Component {
             cards={this.state.cards} //[<Cards>]
             played={this.state.played}//[<Cards>]
             playClicked={() => this.handlePlayClick()} //function
+            discardClicked={() => this.handleDiscardClick()}
             myTurn={this.props.pid === this.props.currentPlayer}
             gameState={this.props.gameState}
             allPlayed={allPlayed}
@@ -436,10 +527,16 @@ class Game extends React.Component {
     }
 }
 
-var socket = io.connect('https://damoclesgame.herokuapp.com');
+//var connectTo = 'https://damoclesgame.herokuapp.com';
+var connectTo = 'http://localhost:3000';
+var socket = io.connect(connectTo);
 console.log(socket);
 socket.on('initialize', function(data) {
     let localData = Object.assign({}, data);
+    socket.on('standby', function(data) {
+        Object.assign(localData, data);
+        renderGame(localData, socket);
+    });
     socket.on('boardChange', function(data) {
         Object.assign(localData, data);
         renderGame(localData, socket);
@@ -450,7 +547,10 @@ socket.on('initialize', function(data) {
     });
     socket.on('cardUpdate', function(data) {
         Object.assign(localData, data);
-        console.log(localData);
+        renderGame(localData, socket);
+    });
+    socket.on('discardphase', function(data) {
+        Object.assign(localData, data);
         renderGame(localData, socket);
     });
     socket.on('cardPlayed', function(data) {
@@ -470,6 +570,8 @@ function renderGame(data, socket) {
         socket={socket}
         played={data.played[data.pid - 1]}
         allPlayed={data.played}
+        discardCount={data.discardCount}
+        processCode={data.processCode}
 
         />, document.getElementById("root"));
 }
