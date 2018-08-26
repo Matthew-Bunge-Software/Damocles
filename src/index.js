@@ -31,16 +31,8 @@ var three = "3";
 class Card extends React.Component {
     constructor(props) {
         super(props);
-        const spaces = Array(7).fill(null);
-        if (props.card.one != null) { spaces[0] = props.card.one; }
-        if (props.card.two != null) { spaces[1] = props.card.two; }
-        if (props.card.three != null) { spaces[2] = props.card.three; }
-        if (props.card.four != null) { spaces[3] = props.card.four; }
-        if (props.card.five != null) { spaces[4] = props.card.five; }
-        if (props.card.six != null) { spaces[5] = props.card.six; }
-        if (props.card.seven != null) { spaces[6] = props.card.seven; }
         this.state = {
-            spaces: spaces,
+            spaces: props.card.spaces,
             card: props.card,
         }
     }

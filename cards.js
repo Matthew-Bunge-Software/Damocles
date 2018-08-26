@@ -1,3 +1,27 @@
+const COLORS = {
+    RED: "red",
+    BLUE: "blue",
+    GREEN: "green",
+    BLACK: "black",
+    GOLD: "gold"
+};
+
+var gold = COLORS.GOLD;
+var generate = "G";
+var blue = COLORS.BLUE;
+var red = COLORS.RED;
+var green = COLORS.GREEN;
+var gold = COLORS.GOLD;
+var black = COLORS.BLACK;
+var combust = "C";
+var oracle = "O";
+var reflex = "R";
+var conquer = "A";
+var haste = "H";
+var one = "1";
+var two = "2";
+var three = "3";
+
 const CARDS = [
     {
         type: generate,
@@ -336,16 +360,7 @@ const CARDS = [
     }
 ];
 
-const selectCards = CARDS.map(card => {
-    let intAdded = false;
-    let randInt = -1;
-    while (!intAdded) {
-        randInt = Math.floor(Math.random() * 100000);
-        if (!IDS.has(randInt)) {
-            IDS.add(randInt);
-            intAdded = true;
-        }
-    }
-    card.ID = randInt;
-    return card;
-});
+module.exports = {
+    colors: COLORS,
+    cards: CARDS
+}
