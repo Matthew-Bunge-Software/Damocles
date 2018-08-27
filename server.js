@@ -109,6 +109,10 @@ io.on('connection', function(socket) {
             socket.emit('bonusswap', {
                 gameState: "bonusswap"
             });
+        } else if (interacted.stateEdit === "R") {
+            socket.emit('reflexed', {
+                gameState: "reflexed"
+            });
         }
         io.emit('cardPlayed', {
             played: played
@@ -212,7 +216,9 @@ function handleCardInteractions(played) {
         if (action === "A") { //use opponents revealed
 
         } else if (action === "R") { //use relative position
-
+            Object.assign(returnMe, {
+                stateEdit: "R"
+            })
         } else if (action === "H") { //swap twice
             Object.assign(returnMe, {
                 stateEdit: "H"

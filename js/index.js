@@ -462,8 +462,13 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
         } }, { key: "updateActiveCards", value: function updateActiveCards(
 
         newState, selectCards) {var _this11 = this;
-            return selectCards.map(function (name, index) {
-                var active = _this11.isActive(newState, name) ? "active" : "";
+            return selectCards.map(function (name) {
+                var active = "";
+                if (_this11.isActive(newState, name)) {
+                    active = "active";
+                } else if (_this11.props.gameState === "reflexed" && _this11.isActiveReflexed(newState, name)) {
+                    active = "activeReflexed";
+                }
                 var selected = _this11.state.selectedActionCard === name || _this11.state.selectedNumberCard === name ? "selectedCard" : "";
                 return React.createElement(Card, { key: name.ID, onClick: function onClick(i) {return _this11.handleCardClick(i);}, selected: selected, display: active, card: name });
             });
@@ -473,36 +478,32 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
             var rotation = newState.slice();
             var nameSpaces = name.spaces.slice();
             return this.arraysAreRotations(nameSpaces, rotation);
-        } }, { key: "isActiveHasted", value: function isActiveHasted(
+        } }, { key: "isActiveReflexed", value: function isActiveReflexed(
 
         newState, name) {
             var rotation = this.purgeNull(newState);
-            var nameSpaces = this.purgeNull(names.spaces);
+            var nameSpaces = this.purgeNull(name.spaces);
             return this.arraysAreRotations(nameSpaces, rotation);
         } }, { key: "arraysAreRotations", value: function arraysAreRotations(
 
         cardSpaces, boardSpaces) {
             var active = true;
-            if (cardSpaces.length != boardSpaces.length) {
-                active = false;
-            } else {
-                for (var j = 0; j < boardSpaces.length; j++) {
-                    active = true;
-                    for (var i = 0; i < boardSpaces.length; i++) {
-                        if (cardSpaces[i] !== boardSpaces[i] && cardSpaces[i] != null) {
-                            active = false;
-                            break;
-                        }
-                    }
-                    if (active) {
+            for (var j = 0; j < boardSpaces.length; j++) {
+                active = true;
+                for (var i = 0; i < cardSpaces.length; i++) {
+                    if (cardSpaces[i] !== boardSpaces[i] && cardSpaces[i] != null) {
+                        active = false;
                         break;
                     }
-                    var temp = boardSpaces[0];
-                    for (var _i = 0; _i < boardSpaces.length; _i++) {
-                        boardSpaces[_i] = boardSpaces[_i + 1];
-                    }
-                    boardSpaces[boardSpaces.length - 1] = temp;
                 }
+                if (active) {
+                    break;
+                }
+                var temp = boardSpaces[0];
+                for (var _i = 0; _i < boardSpaces.length; _i++) {
+                    boardSpaces[_i] = boardSpaces[_i + 1];
+                }
+                boardSpaces[boardSpaces.length - 1] = temp;
             }
             return active;
         } }, { key: "purgeNull", value: function purgeNull(
@@ -578,6 +579,10 @@ socket.on('initialize', function (data) {
         renderGame(localData, socket);
     });
     socket.on('bonusswap', function (data) {
+        Object.assign(localData, data);
+        renderGame(localData, socket);
+    });
+    socket.on('reflexed', function (data) {
         Object.assign(localData, data);
         renderGame(localData, socket);
     });

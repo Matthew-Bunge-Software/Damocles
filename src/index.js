@@ -462,8 +462,13 @@ class Game extends React.Component {
     }
 
     updateActiveCards(newState, selectCards) {
-        return (selectCards.map((name, index) => {
-            let active = this.isActive(newState, name) ? "active" : "";
+        return (selectCards.map((name) => {
+            let active = "";
+            if (this.isActive(newState, name)) {
+                active = "active";
+            } else if (this.props.gameState === "reflexed" && this.isActiveReflexed(newState, name)) {
+                active = "activeReflexed";
+            }
             let selected = (this.state.selectedActionCard === name || this.state.selectedNumberCard === name) ? "selectedCard" : "";
             return (<Card key={name.ID} onClick={(i) => this.handleCardClick(i)} selected={selected} display={active} card={name} />);
         }));
@@ -475,34 +480,30 @@ class Game extends React.Component {
         return this.arraysAreRotations(nameSpaces, rotation);
     }
 
-    isActiveHasted(newState, name) {
+    isActiveReflexed(newState, name) {
         let rotation = this.purgeNull(newState);
-        let nameSpaces = this.purgeNull(names.spaces);
+        let nameSpaces = this.purgeNull(name.spaces);
         return this.arraysAreRotations(nameSpaces, rotation);
     }
 
     arraysAreRotations(cardSpaces, boardSpaces) {
         let active = true;
-        if (cardSpaces.length != boardSpaces.length) {
-            active = false;
-        } else {
-            for (let j = 0; j < boardSpaces.length; j++) {
-                active = true;
-                for (let i = 0; i < boardSpaces.length; i++) {
-                    if (cardSpaces[i] !== boardSpaces[i] && cardSpaces[i] != null) {
-                        active = false;
-                        break;
-                    }
-                }
-                if (active) {
+        for (let j = 0; j < boardSpaces.length; j++) {
+            active = true;
+            for (let i = 0; i < cardSpaces.length; i++) {
+                if (cardSpaces[i] !== boardSpaces[i] && cardSpaces[i] != null) {
+                    active = false;
                     break;
                 }
-                let temp = boardSpaces[0];
-                for (let i = 0; i < boardSpaces.length; i++) {
-                    boardSpaces[i] = boardSpaces[i + 1];
-                }
-                boardSpaces[boardSpaces.length - 1] = temp;
             }
+            if (active) {
+                break;
+            }
+            let temp = boardSpaces[0];
+            for (let i = 0; i < boardSpaces.length; i++) {
+                boardSpaces[i] = boardSpaces[i + 1];
+            }
+            boardSpaces[boardSpaces.length - 1] = temp;
         }
         return active;
     }
@@ -578,6 +579,10 @@ socket.on('initialize', function(data) {
         renderGame(localData, socket);
     });
     socket.on('bonusswap', function(data) {
+        Object.assign(localData, data);
+        renderGame(localData, socket);
+    });
+    socket.on('reflexed', function(data) {
         Object.assign(localData, data);
         renderGame(localData, socket);
     });

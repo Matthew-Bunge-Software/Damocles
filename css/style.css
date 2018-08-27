@@ -111,6 +111,10 @@
   background-color: lightgray;
 }
 
+.activeReflexed {
+  background-color: lightcoral;
+}
+
 .cardType {
   position: absolute;
   list-style-type: none;
