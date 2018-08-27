@@ -6,8 +6,6 @@
     GOLD: "gold" };
 
 
-var IDS = new Set();
-
 var NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
 
 var HEPINDEX = NAMES.map(function (name) {return name + "hep";});
@@ -431,7 +429,8 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
                                 _newCounts[j].count++;
                             }
                         }
-                        socket.emit('boardChange', { newSpaces: _newSpaces, newCounts: _newCounts });
+                        var emitCheck = this.props.gameState === 'bonusswap' ? 'bonusswap' : 'boardChange';
+                        socket.emit(emitCheck, { newSpaces: _newSpaces, newCounts: _newCounts });
                         this.setState({
                             selectedColor: null,
                             isSwap: false,
@@ -443,7 +442,8 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
                         var temp = _newSpaces2[index];
                         _newSpaces2[index] = _newSpaces2[prevState.index];
                         _newSpaces2[prevState.index] = temp;
-                        socket.emit('boardChange', { newSpaces: _newSpaces2, newCounts: this.props.colorCounts });
+                        var _emitCheck = this.props.gameState === 'bonusswap' ? 'bonusswap' : 'boardChange';
+                        socket.emit(_emitCheck, { newSpaces: _newSpaces2, newCounts: this.props.colorCounts });
                         this.setState({
                             selectColor: null,
                             isSwap: false,
@@ -574,6 +574,10 @@ socket.on('initialize', function (data) {
         renderGame(localData, socket);
     });
     socket.on('cardPlayed', function (data) {
+        Object.assign(localData, data);
+        renderGame(localData, socket);
+    });
+    socket.on('bonusswap', function (data) {
         Object.assign(localData, data);
         renderGame(localData, socket);
     });

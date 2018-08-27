@@ -64,10 +64,20 @@ io.on('connection', function(socket) {
             colorCounts: colorCounts,
             currentPlayer: currentPlayer,
             gameState: gameState,
-            played: played
+        });
+    });
+    socket.on('bonusswap', function(data) {
+        spaces = data.newSpaces;
+        colorCounts = data.newCounts;
+        gameState = "";
+        io.emit('boardChange', {  
+            spaces: spaces,
+            colorCounts: colorCounts,
+            gameState: gameState,
         });
     });
     socket.on('discardNormalHand', function(data) {
+        //TODO: Figure out turn order
         currentPlayer = ((currentPlayer % players.length) + 1);
         gameState = spaces.includes(null) ? gameState : "";
         let tempCards = data.slice();
@@ -94,6 +104,11 @@ io.on('connection', function(socket) {
                 processCode: interacted.processCode,
                 discardCount: 2
             })
+        }
+        if (interacted.stateEdit === "H") {
+            socket.emit('bonusswap', {
+                gameState: "bonusswap"
+            });
         }
         io.emit('cardPlayed', {
             played: played
@@ -194,12 +209,14 @@ function handleCardInteractions(played) {
             console.log("Something went wrong");
         }
     } else {
-        if (action === "A") {
+        if (action === "A") { //use opponents revealed
 
-        } else if (action === "R") {
+        } else if (action === "R") { //use relative position
 
-        } else if (action === "H") {
-
+        } else if (action === "H") { //swap twice
+            Object.assign(returnMe, {
+                stateEdit: "H"
+            });
         }
     }
     return returnMe;
