@@ -34,7 +34,7 @@ io.on('connection', function(socket) {
             discardCount: 2
         });
     }
-    socket.on('discardComplete', function(data) {
+    socket.on('discardPresetup', function(data) {
         numDiscarded++;
         socket.emit('cardUpdate', {
             selectCards: data

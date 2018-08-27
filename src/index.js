@@ -232,8 +232,8 @@ class Game extends React.Component {
                     j++;
                 }
             }
-            if (this.props.processCode != null) {
-                socket.emit('discardComplete', cardsToRemove);
+            if (this.props.processCode === null) {
+                socket.emit('discardPresetup', cardsToRemove);
             } else {
                 socket.emit('discardNormalHand', cardsToRemove);
             }
@@ -470,26 +470,54 @@ class Game extends React.Component {
     }
 
     isActive(newState, name) {
-        let active = true;
         let rotation = newState.slice();
-        for (var j = 0; j < 7; j++) {
-            active = true;
-            for (var i = 0; i < 7; i++) {
-                if (name[NAMES[i]] !== rotation[i] && name[NAMES[i]] != null) {
-                    active = false;
+        let nameSpaces = name.spaces.slice();
+        return this.arraysAreRotations(nameSpaces, rotation);
+    }
+
+    isActiveHasted(newState, name) {
+        let rotation = this.purgeNull(newState);
+        let nameSpaces = this.purgeNull(names.spaces);
+        return this.arraysAreRotations(nameSpaces, rotation);
+    }
+
+    arraysAreRotations(cardSpaces, boardSpaces) {
+        let active = true;
+        if (cardSpaces.length != boardSpaces.length) {
+            active = false;
+        } else {
+            for (let j = 0; j < boardSpaces.length; j++) {
+                active = true;
+                for (let i = 0; i < boardSpaces.length; i++) {
+                    if (cardSpaces[i] !== boardSpaces[i] && cardSpaces[i] != null) {
+                        active = false;
+                        break;
+                    }
+                }
+                if (active) {
                     break;
                 }
+                let temp = boardSpaces[0];
+                for (let i = 0; i < boardSpaces.length; i++) {
+                    boardSpaces[i] = boardSpaces[i + 1];
+                }
+                boardSpaces[boardSpaces.length - 1] = temp;
             }
-            if (active) {
-                break;
-            }
-            let temp = rotation[0];
-            for (var i = 0; i < 6; i++) {
-                rotation[i] = rotation[i + 1];
-            }
-            rotation[6] = temp;
         }
         return active;
+    }
+
+    purgeNull(name) {
+        let purged = name.slice();
+        let j = 0;
+        while (j < purged.length) {
+            if (purged[j] === null) {
+                purged.splice(j, 1);
+            } else {
+                j++;
+            }
+        }
+        return purged;
     }
 
     render() {

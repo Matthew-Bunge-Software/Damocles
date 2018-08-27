@@ -232,8 +232,8 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
                         j++;
                     }
                 }
-                if (this.props.processCode != null) {
-                    socket.emit('discardComplete', cardsToRemove);
+                if (this.props.processCode === null) {
+                    socket.emit('discardPresetup', cardsToRemove);
                 } else {
                     socket.emit('discardNormalHand', cardsToRemove);
                 }
@@ -470,26 +470,54 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
         } }, { key: "isActive", value: function isActive(
 
         newState, name) {
-            var active = true;
             var rotation = newState.slice();
-            for (var j = 0; j < 7; j++) {
-                active = true;
-                for (var i = 0; i < 7; i++) {
-                    if (name[NAMES[i]] !== rotation[i] && name[NAMES[i]] != null) {
-                        active = false;
+            var nameSpaces = name.spaces.slice();
+            return this.arraysAreRotations(nameSpaces, rotation);
+        } }, { key: "isActiveHasted", value: function isActiveHasted(
+
+        newState, name) {
+            var rotation = this.purgeNull(newState);
+            var nameSpaces = this.purgeNull(names.spaces);
+            return this.arraysAreRotations(nameSpaces, rotation);
+        } }, { key: "arraysAreRotations", value: function arraysAreRotations(
+
+        cardSpaces, boardSpaces) {
+            var active = true;
+            if (cardSpaces.length != boardSpaces.length) {
+                active = false;
+            } else {
+                for (var j = 0; j < boardSpaces.length; j++) {
+                    active = true;
+                    for (var i = 0; i < boardSpaces.length; i++) {
+                        if (cardSpaces[i] !== boardSpaces[i] && cardSpaces[i] != null) {
+                            active = false;
+                            break;
+                        }
+                    }
+                    if (active) {
                         break;
                     }
+                    var temp = boardSpaces[0];
+                    for (var _i = 0; _i < boardSpaces.length; _i++) {
+                        boardSpaces[_i] = boardSpaces[_i + 1];
+                    }
+                    boardSpaces[boardSpaces.length - 1] = temp;
                 }
-                if (active) {
-                    break;
-                }
-                var temp = rotation[0];
-                for (var i = 0; i < 6; i++) {
-                    rotation[i] = rotation[i + 1];
-                }
-                rotation[6] = temp;
             }
             return active;
+        } }, { key: "purgeNull", value: function purgeNull(
+
+        name) {
+            var purged = name.slice();
+            var j = 0;
+            while (j < purged.length) {
+                if (purged[j] === null) {
+                    purged.splice(j, 1);
+                } else {
+                    j++;
+                }
+            }
+            return purged;
         } }, { key: "render", value: function render()
 
         {var _this12 = this;
