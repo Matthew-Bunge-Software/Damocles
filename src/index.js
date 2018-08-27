@@ -489,16 +489,22 @@ class Game extends React.Component {
     arraysAreRotations(cardSpaces, boardSpaces) {
         let active = true;
         for (let j = 0; j < boardSpaces.length; j++) {
-            active = true;
-            for (let i = 0; i < cardSpaces.length; i++) {
-                if (cardSpaces[i] !== boardSpaces[i] && cardSpaces[i] != null) {
-                    active = false;
-                    break;
+            active = false;
+            let k = 0;
+            for (let i = 0; i < boardSpaces.length; i++) {
+                if (cardSpaces[k] === null || cardSpaces[k] === boardSpaces[i]) {
+                    k++;
+                    if (k === cardSpaces.length) {
+                        active = true;
+                        break;
+                    }
                 }
             }
+            //Match found
             if (active) {
                 break;
             }
+            //Rotates board
             let temp = boardSpaces[0];
             for (let i = 0; i < boardSpaces.length; i++) {
                 boardSpaces[i] = boardSpaces[i + 1];

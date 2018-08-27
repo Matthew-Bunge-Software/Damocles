@@ -489,16 +489,22 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
         cardSpaces, boardSpaces) {
             var active = true;
             for (var j = 0; j < boardSpaces.length; j++) {
-                active = true;
-                for (var i = 0; i < cardSpaces.length; i++) {
-                    if (cardSpaces[i] !== boardSpaces[i] && cardSpaces[i] != null) {
-                        active = false;
-                        break;
+                active = false;
+                var k = 0;
+                for (var i = 0; i < boardSpaces.length; i++) {
+                    if (cardSpaces[k] === null || cardSpaces[k] === boardSpaces[i]) {
+                        k++;
+                        if (k === cardSpaces.length) {
+                            active = true;
+                            break;
+                        }
                     }
                 }
+                //Match found
                 if (active) {
                     break;
                 }
+                //Rotates board
                 var temp = boardSpaces[0];
                 for (var _i = 0; _i < boardSpaces.length; _i++) {
                     boardSpaces[_i] = boardSpaces[_i + 1];
