@@ -126,7 +126,15 @@ function Board(props) {
 }
 
 function Lobby(props) {
-    return React.createElement("button", { onClick: props.onClick }, "Start Game");
+    return React.createElement("div", { className: "Login" },
+        React.createElement("form", { id: "login" },
+            React.createElement("label", { "for": "uname" }, React.createElement("b", null, "Username")),
+            React.createElement("input", { type: "text", id: "uname", placeholder: "Enter Username" }),
+            React.createElement("label", { "for": "passw" }, React.createElement("b", null, "Password")),
+            React.createElement("input", { type: "text", id: "passw", placeholder: "Enter Password" }),
+            React.createElement("button", { onClick: function onClick() {return props.onClick(login.uname.value, login.passw.value);}, type: "submit" }, "Login")));
+
+
 }var
 
 Display = function (_React$Component3) {_inherits(Display, _React$Component3);function Display() {_classCallCheck(this, Display);return _possibleConstructorReturn(this, (Display.__proto__ || Object.getPrototypeOf(Display)).apply(this, arguments));}_createClass(Display, [{ key: "renderSelector", value: function renderSelector()
@@ -512,6 +520,13 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
                 boardSpaces[boardSpaces.length - 1] = temp;
             }
             return active;
+        } }, { key: "login", value: function login(
+
+        user, pass) {
+            socket.emit("login", {
+                username: user,
+                password: pass });
+
         } }, { key: "purgeNull", value: function purgeNull(
 
         name) {
@@ -547,7 +562,7 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
                 allPlayed: allPlayed });
 
             var lobby = React.createElement(Lobby, {
-                onClick: function onClick() {return _this12.startGame();} });
+                onClick: function onClick(user, pass) {return _this12.login(user, pass);} });
 
             var showMe = this.props.gameState === "lobby" ? lobby : display;
             return showMe;

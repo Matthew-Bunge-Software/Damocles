@@ -1,6 +1,13 @@
 var {colors} = require('./cards');
 var {cards} = require('./cards');
+const { Client } = require('pg');
 
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true,
+});
+
+client.connect();
 var express = require('express'),
     http = require('http');
 var app = express();
@@ -14,6 +21,19 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', function(socket) {
+    socket.on('login', function(data) {
+        const text = 'SELECT * FROM login';
+        const values = [data.username, data.password];
+        console.log("HiHi");
+        client.query('SELECT * FROM login', values, (err, res) => {
+            if (err) {
+                console.log(err.stack);
+            }
+            for (let row of res.rows) {
+              console.log(row);
+            }
+          });
+    });
     console.log(socket.request.connection._peername);
     players.push(idCount);
     socket.emit('initialize', { 

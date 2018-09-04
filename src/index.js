@@ -126,7 +126,15 @@ function Board(props) {
 }
 
 function Lobby(props) {
-    return <button onClick={props.onClick}>{"Start Game"}</button>;
+    return <div className={"Login"}>
+        <form id="login">
+            <label for={"uname"}><b>{"Username"}</b></label>
+            <input type={"text"} id={"uname"} placeholder={"Enter Username"}></input>
+            <label for={"passw"}><b>{"Password"}</b></label>
+            <input type={"text"} id={"passw"} placeholder={"Enter Password"}></input>
+            <button onClick={() => props.onClick(login.uname.value, login.passw.value)} type={"submit"}>{"Login"}</button>
+        </form>
+    </div>;
 }
 
 class Display extends React.Component {
@@ -514,6 +522,13 @@ class Game extends React.Component {
         return active;
     }
 
+    login(user, pass) {
+        socket.emit("login", {
+            username: user,
+            password: pass
+        });
+    }
+
     purgeNull(name) {
         let purged = name.slice();
         let j = 0;
@@ -547,7 +562,7 @@ class Game extends React.Component {
             allPlayed={allPlayed}
         />;
         let lobby = <Lobby
-            onClick={() => this.startGame()}
+            onClick={(user, pass) => this.login(user, pass)}
         />;
         let showMe = this.props.gameState === "lobby" ? lobby : display;
         return (showMe);
