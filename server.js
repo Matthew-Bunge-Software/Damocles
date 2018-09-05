@@ -1,6 +1,8 @@
 var {colors} = require('./cards');
 var {cards} = require('./cards');
 const { Client } = require('pg');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 const client = new Client({
     //process.env.DATABASE_URL |
