@@ -5,8 +5,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
 const client = new Client({
-    //process.env.DATABASE_URL |
-  connectionString: "postgres://matthew:cadenza@localhost:5432/tempdb",
+  connectionString: process.env.DATABASE_URL || "postgres://matthew:cadenza@localhost:5432/tempdb",
 });
 
 client.connect();
@@ -22,8 +21,49 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(function(username, password, done) {
+    const text = 'SELECT * FROM login WHERE username = $1';
+    const values = [username];
+    client.query(text, values, (err, res) => {
+        if (err) {
+            console.log(err.stack);
+            return done(err);
+        }
+        if (res.rows.length > 0) {
+            let result = res.rows[0];
+            if (result.password === password) {
+                return done(null, {id: result.id, user: result.username});
+            } else {
+                return done(null, false, { message: 'Password does not exist' });
+            }
+        } else {
+            return done(null, false, { message: 'Username does not exist' });
+        }
+      });
+}));
+
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+passport.deserializeUser((user, done) => {
+    const text = 'SELECT * FROM login WHERE id = $1';
+    const values = [user];
+    client.query(text, values, (err, res) => {
+        if (err) {
+            console.log(err.stack);
+            return done(err);
+        }
+
+        done(null, { id: res.rows[0].id, username: res.rows[0].username });
+    });
+});
+
 io.on('connection', function(socket) {
-    socket.on('login', function(data) {
+    /*socket.on('login', function(data) {
         const text = 'SELECT * FROM login WHERE username = $1 AND password = $2';
         const values = [data.username, data.password];
         client.query(text, values, (err, res) => {
@@ -35,7 +75,7 @@ io.on('connection', function(socket) {
             }
           });
         socket.emit("cookify", setCookie(row.username));
-    });
+    });*/
     console.log(socket.request.connection._peername);
     players.push(idCount);
     socket.emit('initialize', { 
