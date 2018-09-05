@@ -641,7 +641,7 @@ function cardsEqual(a, b) {
             a.id === b.id
     );
 }
-/*
+
 function getCookie() {
     var name = "Damocles=";
     var decodedCookie = decodeURIComponent(document.cookie);
@@ -668,4 +668,4 @@ function checkCookie() {
            setCookie("username", user, 30);
        }
     }
-}*/
+}
