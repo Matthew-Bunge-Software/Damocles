@@ -1,7 +1,0 @@
-2018-09-04 17:00:58.398 PDT [13164] LOG:  could not bind IPv6 address "::1": Permission denied
-2018-09-04 17:00:58.398 PDT [13164] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
-2018-09-04 17:00:58.398 PDT [13164] LOG:  could not bind IPv4 address "127.0.0.1": Permission denied
-2018-09-04 17:00:58.398 PDT [13164] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
-2018-09-04 17:00:58.398 PDT [13164] WARNING:  could not create listen socket for "localhost"
-2018-09-04 17:00:58.398 PDT [13164] FATAL:  could not create any TCP/IP sockets
-2018-09-04 17:00:58.399 PDT [13164] LOG:  database system is shut down

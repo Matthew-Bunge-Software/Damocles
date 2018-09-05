@@ -607,6 +607,9 @@ socket.on('initialize', function(data) {
         Object.assign(localData, data);
         renderGame(localData, socket);
     });
+    socket.on('cookify', function(data) {
+        document.cookie = data;
+    });
     renderGame(localData, socket);
 });
 
@@ -638,6 +641,7 @@ function cardsEqual(a, b) {
             a.id === b.id
     );
 }
+/*
 function getCookie() {
     var name = "Damocles=";
     var decodedCookie = decodeURIComponent(document.cookie);
@@ -664,4 +668,4 @@ function checkCookie() {
            setCookie("username", user, 30);
        }
     }
-}
+}*/
