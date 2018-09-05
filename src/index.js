@@ -607,6 +607,9 @@ socket.on('initialize', function(data) {
         Object.assign(localData, data);
         renderGame(localData, socket);
     });
+    socket.on('cookify', function(data) {
+        document.cookie = data;
+    });
     renderGame(localData, socket);
 });
 
@@ -637,4 +640,32 @@ function cardsEqual(a, b) {
             a.type === b.type &&
             a.id === b.id
     );
+}
+
+function getCookie() {
+    var name = "Damocles=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(";");
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function checkCookie() {
+    var user=getCookie();
+    if (user != "") {
+        alert("Welcome again " + user);
+    } else {
+       user = prompt("Please enter your name:","");
+       if (user != "" && user != null) {
+           setCookie("username", user, 30);
+       }
+    }
 }

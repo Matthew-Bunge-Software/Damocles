@@ -3,8 +3,8 @@ var {cards} = require('./cards');
 const { Client } = require('pg');
 
 const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true,
+    //process.env.DATABASE_URL |
+  connectionString: "postgres://matthew:cadenza@localhost:5432/tempdb",
 });
 
 client.connect();
@@ -22,17 +22,17 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket) {
     socket.on('login', function(data) {
-        const text = 'SELECT * FROM login';
+        const text = 'SELECT * FROM login WHERE username = $1 AND password = $2';
         const values = [data.username, data.password];
-        console.log("HiHi");
-        client.query('SELECT * FROM login', values, (err, res) => {
+        client.query(text, values, (err, res) => {
             if (err) {
                 console.log(err.stack);
             }
             for (let row of res.rows) {
-              console.log(row);
+                console.log(row);
             }
           });
+        socket.emit("cookify", setCookie(row.username));
     });
     console.log(socket.request.connection._peername);
     players.push(idCount);
@@ -191,6 +191,13 @@ function shuffle(toShuffle) {
         arr[j] = temp;
     }
     return arr;
+}
+
+function setCookie(user) {
+    var d = new Date();
+    d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
+    var expires = "expires=" + d.toUTCString();
+    return ("Damocles =" + user + ";" + expires + ";path=/");
 }
 
 function handleCardInteractions(played) {
