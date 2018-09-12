@@ -3,8 +3,7 @@ var {cards} = require('./cards');
 const { Client } = require('pg');
 
 const client = new Client({
-    //process.env.DATABASE_URL |
-  connectionString: "postgres://matthew:cadenza@localhost:5432/tempdb",
+  connectionString: process.env.DATABASE_URL || "postgres://matthew:cadenza@localhost:5432/tempdb",
 });
 
 client.connect();
@@ -21,6 +20,15 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', function(socket) {
+    console.log('a user connected');
+    socket.on('refreshCookie', function(data) {
+        socket.join('lobby');
+        socket.emit("cookify", { 
+            cookie: setCookie(data),
+            gameState: "lobby",
+            availableGames: publicInstances
+        });
+    });
     socket.on('login', function(data) {
         const text = 'SELECT * FROM login WHERE username = $1 AND password = $2';
         const values = [data.username, data.password];
@@ -28,14 +36,92 @@ io.on('connection', function(socket) {
             if (err) {
                 console.log(err.stack);
             }
-            for (let row of res.rows) {
-                console.log(row);
+            if (res.rows.length > 0) {
+                socket.join('lobby');
+                socket.emit("cookify", {
+                    cookie: setCookie(res.rows[0].username),
+                    gameState: "lobby",
+                    availableGames: publicInstances
+                });
             }
-          });
-        socket.emit("cookify", setCookie(row.username));
+        });
     });
-    console.log(socket.request.connection._peername);
-    players.push(idCount);
+    socket.on('roomcreated', function(data) {
+        let hands = [];
+        let played = [];
+        let creator = data.creator;
+        let id = gameId;
+        played[creator] = [];
+        let deck = shuffle(selectCards.slice());
+        hands[creator] = deck.splice(0, 8)
+        let newInstance = {
+            creator: data.creator,
+            name: data.name,
+            maxPlayers: data.players,
+            id: gameId,
+            deck: deck,
+            players: [data.creator],
+            ready: 0,
+            hands: hands,
+            gameState: "prestart",
+            played: played
+        };
+        let newPublicInstance = {
+            creator: data.creator,
+            name: data.name,
+            maxPlayers: data.players,
+            currentPlayers: 1,
+            id: gameId
+        };
+        gameInstances[id] = newInstance;
+        publicInstances.push(newPublicInstance);
+        io.to('lobby').emit("newroom", {
+            availableGames: publicInstances
+        });
+        socket.leave('lobby');
+        socket.join('' + gameId);
+        socket.emit('userjoined', {
+            selectCards: hands[creator],
+            gameState: newInstance.gameState,
+            players: newInstance.players,
+            chat: [],
+            played: newInstance.played,
+        });
+        gameId += 1;
+    });
+    socket.on('roomjoined', function(data) {
+        let joinedInstance = gameInstances[data.id];
+        let user = data.user;
+        joinedInstance.players.push(user);
+        joinedInstance.hands[user] = joinedInstance.deck.splice(0,8);
+        joinedInstance.played[user] = [];
+        socket.leave('lobby');
+        socket.join('' + data.id);
+        socket.emit('userjoined', {
+            selectCards: joinedInstance.hands[user],
+            gameState: joinedInstance.gameState,
+        });
+        io.to('' + data.id).emit("userjoined", {
+            players: joinedInstance.players,
+            chat: joinedInstance.chat,
+            played: joinedInstance.played
+        });
+
+    });
+    socket.on('userreadied', function(data) {
+        let instance = gameInstances[data.id];
+        instance.ready += 1;
+        if (instance.ready === instance.maxPlayers) {
+            io.to('' + data.id).emit('discardphase', {
+                spaces: Array(7).fill(null),
+                colorCounts: colorNames.map(name => ({ color: name, count: 4 })),
+                gameState: "discardphase",
+                played: instance.played,
+                processCode: null,
+                discardCount: 2
+            });
+        }
+    });/*
     socket.emit('initialize', { 
         selectCards: selectCards.splice(0, 8), 
         spaces: spaces,
@@ -45,16 +131,8 @@ io.on('connection', function(socket) {
         currentPlayer: currentPlayer,
         played: played
     });
-    idCount++;
-    if (idCount == 3) {
-        gameState = "discardphase";
-        io.emit('discardphase', {
-            gameState: gameState,
-            processCode: null,
-            discardCount: 2
-        });
-    }
     socket.on('discardPresetup', function(data) {
+        let instance = gameInstances[data.id];
         numDiscarded++;
         socket.emit('cardUpdate', {
             selectCards: data
@@ -73,7 +151,6 @@ io.on('connection', function(socket) {
             });
         }
     });
-    console.log('a user connected');
     socket.on('boardChange', function(data) {
         spaces = data.newSpaces;
         colorCounts = data.newCounts;
@@ -137,18 +214,15 @@ io.on('connection', function(socket) {
         io.emit('cardPlayed', {
             played: played
         });
-    });
+    });*/
 });
 
 server.listen(port, function() {
     console.log('listening on *' + port);
 });
 
+const colorNames = Object.values(colors);
 var IDS = new Set();
-var spaces = Array(7).fill(null);
-let colorNames = Object.values(colors);
-var colorCounts = colorNames.map(name => ({ color: name, count: 4 }));
-
 
 var selectCards = cards.map(card => {
     let intAdded = false;
@@ -173,14 +247,9 @@ var selectCards = cards.map(card => {
     return card;
 });
 
-selectCards = shuffle(selectCards);
-
-var players = [];
-var idCount = 1;
-var currentPlayer = null;
-var gameState = "lobby";
-var played = [[], []];
-var numDiscarded = 0;
+var gameId = 1;
+var gameInstances = [];
+var publicInstances = [];
 
 function shuffle(toShuffle) {
     let arr = toShuffle.slice();
@@ -197,7 +266,7 @@ function setCookie(user) {
     var d = new Date();
     d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
     var expires = "expires=" + d.toUTCString();
-    return ("Damocles =" + user + ";" + expires + ";path=/");
+    return ("Damocles=" + user + ", " + expires + ", path=/");
 }
 
 function handleCardInteractions(played) {

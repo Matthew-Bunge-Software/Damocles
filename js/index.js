@@ -1,30 +1,8 @@
-"use strict";var _createClass = function () {function defineProperties(target, props) {for (var i = 0; i < props.length; i++) {var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);}}return function (Constructor, protoProps, staticProps) {if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;};}();function _classCallCheck(instance, Constructor) {if (!(instance instanceof Constructor)) {throw new TypeError("Cannot call a class as a function");}}function _possibleConstructorReturn(self, call) {if (!self) {throw new ReferenceError("this hasn't been initialised - super() hasn't been called");}return call && (typeof call === "object" || typeof call === "function") ? call : self;}function _inherits(subClass, superClass) {if (typeof superClass !== "function" && superClass !== null) {throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;}var COLORS = {
-    RED: "red",
-    BLUE: "blue",
-    GREEN: "green",
-    BLACK: "black",
-    GOLD: "gold" };
-
+"use strict";var _createClass = function () {function defineProperties(target, props) {for (var i = 0; i < props.length; i++) {var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);}}return function (Constructor, protoProps, staticProps) {if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;};}();function _classCallCheck(instance, Constructor) {if (!(instance instanceof Constructor)) {throw new TypeError("Cannot call a class as a function");}}function _possibleConstructorReturn(self, call) {if (!self) {throw new ReferenceError("this hasn't been initialised - super() hasn't been called");}return call && (typeof call === "object" || typeof call === "function") ? call : self;}function _inherits(subClass, superClass) {if (typeof superClass !== "function" && superClass !== null) {throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;}
 
 var NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
 
-var HEPINDEX = NAMES.map(function (name) {return name + "hep";});
-
-var gold = COLORS.GOLD;
-var generate = "G";
-var blue = COLORS.BLUE;
-var red = COLORS.RED;
-var green = COLORS.GREEN;
-var gold = COLORS.GOLD;
-var black = COLORS.BLACK;
-var combust = "C";
-var oracle = "O";
-var reflex = "R";
-var conquer = "A";
-var haste = "H";
-var one = "1";
-var two = "2";
-var three = "3";var
+var HEPINDEX = NAMES.map(function (name) {return name + "hep";});var
 
 Card = function (_React$Component) {_inherits(Card, _React$Component);
     function Card(props) {_classCallCheck(this, Card);var _this = _possibleConstructorReturn(this, (Card.__proto__ || Object.getPrototypeOf(Card)).call(this,
@@ -123,25 +101,61 @@ function Board(props) {
 
 
     return React.createElement("ul", { className: "board" }, listBoard);
-}
-
-function Lobby(props) {
-    return React.createElement("div", { className: "Login" },
-        React.createElement("form", { id: "login" },
-            React.createElement("label", { "for": "uname" }, React.createElement("b", null, "Username")),
-            React.createElement("input", { type: "text", id: "uname", placeholder: "Enter Username" }),
-            React.createElement("label", { "for": "passw" }, React.createElement("b", null, "Password")),
-            React.createElement("input", { type: "text", id: "passw", placeholder: "Enter Password" }),
-            React.createElement("button", { onClick: function onClick() {return props.onClick(login.uname.value, login.passw.value);}, type: "submit" }, "Login")));
-
-
 }var
 
-Display = function (_React$Component3) {_inherits(Display, _React$Component3);function Display() {_classCallCheck(this, Display);return _possibleConstructorReturn(this, (Display.__proto__ || Object.getPrototypeOf(Display)).apply(this, arguments));}_createClass(Display, [{ key: "renderSelector", value: function renderSelector()
+Login = function (_React$Component3) {_inherits(Login, _React$Component3);
+
+    function Login(props) {_classCallCheck(this, Login);var _this5 = _possibleConstructorReturn(this, (Login.__proto__ || Object.getPrototypeOf(Login)).call(this,
+        props));
+        _this5.state = {
+            username: "",
+            password: "" };return _this5;
+
+    }_createClass(Login, [{ key: "updatePassword", value: function updatePassword(
+
+        e) {
+            this.setState({
+                password: e.target.value });
+
+        } }, { key: "updateUsername", value: function updateUsername(
+
+        e) {
+            this.setState({
+                username: e.target.value });
+
+        } }, { key: "render", value: function render()
+
         {var _this6 = this;
+            return React.createElement("div", { className: "Login" },
+                React.createElement("form", { id: "login" },
+                    React.createElement("label", { htmlFor: "uname" }, React.createElement("b", null, "Username")),
+                    React.createElement("input", { type: "text", id: "uname", placeholder: "Enter Username", onChange: function onChange(e) {return _this6.updateUsername(e);} }),
+                    React.createElement("label", { htmlFor: "passw" }, React.createElement("b", null, "Password")),
+                    React.createElement("input", { type: "text", id: "passw", placeholder: "Enter Password", onChange: function onChange(e) {return _this6.updatePassword(e);} }),
+                    React.createElement("button", { onClick: function onClick() {return _this6.props.onClick(_this6.state.username, _this6.state.password);}, type: "button" }, "Login")));
+
+
+        } }]);return Login;}(React.Component);var
+
+
+Waiting = function (_React$Component4) {_inherits(Waiting, _React$Component4);function Waiting() {_classCallCheck(this, Waiting);return _possibleConstructorReturn(this, (Waiting.__proto__ || Object.getPrototypeOf(Waiting)).apply(this, arguments));}_createClass(Waiting, [{ key: "renderPlayers", value: function renderPlayers()
+        {
+            return React.createElement("ul", null, this.props.players);
+        } }, { key: "render", value: function render()
+
+        {
+            return (
+                React.createElement("div", { className: "Waiting" },
+                    this.renderPlayers()));
+
+        } }]);return Waiting;}(React.Component);var
+
+
+Display = function (_React$Component5) {_inherits(Display, _React$Component5);function Display() {_classCallCheck(this, Display);return _possibleConstructorReturn(this, (Display.__proto__ || Object.getPrototypeOf(Display)).apply(this, arguments));}_createClass(Display, [{ key: "renderSelector", value: function renderSelector()
+        {var _this9 = this;
             return (
                 React.createElement(Community, {
-                    onClick: function onClick(i) {return _this6.props.selectorClick(i);},
+                    onClick: function onClick(i) {return _this9.props.selectorClick(i);},
                     colorCounts: this.props.colorCounts }));
 
 
@@ -155,19 +169,19 @@ Display = function (_React$Component3) {_inherits(Display, _React$Component3);fu
             return hands;
         } }, { key: "render", value: function render()
 
-        {var _this7 = this;
+        {var _this10 = this;
             return (
                 React.createElement("div", { className: "display" },
                     this.renderOtherHands(),
                     React.createElement(Header, { myTurn: this.props.myTurn }),
                     this.renderSelector(),
                     React.createElement(Board, {
-                        onClick: function onClick(i, j) {return _this7.props.boardClick(i, j);},
+                        onClick: function onClick(i, j) {return _this10.props.boardClick(i, j);},
                         spaces: this.props.spaces }),
 
                     React.createElement(PlayedTiles, { played: this.props.played }),
-                    React.createElement(MyHand, { playClicked: function playClicked() {return _this7.props.playClicked();},
-                        discardClicked: function discardClicked() {return _this7.props.discardClicked();},
+                    React.createElement(MyHand, { playClicked: function playClicked() {return _this10.props.playClicked();},
+                        discardClicked: function discardClicked() {return _this10.props.discardClicked();},
                         cards: this.props.cards,
                         myTurn: this.props.myTurn,
                         gameState: this.props.gameState })));
@@ -177,44 +191,44 @@ Display = function (_React$Component3) {_inherits(Display, _React$Component3);fu
         } }]);return Display;}(React.Component);var
 
 
-Game = function (_React$Component4) {_inherits(Game, _React$Component4);
-    function Game(props) {_classCallCheck(this, Game);var _this8 = _possibleConstructorReturn(this, (Game.__proto__ || Object.getPrototypeOf(Game)).call(this,
+Game = function (_React$Component6) {_inherits(Game, _React$Component6);
+    function Game(props) {_classCallCheck(this, Game);var _this11 = _possibleConstructorReturn(this, (Game.__proto__ || Object.getPrototypeOf(Game)).call(this,
         props));
         var selectCards = props.selectCards;
-        var cards = selectCards.map(function (name) {return React.createElement(Card, { key: name.ID, onClick: function onClick(i) {return _this8.handleCardClick(i);}, display: "", card: name });});
-        _this8.state = {
+        var cards = selectCards.map(function (name) {return React.createElement(Card, { key: name.ID, onClick: function onClick(i) {return _this11.handleCardClick(i);}, display: "", card: name });});
+        _this11.state = {
             playedRaw: props.played,
             played: [],
             selectedColor: null,
             isSwap: false,
             index: null,
             rawCards: selectCards,
-            cards: cards };return _this8;
+            cards: cards };return _this11;
 
     }_createClass(Game, [{ key: "componentDidMount", value: function componentDidMount()
 
-        {var _this9 = this;
+        {var _this12 = this;
             this.props.socket.on('boardChange', function () {
-                _this9.setState({
-                    cards: _this9.updateActiveCards(_this9.props.spaces, _this9.props.selectCards),
-                    played: _this9.updateActiveCards(_this9.props.spaces, _this9.props.played) });
+                _this12.setState({
+                    cards: _this12.updateActiveCards(_this12.props.spaces, _this12.props.selectCards),
+                    played: _this12.updateActiveCards(_this12.props.spaces, _this12.props.played) });
 
             });
             this.props.socket.on('cardPlayed', function () {
-                _this9.setState({
-                    cards: _this9.updateActiveCards(_this9.props.spaces, _this9.props.selectCards),
-                    played: _this9.updateActiveCards(_this9.props.spaces, _this9.props.played) });
+                _this12.setState({
+                    cards: _this12.updateActiveCards(_this12.props.spaces, _this12.props.selectCards),
+                    played: _this12.updateActiveCards(_this12.props.spaces, _this12.props.played) });
 
             });
             this.props.socket.on('cardUpdate', function () {
-                _this9.setState({
-                    cards: _this9.updateActiveCards(_this9.props.spaces, _this9.props.selectCards),
-                    played: _this9.updateActiveCards(_this9.props.spaces, _this9.props.played) });
+                _this12.setState({
+                    cards: _this12.updateActiveCards(_this12.props.spaces, _this12.props.selectCards),
+                    played: _this12.updateActiveCards(_this12.props.spaces, _this12.props.played) });
 
             });
             this.props.socket.on('discardphase', function () {
-                _this9.setState({
-                    queuedForDiscard: Array(_this9.props.discardCount).fill(null) });
+                _this12.setState({
+                    queuedForDiscard: Array(_this12.props.discardCount).fill(null) });
 
             });
         } }, { key: "handleDiscardClick", value: function handleDiscardClick()
@@ -239,7 +253,12 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
                     }
                 }
                 if (this.props.processCode === null) {
-                    socket.emit('discardPresetup', cardsToRemove);
+                    socket.emit('discardPresetup', {
+                        newHand: cardsToRemove,
+                        user: getCookie(),
+                        id: this.props.id });
+
+
                 } else {
                     socket.emit('discardNormalHand', cardsToRemove);
                 }
@@ -286,7 +305,7 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
 
         } }, { key: "handleCardClick", value: function handleCardClick(
 
-        i) {var _this10 = this;
+        i) {var _this13 = this;
             var selectCards = this.props.selectCards.slice();
             var played = this.props.played.slice();
             var cardType = i.type;
@@ -327,7 +346,7 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
                                     break;
                                 }
                             }
-                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this10.handleCardClick(i);}, display: "", card: name });
+                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this13.handleCardClick(i);}, display: "", card: name });
                         }) });
 
                 }
@@ -337,14 +356,14 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
                     this.setState({
                         selectedNumberCard: newSelected,
                         cards: selectCards.map(function (name) {
-                            var active = _this10.isActive(_this10.props.spaces, name) ? "active" : "";
-                            var selected = cardsEqual(name, newSelected) || cardsEqual(name, _this10.state.selectedActionCard) ? "selectedCard" : "";
-                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this10.handleCardClick(i);}, display: active, card: name });
+                            var active = _this13.isActive(_this13.props.spaces, name) ? "active" : "";
+                            var selected = cardsEqual(name, newSelected) || cardsEqual(name, _this13.state.selectedActionCard) ? "selectedCard" : "";
+                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this13.handleCardClick(i);}, display: active, card: name });
                         }),
                         played: played.map(function (name) {
-                            var active = _this10.isActive(_this10.props.spaces, name) ? "active" : "";
-                            var selected = cardsEqual(name, newSelected) || cardsEqual(name, _this10.state.selectedActionCard) ? "selectedCard" : "";
-                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this10.handleCardClick(i);}, display: active, card: name });
+                            var active = _this13.isActive(_this13.props.spaces, name) ? "active" : "";
+                            var selected = cardsEqual(name, newSelected) || cardsEqual(name, _this13.state.selectedActionCard) ? "selectedCard" : "";
+                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this13.handleCardClick(i);}, display: active, card: name });
                         }) });
 
                 } else {
@@ -352,14 +371,14 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
                     this.setState({
                         selectedActionCard: _newSelected,
                         cards: selectCards.map(function (name) {
-                            var active = _this10.isActive(_this10.props.spaces, name) ? "active" : "";
-                            var selected = cardsEqual(name, _newSelected) || cardsEqual(name, _this10.state.selectedNumberCard) ? "selectedCard" : "";
-                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this10.handleCardClick(i);}, display: active, card: name });
+                            var active = _this13.isActive(_this13.props.spaces, name) ? "active" : "";
+                            var selected = cardsEqual(name, _newSelected) || cardsEqual(name, _this13.state.selectedNumberCard) ? "selectedCard" : "";
+                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this13.handleCardClick(i);}, display: active, card: name });
                         }),
                         played: played.map(function (name) {
-                            var active = _this10.isActive(_this10.props.spaces, name) ? "active" : "";
-                            var selected = cardsEqual(name, _newSelected) || cardsEqual(name, _this10.state.selectedNumberCard) ? "selectedCard" : "";
-                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this10.handleCardClick(i);}, display: active, card: name });
+                            var active = _this13.isActive(_this13.props.spaces, name) ? "active" : "";
+                            var selected = cardsEqual(name, _newSelected) || cardsEqual(name, _this13.state.selectedNumberCard) ? "selectedCard" : "";
+                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this13.handleCardClick(i);}, display: active, card: name });
                         }) });
 
                 }
@@ -469,16 +488,16 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
             }
         } }, { key: "updateActiveCards", value: function updateActiveCards(
 
-        newState, selectCards) {var _this11 = this;
+        newState, selectCards) {var _this14 = this;
             return selectCards.map(function (name) {
                 var active = "";
-                if (_this11.isActive(newState, name)) {
+                if (_this14.isActive(newState, name)) {
                     active = "active";
-                } else if (_this11.props.gameState === "reflexed" && _this11.isActiveReflexed(newState, name)) {
+                } else if (_this14.props.gameState === "reflexed" && _this14.isActiveReflexed(newState, name)) {
                     active = "activeReflexed";
                 }
-                var selected = _this11.state.selectedActionCard === name || _this11.state.selectedNumberCard === name ? "selectedCard" : "";
-                return React.createElement(Card, { key: name.ID, onClick: function onClick(i) {return _this11.handleCardClick(i);}, selected: selected, display: active, card: name });
+                var selected = _this14.state.selectedActionCard === name || _this14.state.selectedNumberCard === name ? "selectedCard" : "";
+                return React.createElement(Card, { key: name.ID, onClick: function onClick(i) {return _this14.handleCardClick(i);}, selected: selected, display: active, card: name });
             });
         } }, { key: "isActive", value: function isActive(
 
@@ -520,13 +539,6 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
                 boardSpaces[boardSpaces.length - 1] = temp;
             }
             return active;
-        } }, { key: "login", value: function login(
-
-        user, pass) {
-            socket.emit("login", {
-                username: user,
-                password: pass });
-
         } }, { key: "purgeNull", value: function purgeNull(
 
         name) {
@@ -542,7 +554,7 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
             return purged;
         } }, { key: "render", value: function render()
 
-        {var _this12 = this;
+        {var _this15 = this;
             var allPlayed = this.props.allPlayed.slice();
             allPlayed.splice(this.props.pid - 1, 1);
             for (var i = 0; i < allPlayed.length; i++) {
@@ -551,20 +563,18 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
             var display = React.createElement(Display, {
                 spaces: this.props.spaces //[]
                 , colorCounts: this.props.colorCounts //[]
-                , selectorClick: function selectorClick(i) {return _this12.handleSelectorClick(i);} //function
-                , boardClick: function boardClick(i, j) {return _this12.handleBoardClick(i, j);} //function
+                , selectorClick: function selectorClick(i) {return _this15.handleSelectorClick(i);} //function
+                , boardClick: function boardClick(i, j) {return _this15.handleBoardClick(i, j);} //function
                 , cards: this.state.cards //[<Cards>]
                 , played: this.state.played //[<Cards>]
-                , playClicked: function playClicked() {return _this12.handlePlayClick();} //function
-                , discardClicked: function discardClicked() {return _this12.handleDiscardClick();},
+                , playClicked: function playClicked() {return _this15.handlePlayClick();} //function
+                , discardClicked: function discardClicked() {return _this15.handleDiscardClick();},
                 myTurn: this.props.pid === this.props.currentPlayer,
                 gameState: this.props.gameState,
                 allPlayed: allPlayed });
 
-            var lobby = React.createElement(Lobby, {
-                onClick: function onClick(user, pass) {return _this12.login(user, pass);} });
-
-            var showMe = this.props.gameState === "lobby" ? lobby : display;
+            var waiting = React.createElement(Waiting, { players: this.props.players });
+            var showMe = this.props.gameState === "prestart" ? waiting : display;
             return showMe;
         } }]);return Game;}(React.Component);
 
@@ -572,41 +582,58 @@ Game = function (_React$Component4) {_inherits(Game, _React$Component4);
 //var connectTo = 'https://damoclesgame.herokuapp.com';
 var connectTo = 'http://localhost:3000';
 var socket = io.connect(connectTo);
-console.log(socket);
-socket.on('initialize', function (data) {
-    var localData = Object.assign({}, data);
-    socket.on('standby', function (data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on('boardChange', function (data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on('setupphase', function (data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on('cardUpdate', function (data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on('discardphase', function (data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on('cardPlayed', function (data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on('bonusswap', function (data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on('reflexed', function (data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
+
+var currentCookie = getCookie();
+var localData = {};
+if (currentCookie != "") {
+    console.log(currentCookie);
+    socket.emit('refreshCookie', currentCookie);
+} else {
+    renderLogin(localData, socket);
+}
+socket.on('standby', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on('boardChange', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on('setupphase', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on('cardUpdate', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on('discardphase', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on('cardPlayed', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on('bonusswap', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on('reflexed', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on('cookify', function (data) {
+    document.cookie = data.cookie;
+    Object.assign(localData, data);
+    renderLobby(localData, socket);
+});
+socket.on('newroom', function (data) {
+    Object.assign(localData, data);
+    renderLobby(localData, socket);
+});
+socket.on('userjoined', function (data) {
+    Object.assign(localData, data);
     renderGame(localData, socket);
 });
 
@@ -621,9 +648,29 @@ function renderGame(data, socket) {
         played: data.played[data.pid - 1],
         allPlayed: data.played,
         discardCount: data.discardCount,
-        processCode: data.processCode }),
+        processCode: data.processCode,
+        players: data.players }),
 
     document.getElementById("root"));
+}
+
+function renderLobby(data, socket) {
+    ReactDOM.render(React.createElement(Lobby, {
+        available: data.availableGames }),
+    document.getElementById("root"));
+}
+
+function renderLogin() {
+    ReactDOM.render(React.createElement(Login, {
+        onClick: function onClick(user, pass) {return logMeIn(user, pass);} }),
+    document.getElementById("root"));
+}
+
+function logMeIn(user, pass) {
+    socket.emit("login", {
+        username: user,
+        password: pass });
+
 }
 
 function cardsEqual(a, b) {
@@ -638,4 +685,89 @@ function cardsEqual(a, b) {
     a.id === b.id;
 
 }
+
+function getCookie() {
+    var name = "Damocles=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(",");
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}var
+
+Lobby = function (_React$Component7) {_inherits(Lobby, _React$Component7);
+    function Lobby(props) {_classCallCheck(this, Lobby);var _this16 = _possibleConstructorReturn(this, (Lobby.__proto__ || Object.getPrototypeOf(Lobby)).call(this,
+        props));
+        _this16.state = {
+            available: [],
+            selected: 2,
+            name: null };return _this16;
+
+    }_createClass(Lobby, [{ key: "selectChange", value: function selectChange(
+
+        e) {
+            this.setState({
+                selected: e.target.value });
+
+        } }, { key: "nameChange", value: function nameChange(
+
+        e) {
+            this.setState({
+                name: e.target.value });
+
+        } }, { key: "createNewValues", value: function createNewValues()
+
+        {
+            var name = this.state.name;
+            if (name != null) {
+                socket.emit("roomcreated", {
+                    name: name,
+                    players: this.state.selected,
+                    creator: getCookie() });
+
+            }
+        } }, { key: "joinRoom", value: function joinRoom(
+
+        id) {
+            socket.emit('roomjoined', {
+                user: getCookie(),
+                id: id });
+
+        } }, { key: "renderAvailable", value: function renderAvailable()
+
+        {var _this17 = this;
+            var lobbies = [];
+            var games = this.props.available.slice();
+            for (var i = 0; i < games.length; i++) {
+                lobbies.push(React.createElement("li", {
+                        id: games[i].id,
+                        onDoubleClick: function onDoubleClick(e) {return _this17.joinRoom(e.target.id);} },
+                    games[i].name));
+            }
+            return React.createElement("div", { className: "browser" }, lobbies);
+
+        } }, { key: "render", value: function render()
+
+        {var _this18 = this;
+            return React.createElement("div", { id: "lobby" },
+                React.createElement("button", { type: "button", onClick: function onClick() {return _this18.createNewValues();} }, "New Instance"),
+                React.createElement("label", null, "MAX PLAYERS"),
+                React.createElement("select", { onChange: function onChange(e) {return _this18.selectChange(e);}, id: "max_val" },
+                    React.createElement("option", { value: "2" }, "2"),
+                    React.createElement("option", { value: "3" }, "3"),
+                    React.createElement("option", { value: "4" }, "4"),
+                    React.createElement("option", { value: "5" }, "5")),
+
+                React.createElement("input", { onInput: function onInput(e) {return _this18.nameChange(e);}, type: "text" }),
+                this.renderAvailable());
+
+
+        } }]);return Lobby;}(React.Component);
 //# sourceMappingURL=index.js.map

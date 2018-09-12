@@ -1,30 +1,8 @@
-const COLORS = {
-    RED: "red",
-    BLUE: "blue",
-    GREEN: "green",
-    BLACK: "black",
-    GOLD: "gold"
-};
+
 
 const NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
 
 const HEPINDEX = NAMES.map(name => name + "hep");
-
-var gold = COLORS.GOLD;
-var generate = "G";
-var blue = COLORS.BLUE;
-var red = COLORS.RED;
-var green = COLORS.GREEN;
-var gold = COLORS.GOLD;
-var black = COLORS.BLACK;
-var combust = "C";
-var oracle = "O";
-var reflex = "R";
-var conquer = "A";
-var haste = "H";
-var one = "1";
-var two = "2";
-var three = "3";
 
 class Card extends React.Component {
     constructor(props) {
@@ -125,16 +103,52 @@ function Board(props) {
     return <ul className="board">{listBoard}</ul>;
 }
 
-function Lobby(props) {
-    return <div className={"Login"}>
-        <form id="login">
-            <label for={"uname"}><b>{"Username"}</b></label>
-            <input type={"text"} id={"uname"} placeholder={"Enter Username"}></input>
-            <label for={"passw"}><b>{"Password"}</b></label>
-            <input type={"text"} id={"passw"} placeholder={"Enter Password"}></input>
-            <button onClick={() => props.onClick(login.uname.value, login.passw.value)} type={"submit"}>{"Login"}</button>
-        </form>
-    </div>;
+class Login extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: "",
+            password: ""
+        }
+    }
+
+    updatePassword(e) {
+        this.setState({
+            password: e.target.value
+        })
+    }
+
+    updateUsername(e) {
+        this.setState({
+            username: e.target.value
+        });
+    }
+    
+    render() {
+        return <div className={"Login"}>
+            <form id="login">
+                <label htmlFor={"uname"}><b>{"Username"}</b></label>
+                <input type={"text"} id={"uname"} placeholder={"Enter Username"} onChange={(e) => this.updateUsername(e)}></input>
+                <label htmlFor={"passw"}><b>{"Password"}</b></label>
+                <input type={"text"} id={"passw"} placeholder={"Enter Password"} onChange={(e) => this.updatePassword(e)}></input>
+                <button onClick={() => this.props.onClick(this.state.username, this.state.password)} type={"button"}>{"Login"}</button>
+            </form>
+        </div>;
+    }
+}
+
+class Waiting extends React.Component {
+    renderPlayers() {
+        return <ul>{this.props.players}</ul>
+    }
+
+    render() {
+        return (
+            <div className={"Waiting"}>
+                {this.renderPlayers()}
+            </div>);
+    }
 }
 
 class Display extends React.Component {
@@ -239,7 +253,12 @@ class Game extends React.Component {
                 }
             }
             if (this.props.processCode === null) {
-                socket.emit('discardPresetup', cardsToRemove);
+                socket.emit('discardPresetup', {
+                    newHand: cardsToRemove,
+                    user: getCookie(),
+                    id: this.props.id
+
+                });
             } else {
                 socket.emit('discardNormalHand', cardsToRemove);
             }
@@ -522,13 +541,6 @@ class Game extends React.Component {
         return active;
     }
 
-    login(user, pass) {
-        socket.emit("login", {
-            username: user,
-            password: pass
-        });
-    }
-
     purgeNull(name) {
         let purged = name.slice();
         let j = 0;
@@ -561,10 +573,8 @@ class Game extends React.Component {
             gameState={this.props.gameState}
             allPlayed={allPlayed}
         />;
-        let lobby = <Lobby
-            onClick={(user, pass) => this.login(user, pass)}
-        />;
-        let showMe = this.props.gameState === "lobby" ? lobby : display;
+        let waiting = <Waiting players={this.props.players}/>;
+        let showMe = this.props.gameState === "prestart" ? waiting : display;
         return (showMe);
     }
 }
@@ -572,9 +582,15 @@ class Game extends React.Component {
 //var connectTo = 'https://damoclesgame.herokuapp.com';
 var connectTo = 'http://localhost:3000';
 var socket = io.connect(connectTo);
-console.log(socket);
-socket.on('initialize', function(data) {
-    let localData = Object.assign({}, data);
+
+    let currentCookie = getCookie();
+    let localData = {};
+    if (currentCookie != "") {
+        console.log(currentCookie);
+        socket.emit('refreshCookie', currentCookie);
+    } else {
+        renderLogin(localData, socket);
+    }
     socket.on('standby', function(data) {
         Object.assign(localData, data);
         renderGame(localData, socket);
@@ -608,10 +624,18 @@ socket.on('initialize', function(data) {
         renderGame(localData, socket);
     });
     socket.on('cookify', function(data) {
-        document.cookie = data;
+        document.cookie = data.cookie;
+        Object.assign(localData, data);
+        renderLobby(localData, socket);
     });
-    renderGame(localData, socket);
-});
+    socket.on('newroom', function(data) {
+        Object.assign(localData, data);
+        renderLobby(localData, socket);
+    });
+    socket.on('userjoined', function(data) {
+        Object.assign(localData, data);
+        renderGame(localData, socket);
+    });
 
 function renderGame(data, socket) {
     ReactDOM.render(<Game   spaces={data.spaces} 
@@ -625,8 +649,28 @@ function renderGame(data, socket) {
         allPlayed={data.played}
         discardCount={data.discardCount}
         processCode={data.processCode}
+        players={data.players}
 
         />, document.getElementById("root"));
+}
+
+function renderLobby(data, socket) {
+    ReactDOM.render(<Lobby
+        available={data.availableGames}
+    />, document.getElementById("root"));
+}
+
+function renderLogin() {
+    ReactDOM.render(<Login
+            onClick={(user, pass) => logMeIn(user, pass)}
+        />, document.getElementById("root"));
+}
+
+function logMeIn(user, pass) {
+    socket.emit("login", {
+        username: user,
+        password: pass
+    });
 }
 
 function cardsEqual(a, b) {
@@ -645,7 +689,7 @@ function cardsEqual(a, b) {
 function getCookie() {
     var name = "Damocles=";
     var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(";");
+    var ca = decodedCookie.split(",");
     for(var i = 0; i < ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0) == ' ') {
@@ -658,14 +702,72 @@ function getCookie() {
     return "";
 }
 
-function checkCookie() {
-    var user=getCookie();
-    if (user != "") {
-        alert("Welcome again " + user);
-    } else {
-       user = prompt("Please enter your name:","");
-       if (user != "" && user != null) {
-           setCookie("username", user, 30);
-       }
+class Lobby extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        available: [],
+        selected: 2,
+        name: null
+      }
+    }
+    
+    selectChange(e) {
+      this.setState({
+        selected: e.target.value
+      });
+    }
+    
+    nameChange(e) {
+      this.setState({
+        name: e.target.value
+      });
+    }
+    
+    createNewValues() {
+        let name = this.state.name;
+        if (name != null) {
+            socket.emit("roomcreated", {
+                name: name,
+                players: this.state.selected,
+                creator: getCookie()
+            });
+        }
+    }
+
+    joinRoom(id) {
+        socket.emit('roomjoined', {
+            user: getCookie(),
+            id: id
+        });
+    }
+
+    renderAvailable() {
+        let lobbies = [];
+        let games = this.props.available.slice();
+        for (let i = 0; i < games.length; i++) {
+            lobbies.push(<li 
+                id={games[i].id}
+                onDoubleClick={(e) => this.joinRoom(e.target.id)}
+            >{games[i].name}</li>);
+        }
+        return (<div className="browser">{lobbies}</div>
+        );
+    }
+    
+    render() {
+      return (<div id="lobby">
+                <button type="button" onClick={() => this.createNewValues()}>{"New Instance"}</button>
+                <label>{"MAX PLAYERS"}</label>
+                <select onChange={(e) => this.selectChange(e)} id="max_val">
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+          <input onInput={(e) => this.nameChange(e)}type="text"></input>
+          {this.renderAvailable()}
+          </div> 
+          );
     }
 }
