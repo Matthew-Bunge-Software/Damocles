@@ -296,6 +296,8 @@ class Game extends React.Component {
         let action = this.state.selectedActionCard;
         let spaceState = this.props.spaces.slice();
         let tempPlayed = [];
+        let oldPlayed = [];
+        let playedToRecycle = this.props.played.slice();
         let cardsToRemove = this.props.selectCards.slice();
         if (number != null && action != null) {
             if (this.isActive(spaceState, number) && this.isActive(spaceState, action) && (action.type != "A" && action.type != "R" && action.type != "H")) {
@@ -306,6 +308,13 @@ class Game extends React.Component {
                     } else {
                         j++;
                     }
+                }
+                j = 0;
+                while (j < playedToRecycle.length) {
+                    if (cardsEqual(playedToRecycle[j], number) || cardsEqual(playedToRecycle[j], action)) {
+                        oldPlayed.push(playedToRecycle[j]);
+                    }
+                    j++;
                 }
             }
         } else if (action != null) {
@@ -318,6 +327,13 @@ class Game extends React.Component {
                         j++;
                     }
                 }
+                j = 0;
+                while (j < playedToRecycle.length) {
+                    if (cardsEqual(playedToRecycle[j], action)) {
+                        oldPlayed.push(playedToRecycle[j]);
+                    }
+                    j++;
+                }
             }
         }
         this.setState({
@@ -326,6 +342,7 @@ class Game extends React.Component {
         });
         socket.emit('cardPlayed', {
             newPlayed: tempPlayed,
+            oldPlayed: oldPlayed,
             rest: cardsToRemove,
             pid: this.props.pid,
             id: this.props.id
@@ -780,7 +797,7 @@ class Lobby extends React.Component {
         for (let i = 0; i < games.length; i++) {
             lobbies.push(<li 
                 id={games[i].id}
-                class={"lobbylist"}
+                className={"lobbylist"}
                 onDoubleClick={(e) => this.joinRoom(parseInt(e.target.id))}
             >{games[i].name + " - " + games[i].maxPlayers}</li>);
         }
@@ -792,7 +809,7 @@ class Lobby extends React.Component {
       return (<div id="lobby">
                 <div id={"newroomlabeldiv"}>
                     <label id={"newroomlabel"}>{"New Room Name"}</label>
-                    <input id={"newroominput"}onInput={(e) => this.nameChange(e)}type="text"></input>
+                    <input id={"newroominput"} onInput={(e) => this.nameChange(e)} type="text"></input>
                 </div>
                 <div id={"newroommaxplayerdiv"}>
                     <label id={"maxplayer"}>{"MAX PLAYERS"}</label>
@@ -803,7 +820,7 @@ class Lobby extends React.Component {
                         <option value="6">6</option>
                     </select>
                 </div>
-                <button id={"newroombutton"}type="button" onClick={() => this.createNewValues()}>{"New Instance"}</button>
+                <button id={"newroombutton"} type="button" onClick={() => this.createNewValues()}>{"New Instance"}</button>
             {this.renderAvailable()}
             </div> 
           );

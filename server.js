@@ -117,17 +117,9 @@ io.on('connection', function(socket) {
         joinedInstance.pid++;
         socket.leave('lobby');
         socket.join('' + data.id);
-        console.log(joinedInstance.players.length + " " + joinedInstance.maxPlayers);
         if (joinedInstance.players.length === joinedInstance.maxPlayers) {
             for (let i = 0; i < publicInstances.length; i++) {
-                console.log(publicInstances[i].id + " " + data.id);
-                console.log(publicInstances[i].id === data.id);
-                console.log(publicInstances[i].id == data.id);
-                console.log(typeof publicInstances[i].id);
-                console.log(typeof data.id);
-
                 if (publicInstances[i].id === data.id) {
-                    console.log(publicInstances);
                     publicInstances.splice(i, 1);
                     io.to('lobby').emit('newroom', {
                         availableGames: publicInstances
@@ -249,7 +241,7 @@ io.on('connection', function(socket) {
     socket.on('cardPlayed', function(data) {
         let instance = gameInstances[data.id];
         let newPlayed = instance.played[data.pid].slice();
-        let interacted = handleCardInteractions(data.newPlayed, data.id);
+        let interacted = handleCardInteractions(data.newPlayed, data.oldPlayed, data.id);
         newPlayed = newPlayed.concat(interacted.played);
         instance.played[data.pid] = newPlayed;
         socket.emit('cardUpdate', {
@@ -330,7 +322,7 @@ function setCookie(user) {
     return ("Damocles=" + user + ", " + expires + ", path=/");
 }
 
-function handleCardInteractions(played, id) {
+function handleCardInteractions(played, oldPlayed, id) {
     let returnToPublic = [];
     let returnMe = {
         newCards: [],
@@ -349,6 +341,15 @@ function handleCardInteractions(played, id) {
         }
         if (current.type != 'C') {
             returnToPublic.push(current);
+        }
+    }
+    for (let i = 0; i < oldPlayed.length; i++) {
+        let current = oldPlayed[i];
+        if (current.type === '1' || current.type === '2' || current.type === '3') {
+            num = parseInt(current.type);
+        }
+        else {
+            action = current.type;
         }
     }
     returnMe.played = returnToPublic.slice();

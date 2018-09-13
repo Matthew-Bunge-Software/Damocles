@@ -296,6 +296,8 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
             var action = this.state.selectedActionCard;
             var spaceState = this.props.spaces.slice();
             var tempPlayed = [];
+            var oldPlayed = [];
+            var playedToRecycle = this.props.played.slice();
             var cardsToRemove = this.props.selectCards.slice();
             if (number != null && action != null) {
                 if (this.isActive(spaceState, number) && this.isActive(spaceState, action) && action.type != "A" && action.type != "R" && action.type != "H") {
@@ -306,6 +308,13 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                         } else {
                             j++;
                         }
+                    }
+                    j = 0;
+                    while (j < playedToRecycle.length) {
+                        if (cardsEqual(playedToRecycle[j], number) || cardsEqual(playedToRecycle[j], action)) {
+                            oldPlayed.push(playedToRecycle[j]);
+                        }
+                        j++;
                     }
                 }
             } else if (action != null) {
@@ -318,6 +327,13 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                             _j++;
                         }
                     }
+                    _j = 0;
+                    while (_j < playedToRecycle.length) {
+                        if (cardsEqual(playedToRecycle[_j], action)) {
+                            oldPlayed.push(playedToRecycle[_j]);
+                        }
+                        _j++;
+                    }
                 }
             }
             this.setState({
@@ -326,6 +342,7 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
 
             socket.emit('cardPlayed', {
                 newPlayed: tempPlayed,
+                oldPlayed: oldPlayed,
                 rest: cardsToRemove,
                 pid: this.props.pid,
                 id: this.props.id });
@@ -780,7 +797,7 @@ Lobby = function (_React$Component7) {_inherits(Lobby, _React$Component7);
             for (var i = 0; i < games.length; i++) {
                 lobbies.push(React.createElement("li", {
                         id: games[i].id,
-                        "class": "lobbylist",
+                        className: "lobbylist",
                         onDoubleClick: function onDoubleClick(e) {return _this18.joinRoom(parseInt(e.target.id));} },
                     games[i].name + " - " + games[i].maxPlayers));
             }
