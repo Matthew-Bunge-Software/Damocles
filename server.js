@@ -47,24 +47,26 @@ io.on('connection', function(socket) {
         });
     });
     socket.on('roomcreated', function(data) {
-        let hands = [];
-        let played = [];
-        let creator = data.creator;
         let id = gameId;
-        played[creator] = [];
         let deck = shuffle(selectCards.slice());
-        hands[creator] = deck.splice(0, 8)
+        let creator = data.creator;
+        let players = [];
+        players.push({ name: creator, ready: false });
+        let played = [];
+        played.push([]);
         let newInstance = {
             creator: data.creator,
             name: data.name,
             maxPlayers: data.players,
             id: gameId,
             deck: deck,
-            players: [data.creator],
+            players: players,
             ready: 0,
-            hands: hands,
             gameState: "prestart",
-            played: played
+            played: played,
+            numDiscarded: 0,
+            spaces: Array(7).fill(null),
+            colorCounts: colorNames.map(name => ({ color: name, count: 4 })),
         };
         let newPublicInstance = {
             creator: data.creator,
@@ -81,117 +83,151 @@ io.on('connection', function(socket) {
         socket.leave('lobby');
         socket.join('' + gameId);
         socket.emit('userjoined', {
-            selectCards: hands[creator],
+            selectCards: deck.splice(0, 8),
             gameState: newInstance.gameState,
             players: newInstance.players,
             chat: [],
             played: newInstance.played,
+            id: newInstance.id,
+            pid: newInstance.players.length - 1
         });
         gameId += 1;
     });
     socket.on('roomjoined', function(data) {
         let joinedInstance = gameInstances[data.id];
         let user = data.user;
-        joinedInstance.players.push(user);
-        joinedInstance.hands[user] = joinedInstance.deck.splice(0,8);
-        joinedInstance.played[user] = [];
+        joinedInstance.players.push({ name: user, ready: false});
+        joinedInstance.played.push([]);
+        joinedInstance.pid++;
         socket.leave('lobby');
         socket.join('' + data.id);
+        if (joinedInstance.players.length === joinedInstance.maxPlayers) {
+            for (let i = 0; i < publicInstances.length; i++) {
+                if (publicInstances[i].id === data.id) {
+                    publicInstances.splice(i, 1);
+                    io.to('lobby').emit('newroom', {
+                        availableGames: publicInstances
+                    })
+                }
+            }
+        }
+        gameInstances[data.id] = joinedInstance;
         socket.emit('userjoined', {
-            selectCards: joinedInstance.hands[user],
+            selectCards: joinedInstance.deck.splice(0,8),
             gameState: joinedInstance.gameState,
+            id: joinedInstance.id,
+            pid: joinedInstance.players.length - 1
         });
         io.to('' + data.id).emit("userjoined", {
             players: joinedInstance.players,
             chat: joinedInstance.chat,
-            played: joinedInstance.played
+            played: joinedInstance.played,
         });
 
     });
     socket.on('userreadied', function(data) {
         let instance = gameInstances[data.id];
         instance.ready += 1;
-        if (instance.ready === instance.maxPlayers) {
+        for (let i = 0; i < instance.players.length; i++) {
+            if (instance.players[i].name === data.user) {
+                instance.players[i].ready = true;
+                gameInstances[data.id] = instance;
+                io.to('' + data.id).emit("userready", {
+                    players: instance.players
+                });
+                break;
+            }
+        }
+        if (instance.ready === instance.players.length && instance.ready >= 3) {
+            for (let i = 0; i < publicInstances.length; i++) {
+                if (publicInstances[i].id === data.id) {
+                    publicInstances.splice(i, 1);
+                    io.to('lobby').emit('newroom', {
+                        availableGames: publicInstances
+                    })
+                }
+            }
+            instance.gameState = "discardphase";
+            gameInstances[data.id] = instance;
             io.to('' + data.id).emit('discardphase', {
-                spaces: Array(7).fill(null),
-                colorCounts: colorNames.map(name => ({ color: name, count: 4 })),
-                gameState: "discardphase",
+                spaces: instance.spaces,
+                colorCounts: instance.colorCounts,
+                gameState: instance.gameState,
                 played: instance.played,
                 processCode: null,
-                discardCount: 2
+                discardCount: 2,
             });
         }
-    });/*
-    socket.emit('initialize', { 
-        selectCards: selectCards.splice(0, 8), 
-        spaces: spaces,
-        colorCounts: colorCounts,
-        gameState: gameState,
-        pid: idCount,
-        currentPlayer: currentPlayer,
-        played: played
     });
     socket.on('discardPresetup', function(data) {
         let instance = gameInstances[data.id];
-        numDiscarded++;
+        instance.numDiscarded++;
         socket.emit('cardUpdate', {
-            selectCards: data
+            selectCards: data.newHand
         });
-        if (numDiscarded === players.length) {
-            currentPlayer = Math.floor(Math.random(players.length) + 1);
-            gameState = "setup";
-            io.emit('setupphase', {
-                gameState: gameState,
-                currentPlayer: currentPlayer,
+        if (instance.numDiscarded === instance.players.length) {
+            instance.currentPlayer = Math.floor(Math.random() * instance.players.length);
+            instance.gameState = "setup";
+            gameInstances[data.id] = instance;
+            io.to('' + data.id).emit('setupphase', {
+                gameState: instance.gameState,
+                currentPlayer: instance.currentPlayer,
             });
         } else {
-            gameState = "standby";
+            instance.gameState = "standby";
+            gameInstances[data.id] = instance;
             socket.emit("standby", {
-                gameState: gameState
+                gameState: instance.gameState
             });
         }
     });
     socket.on('boardChange', function(data) {
-        spaces = data.newSpaces;
-        colorCounts = data.newCounts;
-        currentPlayer = ((currentPlayer % players.length) + 1);
-        gameState = spaces.includes(null) ? gameState : "";
-        io.emit('boardChange', {  
-            spaces: spaces,
-            colorCounts: colorCounts,
-            currentPlayer: currentPlayer,
-            gameState: gameState,
+        let instance = gameInstances[data.id];
+        instance.spaces = data.newSpaces;
+        instance.colorCounts = data.newCounts;
+        instance.currentPlayer = ((instance.currentPlayer + 1) % instance.players.length);
+        instance.gameState = instance.spaces.includes(null) ? instance.gameState : "";
+        gameInstances[data.id] = instance;
+        io.to('' + data.id).emit('boardChange', {  
+            spaces: instance.spaces,
+            colorCounts: instance.colorCounts,
+            currentPlayer: instance.currentPlayer,
+            gameState: instance.gameState,
         });
     });
     socket.on('bonusswap', function(data) {
-        spaces = data.newSpaces;
-        colorCounts = data.newCounts;
-        gameState = "";
-        io.emit('boardChange', {  
-            spaces: spaces,
-            colorCounts: colorCounts,
-            gameState: gameState,
+        let instance = gameInstances[data.id];
+        instance.spaces = data.newSpaces;
+        instance.colorCounts = data.newCounts;
+        instance.gameState = "";
+        gameInstances[data.id] = instance;
+        io.to('' + data.id).emit('boardChange', {  
+            spaces: instance.spaces,
+            colorCounts: instance.colorCounts,
+            gameState: instance.gameState,
         });
     });
     socket.on('discardNormalHand', function(data) {
         //TODO: Figure out turn order
-        currentPlayer = ((currentPlayer % players.length) + 1);
-        gameState = spaces.includes(null) ? gameState : "";
-        let tempCards = data.slice();
+        let instance = gameInstances[data.id];
+        instance.currentPlayer = ((instance.currentPlayer  + 1) % instance.players.length);
+        instance.gameState = instance.spaces.includes(null) ? instance.gameState : "";
+        let tempCards = data.hand.slice();
         socket.emit('boardChange', {
             selectCards: tempCards
         });
-        io.emit('boardChange', {
-            currentPlayer: currentPlayer,
-            gameState: gameState,
+        io.to('' + data.id).emit('boardChange', {
+            currentPlayer: instance.currentPlayer,
+            gameState: instance.gameState,
 
         });
     });
     socket.on('cardPlayed', function(data) {
-        let newPlayed = played[data.pid - 1].slice();
-        let interacted = handleCardInteractions(data.newPlayed);
+        let instance = gameInstances[data.id];
+        let newPlayed = instance.played[data.pid].slice();
+        let interacted = handleCardInteractions(data.newPlayed, data.id);
         newPlayed = newPlayed.concat(interacted.played);
-        played[data.pid - 1] = newPlayed;
+        instance.played[data.pid] = newPlayed;
         socket.emit('cardUpdate', {
             selectCards: data.rest.concat(interacted.newCards)
         });
@@ -211,10 +247,11 @@ io.on('connection', function(socket) {
                 gameState: "reflexed"
             });
         }
-        io.emit('cardPlayed', {
-            played: played
+        gameInstances[data.id] = instance;
+        io.to('' + data.id).emit('cardPlayed', {
+            played: instance.played
         });
-    });*/
+    });
 });
 
 server.listen(port, function() {
@@ -269,7 +306,7 @@ function setCookie(user) {
     return ("Damocles=" + user + ", " + expires + ", path=/");
 }
 
-function handleCardInteractions(played) {
+function handleCardInteractions(played, id) {
     let returnToPublic = [];
     let returnMe = {
         newCards: [],
@@ -294,16 +331,16 @@ function handleCardInteractions(played) {
     if (num != null) {
         if (action === "C") {
             Object.assign(returnMe, {
-                newCards: selectCards.splice(0, num + 1)
+                newCards: gameInstances[id].deck.splice(0, num + 1)
             });
         } else if (action === "O") {
             Object.assign(returnMe, {
-                newCards: selectCards.splice(0, num + 2),
+                newCards: gameInstances[id].deck.splice(0, num + 2),
                 processCode: num + 2
             });
         } else if (action === "G" ) {
             Object.assign(returnMe, {
-                newCards: selectCards.splice(0, num)
+                newCards: gameInstances[id].deck.splice(0, num)
             });
         } else {
             console.log("Something went wrong");

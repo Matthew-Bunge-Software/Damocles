@@ -139,14 +139,37 @@ class Login extends React.Component {
 }
 
 class Waiting extends React.Component {
+    userReady() {
+        socket.emit("userreadied", {
+            user: getCookie(),
+            id: this.props.id
+        });
+    }
+
+    buttonStatus() {
+        let player = this.props.players.slice();
+        let user = getCookie();
+        for (let i = 0; i < player.length; i++) {
+            if (player[i].name === user) {
+                return player[i].ready;
+            }
+        }
+    }
+
     renderPlayers() {
-        return <ul>{this.props.players}</ul>
+        let player = this.props.players.slice();
+        player = player.map(player => { 
+            let active = player.ready ? "readied" : "notreadied";
+            return <li index={player.name} className={"pregameListItem " + active}>{player.name}</li>
+        });
+        return <ul>{player}</ul>
     }
 
     render() {
         return (
             <div className={"Waiting"}>
                 {this.renderPlayers()}
+                <button disabled={this.buttonStatus()} onClick={() => this.userReady()} type={"button"}>{"Ready"}</button>
             </div>);
     }
 }
@@ -260,7 +283,10 @@ class Game extends React.Component {
 
                 });
             } else {
-                socket.emit('discardNormalHand', cardsToRemove);
+                socket.emit('discardNormalHand', {
+                    hand:cardsToRemove,
+                    id: this.props.id
+                });
             }
         }
     }
@@ -301,7 +327,8 @@ class Game extends React.Component {
         socket.emit('cardPlayed', {
             newPlayed: tempPlayed,
             rest: cardsToRemove,
-            pid: this.props.pid
+            pid: this.props.pid,
+            id: this.props.id
         });
     }
 
@@ -424,7 +451,7 @@ class Game extends React.Component {
                             newCounts[j].count++;
                         }
                     }
-                    socket.emit('boardChange', {newSpaces: newSpaces, newCounts: newCounts});
+                    socket.emit('boardChange', {newSpaces: newSpaces, newCounts: newCounts, id: this.props.id });
                     this.setState({
                         selectedColor: null,
                         isSwap: false,
@@ -457,7 +484,7 @@ class Game extends React.Component {
                         }
                     }
                     let emitCheck = this.props.gameState === 'bonusswap' ? 'bonusswap' : 'boardChange';
-                    socket.emit(emitCheck, {newSpaces: newSpaces, newCounts: newCounts});
+                    socket.emit(emitCheck, {newSpaces: newSpaces, newCounts: newCounts, id: this.props.id});
                     this.setState({
                         selectedColor: null,
                         isSwap: false,
@@ -470,7 +497,7 @@ class Game extends React.Component {
                     newSpaces[index] = newSpaces[prevState.index];
                     newSpaces[prevState.index] = temp;
                     let emitCheck = this.props.gameState === 'bonusswap' ? 'bonusswap' : 'boardChange';
-                    socket.emit(emitCheck, {newSpaces: newSpaces, newCounts: this.props.colorCounts});
+                    socket.emit(emitCheck, {newSpaces: newSpaces, newCounts: this.props.colorCounts, id: this.props.id});
                     this.setState({
                         selectColor: null,
                         isSwap: false,
@@ -556,7 +583,7 @@ class Game extends React.Component {
 
     render() {
         let allPlayed = this.props.allPlayed.slice();
-        allPlayed.splice(this.props.pid - 1, 1);
+        allPlayed.splice(this.props.pid, 1);
         for (let i = 0; i < allPlayed.length; i++) {
             allPlayed[i] = this.updateActiveCards(this.props.spaces, allPlayed[i]);
         }
@@ -573,7 +600,7 @@ class Game extends React.Component {
             gameState={this.props.gameState}
             allPlayed={allPlayed}
         />;
-        let waiting = <Waiting players={this.props.players}/>;
+        let waiting = <Waiting id={this.props.id} players={this.props.players}/>;
         let showMe = this.props.gameState === "prestart" ? waiting : display;
         return (showMe);
     }
@@ -636,6 +663,10 @@ var socket = io.connect(connectTo);
         Object.assign(localData, data);
         renderGame(localData, socket);
     });
+    socket.on('userready', function(data) {
+        Object.assign(localData, data);
+        renderGame(localData, socket);
+    });
 
 function renderGame(data, socket) {
     ReactDOM.render(<Game   spaces={data.spaces} 
@@ -645,11 +676,12 @@ function renderGame(data, socket) {
         pid={data.pid}
         currentPlayer={data.currentPlayer}
         socket={socket}
-        played={data.played[data.pid - 1]}
+        played={data.played[data.pid]}
         allPlayed={data.played}
         discardCount={data.discardCount}
         processCode={data.processCode}
         players={data.players}
+        id={data.id}
 
         />, document.getElementById("root"));
 }
@@ -748,26 +780,32 @@ class Lobby extends React.Component {
         for (let i = 0; i < games.length; i++) {
             lobbies.push(<li 
                 id={games[i].id}
+                class={"lobbylist"}
                 onDoubleClick={(e) => this.joinRoom(e.target.id)}
             >{games[i].name}</li>);
         }
-        return (<div className="browser">{lobbies}</div>
+        return (<div className="browser"><label>{"Currently Available Rooms"}</label><ul>{lobbies}</ul></div>
         );
     }
     
     render() {
       return (<div id="lobby">
-                <button type="button" onClick={() => this.createNewValues()}>{"New Instance"}</button>
-                <label>{"MAX PLAYERS"}</label>
-                <select onChange={(e) => this.selectChange(e)} id="max_val">
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-          <input onInput={(e) => this.nameChange(e)}type="text"></input>
-          {this.renderAvailable()}
-          </div> 
+                <div id={"newroomlabeldiv"}>
+                    <label id={"newroomlabel"}>{"New Room Name"}</label>
+                    <input id={"newroominput"}onInput={(e) => this.nameChange(e)}type="text"></input>
+                </div>
+                <div id={"newroommaxplayerdiv"}>
+                    <label id={"maxplayer"}>{"MAX PLAYERS"}</label>
+                    <select id={"playeroptions"} onChange={(e) => this.selectChange(e)} id="max_val">
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                    </select>
+                </div>
+                <button id={"newroombutton"}type="button" onClick={() => this.createNewValues()}>{"New Instance"}</button>
+            {this.renderAvailable()}
+            </div> 
           );
     }
 }

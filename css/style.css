@@ -144,3 +144,57 @@
 .playbutton {
   display: block;
 }
+
+.readied {
+  color: green
+}
+
+.notreadied {
+  color: red;
+}
+
+.pregameListItem {
+  list-style: none;
+}
+
+.lobbylist {
+  display: table;
+  list-style: none;
+  transition: 1s;
+}
+
+.lobbylist:hover {
+  background-color: lightcoral;
+}
+
+.lobbylist:hover {
+  cursor: pointer;
+}
+
+#newroomlabel {
+  display: inline-block;
+}
+
+#newroominput {
+  display: inline;
+}
+
+#maxplayer {
+  display: inline-block;
+}
+
+#playeroptions {
+  display: inline;
+}
+
+#newroombutton {
+  display: block;
+}
+
+#newroomlabeldiv {
+  display: block;
+}
+
+#newroommaxplayerdiv {
+  display: block;
+}

@@ -1,4 +1,4 @@
-"use strict";var _createClass = function () {function defineProperties(target, props) {for (var i = 0; i < props.length; i++) {var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);}}return function (Constructor, protoProps, staticProps) {if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;};}();function _classCallCheck(instance, Constructor) {if (!(instance instanceof Constructor)) {throw new TypeError("Cannot call a class as a function");}}function _possibleConstructorReturn(self, call) {if (!self) {throw new ReferenceError("this hasn't been initialised - super() hasn't been called");}return call && (typeof call === "object" || typeof call === "function") ? call : self;}function _inherits(subClass, superClass) {if (typeof superClass !== "function" && superClass !== null) {throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;}
+"use strict";var _createClass = function () {function defineProperties(target, props) {for (var i = 0; i < props.length; i++) {var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);}}return function (Constructor, protoProps, staticProps) {if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;};}();function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}function _classCallCheck(instance, Constructor) {if (!(instance instanceof Constructor)) {throw new TypeError("Cannot call a class as a function");}}function _possibleConstructorReturn(self, call) {if (!self) {throw new ReferenceError("this hasn't been initialised - super() hasn't been called");}return call && (typeof call === "object" || typeof call === "function") ? call : self;}function _inherits(subClass, superClass) {if (typeof superClass !== "function" && superClass !== null) {throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;}
 
 var NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
 
@@ -138,24 +138,47 @@ Login = function (_React$Component3) {_inherits(Login, _React$Component3);
         } }]);return Login;}(React.Component);var
 
 
-Waiting = function (_React$Component4) {_inherits(Waiting, _React$Component4);function Waiting() {_classCallCheck(this, Waiting);return _possibleConstructorReturn(this, (Waiting.__proto__ || Object.getPrototypeOf(Waiting)).apply(this, arguments));}_createClass(Waiting, [{ key: "renderPlayers", value: function renderPlayers()
+Waiting = function (_React$Component4) {_inherits(Waiting, _React$Component4);function Waiting() {_classCallCheck(this, Waiting);return _possibleConstructorReturn(this, (Waiting.__proto__ || Object.getPrototypeOf(Waiting)).apply(this, arguments));}_createClass(Waiting, [{ key: "userReady", value: function userReady()
         {
-            return React.createElement("ul", null, this.props.players);
-        } }, { key: "render", value: function render()
+            socket.emit("userreadied", {
+                user: getCookie(),
+                id: this.props.id });
+
+        } }, { key: "buttonStatus", value: function buttonStatus()
 
         {
+            var player = this.props.players.slice();
+            var user = getCookie();
+            for (var i = 0; i < player.length; i++) {
+                if (player[i].name === user) {
+                    return player[i].ready;
+                }
+            }
+        } }, { key: "renderPlayers", value: function renderPlayers()
+
+        {
+            var player = this.props.players.slice();
+            player = player.map(function (player) {
+                var active = player.ready ? "readied" : "notreadied";
+                return React.createElement("li", { index: player.name, className: "pregameListItem " + active }, player.name);
+            });
+            return React.createElement("ul", null, player);
+        } }, { key: "render", value: function render()
+
+        {var _this8 = this;
             return (
                 React.createElement("div", { className: "Waiting" },
-                    this.renderPlayers()));
+                    this.renderPlayers(),
+                    React.createElement("button", { disabled: this.buttonStatus(), onClick: function onClick() {return _this8.userReady();}, type: "button" }, "Ready")));
 
         } }]);return Waiting;}(React.Component);var
 
 
 Display = function (_React$Component5) {_inherits(Display, _React$Component5);function Display() {_classCallCheck(this, Display);return _possibleConstructorReturn(this, (Display.__proto__ || Object.getPrototypeOf(Display)).apply(this, arguments));}_createClass(Display, [{ key: "renderSelector", value: function renderSelector()
-        {var _this9 = this;
+        {var _this10 = this;
             return (
                 React.createElement(Community, {
-                    onClick: function onClick(i) {return _this9.props.selectorClick(i);},
+                    onClick: function onClick(i) {return _this10.props.selectorClick(i);},
                     colorCounts: this.props.colorCounts }));
 
 
@@ -169,19 +192,19 @@ Display = function (_React$Component5) {_inherits(Display, _React$Component5);fu
             return hands;
         } }, { key: "render", value: function render()
 
-        {var _this10 = this;
+        {var _this11 = this;
             return (
                 React.createElement("div", { className: "display" },
                     this.renderOtherHands(),
                     React.createElement(Header, { myTurn: this.props.myTurn }),
                     this.renderSelector(),
                     React.createElement(Board, {
-                        onClick: function onClick(i, j) {return _this10.props.boardClick(i, j);},
+                        onClick: function onClick(i, j) {return _this11.props.boardClick(i, j);},
                         spaces: this.props.spaces }),
 
                     React.createElement(PlayedTiles, { played: this.props.played }),
-                    React.createElement(MyHand, { playClicked: function playClicked() {return _this10.props.playClicked();},
-                        discardClicked: function discardClicked() {return _this10.props.discardClicked();},
+                    React.createElement(MyHand, { playClicked: function playClicked() {return _this11.props.playClicked();},
+                        discardClicked: function discardClicked() {return _this11.props.discardClicked();},
                         cards: this.props.cards,
                         myTurn: this.props.myTurn,
                         gameState: this.props.gameState })));
@@ -192,43 +215,43 @@ Display = function (_React$Component5) {_inherits(Display, _React$Component5);fu
 
 
 Game = function (_React$Component6) {_inherits(Game, _React$Component6);
-    function Game(props) {_classCallCheck(this, Game);var _this11 = _possibleConstructorReturn(this, (Game.__proto__ || Object.getPrototypeOf(Game)).call(this,
+    function Game(props) {_classCallCheck(this, Game);var _this12 = _possibleConstructorReturn(this, (Game.__proto__ || Object.getPrototypeOf(Game)).call(this,
         props));
         var selectCards = props.selectCards;
-        var cards = selectCards.map(function (name) {return React.createElement(Card, { key: name.ID, onClick: function onClick(i) {return _this11.handleCardClick(i);}, display: "", card: name });});
-        _this11.state = {
+        var cards = selectCards.map(function (name) {return React.createElement(Card, { key: name.ID, onClick: function onClick(i) {return _this12.handleCardClick(i);}, display: "", card: name });});
+        _this12.state = {
             playedRaw: props.played,
             played: [],
             selectedColor: null,
             isSwap: false,
             index: null,
             rawCards: selectCards,
-            cards: cards };return _this11;
+            cards: cards };return _this12;
 
     }_createClass(Game, [{ key: "componentDidMount", value: function componentDidMount()
 
-        {var _this12 = this;
+        {var _this13 = this;
             this.props.socket.on('boardChange', function () {
-                _this12.setState({
-                    cards: _this12.updateActiveCards(_this12.props.spaces, _this12.props.selectCards),
-                    played: _this12.updateActiveCards(_this12.props.spaces, _this12.props.played) });
+                _this13.setState({
+                    cards: _this13.updateActiveCards(_this13.props.spaces, _this13.props.selectCards),
+                    played: _this13.updateActiveCards(_this13.props.spaces, _this13.props.played) });
 
             });
             this.props.socket.on('cardPlayed', function () {
-                _this12.setState({
-                    cards: _this12.updateActiveCards(_this12.props.spaces, _this12.props.selectCards),
-                    played: _this12.updateActiveCards(_this12.props.spaces, _this12.props.played) });
+                _this13.setState({
+                    cards: _this13.updateActiveCards(_this13.props.spaces, _this13.props.selectCards),
+                    played: _this13.updateActiveCards(_this13.props.spaces, _this13.props.played) });
 
             });
             this.props.socket.on('cardUpdate', function () {
-                _this12.setState({
-                    cards: _this12.updateActiveCards(_this12.props.spaces, _this12.props.selectCards),
-                    played: _this12.updateActiveCards(_this12.props.spaces, _this12.props.played) });
+                _this13.setState({
+                    cards: _this13.updateActiveCards(_this13.props.spaces, _this13.props.selectCards),
+                    played: _this13.updateActiveCards(_this13.props.spaces, _this13.props.played) });
 
             });
             this.props.socket.on('discardphase', function () {
-                _this12.setState({
-                    queuedForDiscard: Array(_this12.props.discardCount).fill(null) });
+                _this13.setState({
+                    queuedForDiscard: Array(_this13.props.discardCount).fill(null) });
 
             });
         } }, { key: "handleDiscardClick", value: function handleDiscardClick()
@@ -260,7 +283,10 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
 
 
                 } else {
-                    socket.emit('discardNormalHand', cardsToRemove);
+                    socket.emit('discardNormalHand', {
+                        hand: cardsToRemove,
+                        id: this.props.id });
+
                 }
             }
         } }, { key: "handlePlayClick", value: function handlePlayClick()
@@ -301,11 +327,12 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
             socket.emit('cardPlayed', {
                 newPlayed: tempPlayed,
                 rest: cardsToRemove,
-                pid: this.props.pid });
+                pid: this.props.pid,
+                id: this.props.id });
 
         } }, { key: "handleCardClick", value: function handleCardClick(
 
-        i) {var _this13 = this;
+        i) {var _this14 = this;
             var selectCards = this.props.selectCards.slice();
             var played = this.props.played.slice();
             var cardType = i.type;
@@ -346,7 +373,7 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                                     break;
                                 }
                             }
-                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this13.handleCardClick(i);}, display: "", card: name });
+                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this14.handleCardClick(i);}, display: "", card: name });
                         }) });
 
                 }
@@ -356,14 +383,14 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                     this.setState({
                         selectedNumberCard: newSelected,
                         cards: selectCards.map(function (name) {
-                            var active = _this13.isActive(_this13.props.spaces, name) ? "active" : "";
-                            var selected = cardsEqual(name, newSelected) || cardsEqual(name, _this13.state.selectedActionCard) ? "selectedCard" : "";
-                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this13.handleCardClick(i);}, display: active, card: name });
+                            var active = _this14.isActive(_this14.props.spaces, name) ? "active" : "";
+                            var selected = cardsEqual(name, newSelected) || cardsEqual(name, _this14.state.selectedActionCard) ? "selectedCard" : "";
+                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this14.handleCardClick(i);}, display: active, card: name });
                         }),
                         played: played.map(function (name) {
-                            var active = _this13.isActive(_this13.props.spaces, name) ? "active" : "";
-                            var selected = cardsEqual(name, newSelected) || cardsEqual(name, _this13.state.selectedActionCard) ? "selectedCard" : "";
-                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this13.handleCardClick(i);}, display: active, card: name });
+                            var active = _this14.isActive(_this14.props.spaces, name) ? "active" : "";
+                            var selected = cardsEqual(name, newSelected) || cardsEqual(name, _this14.state.selectedActionCard) ? "selectedCard" : "";
+                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this14.handleCardClick(i);}, display: active, card: name });
                         }) });
 
                 } else {
@@ -371,14 +398,14 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                     this.setState({
                         selectedActionCard: _newSelected,
                         cards: selectCards.map(function (name) {
-                            var active = _this13.isActive(_this13.props.spaces, name) ? "active" : "";
-                            var selected = cardsEqual(name, _newSelected) || cardsEqual(name, _this13.state.selectedNumberCard) ? "selectedCard" : "";
-                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this13.handleCardClick(i);}, display: active, card: name });
+                            var active = _this14.isActive(_this14.props.spaces, name) ? "active" : "";
+                            var selected = cardsEqual(name, _newSelected) || cardsEqual(name, _this14.state.selectedNumberCard) ? "selectedCard" : "";
+                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this14.handleCardClick(i);}, display: active, card: name });
                         }),
                         played: played.map(function (name) {
-                            var active = _this13.isActive(_this13.props.spaces, name) ? "active" : "";
-                            var selected = cardsEqual(name, _newSelected) || cardsEqual(name, _this13.state.selectedNumberCard) ? "selectedCard" : "";
-                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this13.handleCardClick(i);}, display: active, card: name });
+                            var active = _this14.isActive(_this14.props.spaces, name) ? "active" : "";
+                            var selected = cardsEqual(name, _newSelected) || cardsEqual(name, _this14.state.selectedNumberCard) ? "selectedCard" : "";
+                            return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this14.handleCardClick(i);}, display: active, card: name });
                         }) });
 
                 }
@@ -424,7 +451,7 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                                 newCounts[j].count++;
                             }
                         }
-                        socket.emit('boardChange', { newSpaces: newSpaces, newCounts: newCounts });
+                        socket.emit('boardChange', { newSpaces: newSpaces, newCounts: newCounts, id: this.props.id });
                         this.setState({
                             selectedColor: null,
                             isSwap: false,
@@ -457,7 +484,7 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                             }
                         }
                         var emitCheck = this.props.gameState === 'bonusswap' ? 'bonusswap' : 'boardChange';
-                        socket.emit(emitCheck, { newSpaces: _newSpaces, newCounts: _newCounts });
+                        socket.emit(emitCheck, { newSpaces: _newSpaces, newCounts: _newCounts, id: this.props.id });
                         this.setState({
                             selectedColor: null,
                             isSwap: false,
@@ -470,7 +497,7 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                         _newSpaces2[index] = _newSpaces2[prevState.index];
                         _newSpaces2[prevState.index] = temp;
                         var _emitCheck = this.props.gameState === 'bonusswap' ? 'bonusswap' : 'boardChange';
-                        socket.emit(_emitCheck, { newSpaces: _newSpaces2, newCounts: this.props.colorCounts });
+                        socket.emit(_emitCheck, { newSpaces: _newSpaces2, newCounts: this.props.colorCounts, id: this.props.id });
                         this.setState({
                             selectColor: null,
                             isSwap: false,
@@ -488,16 +515,16 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
             }
         } }, { key: "updateActiveCards", value: function updateActiveCards(
 
-        newState, selectCards) {var _this14 = this;
+        newState, selectCards) {var _this15 = this;
             return selectCards.map(function (name) {
                 var active = "";
-                if (_this14.isActive(newState, name)) {
+                if (_this15.isActive(newState, name)) {
                     active = "active";
-                } else if (_this14.props.gameState === "reflexed" && _this14.isActiveReflexed(newState, name)) {
+                } else if (_this15.props.gameState === "reflexed" && _this15.isActiveReflexed(newState, name)) {
                     active = "activeReflexed";
                 }
-                var selected = _this14.state.selectedActionCard === name || _this14.state.selectedNumberCard === name ? "selectedCard" : "";
-                return React.createElement(Card, { key: name.ID, onClick: function onClick(i) {return _this14.handleCardClick(i);}, selected: selected, display: active, card: name });
+                var selected = _this15.state.selectedActionCard === name || _this15.state.selectedNumberCard === name ? "selectedCard" : "";
+                return React.createElement(Card, { key: name.ID, onClick: function onClick(i) {return _this15.handleCardClick(i);}, selected: selected, display: active, card: name });
             });
         } }, { key: "isActive", value: function isActive(
 
@@ -554,26 +581,26 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
             return purged;
         } }, { key: "render", value: function render()
 
-        {var _this15 = this;
+        {var _this16 = this;
             var allPlayed = this.props.allPlayed.slice();
-            allPlayed.splice(this.props.pid - 1, 1);
+            allPlayed.splice(this.props.pid, 1);
             for (var i = 0; i < allPlayed.length; i++) {
                 allPlayed[i] = this.updateActiveCards(this.props.spaces, allPlayed[i]);
             }
             var display = React.createElement(Display, {
                 spaces: this.props.spaces //[]
                 , colorCounts: this.props.colorCounts //[]
-                , selectorClick: function selectorClick(i) {return _this15.handleSelectorClick(i);} //function
-                , boardClick: function boardClick(i, j) {return _this15.handleBoardClick(i, j);} //function
+                , selectorClick: function selectorClick(i) {return _this16.handleSelectorClick(i);} //function
+                , boardClick: function boardClick(i, j) {return _this16.handleBoardClick(i, j);} //function
                 , cards: this.state.cards //[<Cards>]
                 , played: this.state.played //[<Cards>]
-                , playClicked: function playClicked() {return _this15.handlePlayClick();} //function
-                , discardClicked: function discardClicked() {return _this15.handleDiscardClick();},
+                , playClicked: function playClicked() {return _this16.handlePlayClick();} //function
+                , discardClicked: function discardClicked() {return _this16.handleDiscardClick();},
                 myTurn: this.props.pid === this.props.currentPlayer,
                 gameState: this.props.gameState,
                 allPlayed: allPlayed });
 
-            var waiting = React.createElement(Waiting, { players: this.props.players });
+            var waiting = React.createElement(Waiting, { id: this.props.id, players: this.props.players });
             var showMe = this.props.gameState === "prestart" ? waiting : display;
             return showMe;
         } }]);return Game;}(React.Component);
@@ -636,6 +663,10 @@ socket.on('userjoined', function (data) {
     Object.assign(localData, data);
     renderGame(localData, socket);
 });
+socket.on('userready', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
 
 function renderGame(data, socket) {
     ReactDOM.render(React.createElement(Game, { spaces: data.spaces,
@@ -645,11 +676,12 @@ function renderGame(data, socket) {
         pid: data.pid,
         currentPlayer: data.currentPlayer,
         socket: socket,
-        played: data.played[data.pid - 1],
+        played: data.played[data.pid],
         allPlayed: data.played,
         discardCount: data.discardCount,
         processCode: data.processCode,
-        players: data.players }),
+        players: data.players,
+        id: data.id }),
 
     document.getElementById("root"));
 }
@@ -703,12 +735,12 @@ function getCookie() {
 }var
 
 Lobby = function (_React$Component7) {_inherits(Lobby, _React$Component7);
-    function Lobby(props) {_classCallCheck(this, Lobby);var _this16 = _possibleConstructorReturn(this, (Lobby.__proto__ || Object.getPrototypeOf(Lobby)).call(this,
+    function Lobby(props) {_classCallCheck(this, Lobby);var _this17 = _possibleConstructorReturn(this, (Lobby.__proto__ || Object.getPrototypeOf(Lobby)).call(this,
         props));
-        _this16.state = {
+        _this17.state = {
             available: [],
             selected: 2,
-            name: null };return _this16;
+            name: null };return _this17;
 
     }_createClass(Lobby, [{ key: "selectChange", value: function selectChange(
 
@@ -742,30 +774,36 @@ Lobby = function (_React$Component7) {_inherits(Lobby, _React$Component7);
 
         } }, { key: "renderAvailable", value: function renderAvailable()
 
-        {var _this17 = this;
+        {var _this18 = this;
             var lobbies = [];
             var games = this.props.available.slice();
             for (var i = 0; i < games.length; i++) {
                 lobbies.push(React.createElement("li", {
                         id: games[i].id,
-                        onDoubleClick: function onDoubleClick(e) {return _this17.joinRoom(e.target.id);} },
+                        "class": "lobbylist",
+                        onDoubleClick: function onDoubleClick(e) {return _this18.joinRoom(e.target.id);} },
                     games[i].name));
             }
-            return React.createElement("div", { className: "browser" }, lobbies);
+            return React.createElement("div", { className: "browser" }, React.createElement("label", null, "Currently Available Rooms"), React.createElement("ul", null, lobbies));
 
         } }, { key: "render", value: function render()
 
-        {var _this18 = this;
+        {var _this19 = this;
             return React.createElement("div", { id: "lobby" },
-                React.createElement("button", { type: "button", onClick: function onClick() {return _this18.createNewValues();} }, "New Instance"),
-                React.createElement("label", null, "MAX PLAYERS"),
-                React.createElement("select", { onChange: function onChange(e) {return _this18.selectChange(e);}, id: "max_val" },
-                    React.createElement("option", { value: "2" }, "2"),
-                    React.createElement("option", { value: "3" }, "3"),
-                    React.createElement("option", { value: "4" }, "4"),
-                    React.createElement("option", { value: "5" }, "5")),
+                React.createElement("div", { id: "newroomlabeldiv" },
+                    React.createElement("label", { id: "newroomlabel" }, "New Room Name"),
+                    React.createElement("input", { id: "newroominput", onInput: function onInput(e) {return _this19.nameChange(e);}, type: "text" })),
 
-                React.createElement("input", { onInput: function onInput(e) {return _this18.nameChange(e);}, type: "text" }),
+                React.createElement("div", { id: "newroommaxplayerdiv" },
+                    React.createElement("label", { id: "maxplayer" }, "MAX PLAYERS"),
+                    React.createElement("select", _defineProperty({ id: "playeroptions", onChange: function onChange(e) {return _this19.selectChange(e);} }, "id", "max_val"),
+                        React.createElement("option", { value: "3" }, "3"),
+                        React.createElement("option", { value: "4" }, "4"),
+                        React.createElement("option", { value: "5" }, "5"),
+                        React.createElement("option", { value: "6" }, "6"))),
+
+
+                React.createElement("button", { id: "newroombutton", type: "button", onClick: function onClick() {return _this19.createNewValues();} }, "New Instance"),
                 this.renderAvailable());
 
 
