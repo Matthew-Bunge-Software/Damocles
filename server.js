@@ -30,8 +30,10 @@ io.on('connection', function(socket) {
         });
     });
     socket.on('login', function(data) {
-        const text = 'SELECT * FROM login WHERE username = $1 AND password = $2';
-        const values = [data.username, data.password];
+        //const text = 'SELECT * FROM login WHERE username = $1 AND password = $2';
+        const text = 'SELECT * FROM login WHERE username = $1';
+        //const values = [data.username, data.password];
+        const values = [data.username];
         client.query(text, values, (err, res) => {
             if (err) {
                 console.log(err.stack);
@@ -42,6 +44,20 @@ io.on('connection', function(socket) {
                     cookie: setCookie(res.rows[0].username),
                     gameState: "lobby",
                     availableGames: publicInstances
+                });
+            } else {
+                const textTwo = 'INSERT INTO login (username, password, email) VALUES ($1, $1, $1)';
+                client.query(textTwo, values, (err, res) => {
+                    if (err) {
+                        console.log(err.stack);
+                    } else {
+                        socket.join('lobby');
+                        socket.emit("cookify", {
+                            cookie: setCookie(data.username),
+                            gameState: "lobby",
+                            availableGames: publicInstances
+                        });
+                    }
                 });
             }
         });
@@ -101,9 +117,17 @@ io.on('connection', function(socket) {
         joinedInstance.pid++;
         socket.leave('lobby');
         socket.join('' + data.id);
+        console.log(joinedInstance.players.length + " " + joinedInstance.maxPlayers);
         if (joinedInstance.players.length === joinedInstance.maxPlayers) {
             for (let i = 0; i < publicInstances.length; i++) {
+                console.log(publicInstances[i].id + " " + data.id);
+                console.log(publicInstances[i].id === data.id);
+                console.log(publicInstances[i].id == data.id);
+                console.log(typeof publicInstances[i].id);
+                console.log(typeof data.id);
+
                 if (publicInstances[i].id === data.id) {
+                    console.log(publicInstances);
                     publicInstances.splice(i, 1);
                     io.to('lobby').emit('newroom', {
                         availableGames: publicInstances

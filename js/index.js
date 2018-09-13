@@ -126,12 +126,12 @@ Login = function (_React$Component3) {_inherits(Login, _React$Component3);
         } }, { key: "render", value: function render()
 
         {var _this6 = this;
+            //<label htmlFor={"passw"}><b>{"Password"}</b></label>
+            //<input type={"text"} id={"passw"} placeholder={"Enter Password"} onChange={(e) => this.updatePassword(e)}></input>
             return React.createElement("div", { className: "Login" },
                 React.createElement("form", { id: "login" },
                     React.createElement("label", { htmlFor: "uname" }, React.createElement("b", null, "Username")),
                     React.createElement("input", { type: "text", id: "uname", placeholder: "Enter Username", onChange: function onChange(e) {return _this6.updateUsername(e);} }),
-                    React.createElement("label", { htmlFor: "passw" }, React.createElement("b", null, "Password")),
-                    React.createElement("input", { type: "text", id: "passw", placeholder: "Enter Password", onChange: function onChange(e) {return _this6.updatePassword(e);} }),
                     React.createElement("button", { onClick: function onClick() {return _this6.props.onClick(_this6.state.username, _this6.state.password);}, type: "button" }, "Login")));
 
 
@@ -739,7 +739,7 @@ Lobby = function (_React$Component7) {_inherits(Lobby, _React$Component7);
         props));
         _this17.state = {
             available: [],
-            selected: 2,
+            selected: 3,
             name: null };return _this17;
 
     }_createClass(Lobby, [{ key: "selectChange", value: function selectChange(
@@ -781,8 +781,8 @@ Lobby = function (_React$Component7) {_inherits(Lobby, _React$Component7);
                 lobbies.push(React.createElement("li", {
                         id: games[i].id,
                         "class": "lobbylist",
-                        onDoubleClick: function onDoubleClick(e) {return _this18.joinRoom(e.target.id);} },
-                    games[i].name));
+                        onDoubleClick: function onDoubleClick(e) {return _this18.joinRoom(parseInt(e.target.id));} },
+                    games[i].name + " - " + games[i].maxPlayers));
             }
             return React.createElement("div", { className: "browser" }, React.createElement("label", null, "Currently Available Rooms"), React.createElement("ul", null, lobbies));
 

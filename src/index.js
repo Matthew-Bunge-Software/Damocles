@@ -126,12 +126,12 @@ class Login extends React.Component {
     }
     
     render() {
+        //<label htmlFor={"passw"}><b>{"Password"}</b></label>
+        //<input type={"text"} id={"passw"} placeholder={"Enter Password"} onChange={(e) => this.updatePassword(e)}></input>
         return <div className={"Login"}>
             <form id="login">
                 <label htmlFor={"uname"}><b>{"Username"}</b></label>
                 <input type={"text"} id={"uname"} placeholder={"Enter Username"} onChange={(e) => this.updateUsername(e)}></input>
-                <label htmlFor={"passw"}><b>{"Password"}</b></label>
-                <input type={"text"} id={"passw"} placeholder={"Enter Password"} onChange={(e) => this.updatePassword(e)}></input>
                 <button onClick={() => this.props.onClick(this.state.username, this.state.password)} type={"button"}>{"Login"}</button>
             </form>
         </div>;
@@ -739,7 +739,7 @@ class Lobby extends React.Component {
       super(props);
       this.state = {
         available: [],
-        selected: 2,
+        selected: 3,
         name: null
       }
     }
@@ -781,8 +781,8 @@ class Lobby extends React.Component {
             lobbies.push(<li 
                 id={games[i].id}
                 class={"lobbylist"}
-                onDoubleClick={(e) => this.joinRoom(e.target.id)}
-            >{games[i].name}</li>);
+                onDoubleClick={(e) => this.joinRoom(parseInt(e.target.id))}
+            >{games[i].name + " - " + games[i].maxPlayers}</li>);
         }
         return (<div className="browser"><label>{"Currently Available Rooms"}</label><ul>{lobbies}</ul></div>
         );
