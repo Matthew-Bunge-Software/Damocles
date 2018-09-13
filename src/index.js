@@ -127,7 +127,7 @@ class Login extends React.Component {
     
     render() {
         //<label htmlFor={"passw"}><b>{"Password"}</b></label>
-        //<input type={"text"} id={"passw"} placeholder={"Enter Password"} onChange={(e) => this.updatePassword(e)}></input>
+        //<input type={"password"} id={"passw"} placeholder={"Enter Password"} onChange={(e) => this.updatePassword(e)}></input>
         return <div className={"Login"}>
             <form id="login">
                 <label htmlFor={"uname"}><b>{"Username"}</b></label>
@@ -648,6 +648,13 @@ class Game extends React.Component {
         return purged;
     }
 
+    abandonRoom() {
+        socket.emit("abandonRoom", {
+            id: this.props.id,
+            user: getCookie()
+        })
+    }
+
     render() {
         let allPlayed = this.props.allPlayed.slice();
         allPlayed.splice(this.props.pid, 1);
@@ -669,7 +676,10 @@ class Game extends React.Component {
         />;
         let waiting = <Waiting id={this.props.id} players={this.props.players}/>;
         let showMe = this.props.gameState === "prestart" ? waiting : display;
-        return (showMe);
+        return (<div id={"game"}>
+                    <button id={"backbutton"} type={'button'} onClick={() => this.abandonRoom()}>{"Back"}</button>
+                    {showMe}
+                </div>);
     }
 }
 
@@ -723,6 +733,10 @@ var socket = io.connect(connectTo);
         renderLobby(localData, socket);
     });
     socket.on('newroom', function(data) {
+        Object.assign(localData, data);
+        renderLobby(localData, socket);
+    });
+    socket.on('lobify', function(data) {
         Object.assign(localData, data);
         renderLobby(localData, socket);
     });

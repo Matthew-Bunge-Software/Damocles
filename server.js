@@ -276,6 +276,28 @@ io.on('connection', function(socket) {
             gameState: instance.gameState
         });
     });
+    socket.on("abandonRoom", function(data) {
+        gameInstances[data.id] = [];
+        for(let i = 0; i < publicInstances.length; i++) {
+            if (publicInstances[i].id == data.id) {
+                publicInstances.splice(i ,1);
+                break;
+            }
+        }
+        var users = io.sockets.adapter.rooms['' + data.id].sockets;
+        Object.keys(users).forEach(function(client) {
+            let socket = io.in('' + gameId).connected[client];
+            socket.leave('' + gameId);
+            socket.join('lobby');
+            socket.emit("lobify", {
+                gameState: "lobby",
+                availableGames: publicInstances
+            });
+        });
+        io.to('lobby').emit('newroom', {
+            availableGames: publicInstances
+        });
+    });
 });
 
 server.listen(port, function() {

@@ -127,7 +127,7 @@ Login = function (_React$Component3) {_inherits(Login, _React$Component3);
 
         {var _this6 = this;
             //<label htmlFor={"passw"}><b>{"Password"}</b></label>
-            //<input type={"text"} id={"passw"} placeholder={"Enter Password"} onChange={(e) => this.updatePassword(e)}></input>
+            //<input type={"password"} id={"passw"} placeholder={"Enter Password"} onChange={(e) => this.updatePassword(e)}></input>
             return React.createElement("div", { className: "Login" },
                 React.createElement("form", { id: "login" },
                     React.createElement("label", { htmlFor: "uname" }, React.createElement("b", null, "Username")),
@@ -646,6 +646,13 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                 }
             }
             return purged;
+        } }, { key: "abandonRoom", value: function abandonRoom()
+
+        {
+            socket.emit("abandonRoom", {
+                id: this.props.id,
+                user: getCookie() });
+
         } }, { key: "render", value: function render()
 
         {var _this16 = this;
@@ -669,7 +676,10 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
 
             var waiting = React.createElement(Waiting, { id: this.props.id, players: this.props.players });
             var showMe = this.props.gameState === "prestart" ? waiting : display;
-            return showMe;
+            return React.createElement("div", { id: "game" },
+                React.createElement("button", { id: "backbutton", type: 'button', onClick: function onClick() {return _this16.abandonRoom();} }, "Back"),
+                showMe);
+
         } }]);return Game;}(React.Component);
 
 
@@ -723,6 +733,10 @@ socket.on('cookify', function (data) {
     renderLobby(localData, socket);
 });
 socket.on('newroom', function (data) {
+    Object.assign(localData, data);
+    renderLobby(localData, socket);
+});
+socket.on('lobify', function (data) {
     Object.assign(localData, data);
     renderLobby(localData, socket);
 });
