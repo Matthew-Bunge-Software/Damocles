@@ -248,24 +248,32 @@ io.on('connection', function(socket) {
             selectCards: data.rest.concat(interacted.newCards)
         });
         if (interacted.processCode != null) {
+            instance.gameState = 'discardphase';
             socket.emit('discardphase', {
-                gameState: 'discardphase',
+                gameState: instance.gameState,
                 processCode: interacted.processCode,
                 discardCount: 2
             })
         }
         if (interacted.stateEdit === "H") {
+            instance.gameState = 'bonusswap';
             socket.emit('bonusswap', {
-                gameState: "bonusswap"
+                gameState: instance.gameState
             });
         } else if (interacted.stateEdit === "R") {
+            instance.gameState = 'reflexed';
             socket.emit('reflexed', {
-                gameState: "reflexed"
+                gameState: instance.gameState
             });
+        } else {
+            if (instance.gameState === 'reflexed' && data.reflexused === true) {
+                instance.gameState = '';
+            }
         }
         gameInstances[data.id] = instance;
         io.to('' + data.id).emit('cardPlayed', {
-            played: instance.played
+            played: instance.played,
+            gameState: instance.gameState
         });
     });
 });

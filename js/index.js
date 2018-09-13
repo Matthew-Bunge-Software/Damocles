@@ -299,6 +299,7 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
             var oldPlayed = [];
             var playedToRecycle = this.props.played.slice();
             var cardsToRemove = this.props.selectCards.slice();
+            var reflexused = false;
             if (number != null && action != null) {
                 if (this.isActive(spaceState, number) && this.isActive(spaceState, action) && action.type != "A" && action.type != "R" && action.type != "H") {
                     var j = 0;
@@ -316,25 +317,63 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                         }
                         j++;
                     }
-                }
-            } else if (action != null) {
-                if (this.isActive(spaceState, action) && (action.type === "A" || action.type === "R" || action.type === "H")) {
+                } else if (this.props.gameState === "reflexed" && (
+                this.isActiveReflexed(spaceState, number) && this.isActive(spaceState, action) ||
+                this.isActive(spaceState, number) && this.isActiveReflexed(spaceState, action)) &&
+                action.type != "A" && action.type != "R" && action.type != "H") {
                     var _j = 0;
+                    reflexused = true;
                     while (_j < cardsToRemove.length) {
-                        if (cardsEqual(cardsToRemove[_j], action)) {
+                        if (cardsEqual(cardsToRemove[_j], number) || cardsEqual(cardsToRemove[_j], action)) {
                             tempPlayed.push(cardsToRemove.splice(_j, 1)[0]);
                         } else {
                             _j++;
                         }
                     }
+                    if (cardsToRemove.length === this.props.selectCards.length) {
+                        return false;
+                    }
                     _j = 0;
                     while (_j < playedToRecycle.length) {
-                        if (cardsEqual(playedToRecycle[_j], action)) {
+                        if (cardsEqual(playedToRecycle[_j], number) || cardsEqual(playedToRecycle[_j], action)) {
                             oldPlayed.push(playedToRecycle[_j]);
                         }
                         _j++;
                     }
                 }
+            } else if (action != null) {
+                if (this.isActive(spaceState, action) && (action.type === "A" || action.type === "R" || action.type === "H")) {
+                    var _j2 = 0;
+                    while (_j2 < cardsToRemove.length) {
+                        if (cardsEqual(cardsToRemove[_j2], action)) {
+                            tempPlayed.push(cardsToRemove.splice(_j2, 1)[0]);
+                        } else {
+                            _j2++;
+                        }
+                    }
+                    _j2 = 0;
+                    while (_j2 < playedToRecycle.length) {
+                        if (cardsEqual(playedToRecycle[_j2], action)) {
+                            oldPlayed.push(playedToRecycle[_j2]);
+                        }
+                        _j2++;
+                    }
+                } else if (this.props.gameState === "reflexed" && this.isActiveReflexed(spaceState, action) && (action.type === "A" || action.type === "R" || action.type === "H")) {
+                    var _j3 = 0;
+                    reflexused = true;
+                    while (_j3 < cardsToRemove.length) {
+                        if (cardsEqual(cardsToRemove[_j3], action)) {
+                            tempPlayed.push(cardsToRemove.splice(_j3, 1)[0]);
+                        } else {
+                            _j3++;
+                        }
+                    }
+                    if (cardsToRemove.length === this.props.selectCards.length) {
+                        return false;
+                    }
+                }
+            } else {
+                return false;
             }
             this.setState({
                 selectedNumberCard: null,
@@ -345,7 +384,8 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                 oldPlayed: oldPlayed,
                 rest: cardsToRemove,
                 pid: this.props.pid,
-                id: this.props.id });
+                id: this.props.id,
+                reflexused: reflexused });
 
         } }, { key: "handleCardClick", value: function handleCardClick(
 
@@ -365,17 +405,17 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                 var tempDiscard = this.state.queuedForDiscard.slice();
                 if (selectCardsIndex >= selectCards.length - accessable) {
                     var found = false;
-                    for (var _j2 = 0; _j2 < tempDiscard.length; _j2++) {
-                        if (cardsEqual(tempDiscard[_j2], i)) {
-                            tempDiscard[_j2] = null;
+                    for (var _j4 = 0; _j4 < tempDiscard.length; _j4++) {
+                        if (cardsEqual(tempDiscard[_j4], i)) {
+                            tempDiscard[_j4] = null;
                             found = true;
                             break;
                         }
                     }
                     if (!found && tempDiscard.includes(null)) {
-                        for (var _j3 = 0; _j3 < tempDiscard.length; _j3++) {
-                            if (tempDiscard[_j3] === null) {
-                                tempDiscard[_j3] = i;
+                        for (var _j5 = 0; _j5 < tempDiscard.length; _j5++) {
+                            if (tempDiscard[_j5] === null) {
+                                tempDiscard[_j5] = i;
                                 break;
                             }
                         }
@@ -384,8 +424,8 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                         queuedForDiscard: tempDiscard,
                         cards: selectCards.map(function (name) {
                             var selected = "";
-                            for (var _j4 = 0; _j4 < tempDiscard.length; _j4++) {
-                                if (cardsEqual(tempDiscard[_j4], name)) {
+                            for (var _j6 = 0; _j6 < tempDiscard.length; _j6++) {
+                                if (cardsEqual(tempDiscard[_j6], name)) {
                                     selected = "selectedCard";
                                     break;
                                 }
@@ -400,7 +440,12 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                     this.setState({
                         selectedNumberCard: newSelected,
                         cards: selectCards.map(function (name) {
-                            var active = _this14.isActive(_this14.props.spaces, name) ? "active" : "";
+                            var active = "";
+                            if (_this14.isActive(_this14.props.spaces, name)) {
+                                active = "active";
+                            } else if (_this14.props.gameState === "reflexed" && _this14.props.currentPlayer === _this14.props.pid && _this14.isActiveReflexed(_this14.props.spaces, name)) {
+                                active = "activeReflexed";
+                            }
                             var selected = cardsEqual(name, newSelected) || cardsEqual(name, _this14.state.selectedActionCard) ? "selectedCard" : "";
                             return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this14.handleCardClick(i);}, display: active, card: name });
                         }),
@@ -415,7 +460,12 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                     this.setState({
                         selectedActionCard: _newSelected,
                         cards: selectCards.map(function (name) {
-                            var active = _this14.isActive(_this14.props.spaces, name) ? "active" : "";
+                            var active = "";
+                            if (_this14.isActive(_this14.props.spaces, name)) {
+                                active = "active";
+                            } else if (_this14.props.gameState === "reflexed" && _this14.props.currentPlayer === _this14.props.pid && _this14.isActiveReflexed(_this14.props.spaces, name)) {
+                                active = "activeReflexed";
+                            }
                             var selected = cardsEqual(name, _newSelected) || cardsEqual(name, _this14.state.selectedNumberCard) ? "selectedCard" : "";
                             return React.createElement(Card, { key: name.ID, selected: selected, onClick: function onClick(i) {return _this14.handleCardClick(i);}, display: active, card: name });
                         }),
@@ -537,10 +587,10 @@ Game = function (_React$Component6) {_inherits(Game, _React$Component6);
                 var active = "";
                 if (_this15.isActive(newState, name)) {
                     active = "active";
-                } else if (_this15.props.gameState === "reflexed" && _this15.isActiveReflexed(newState, name)) {
+                } else if (_this15.props.gameState === "reflexed" && _this15.props.currentPlayer === _this15.props.pid && _this15.isActiveReflexed(newState, name)) {
                     active = "activeReflexed";
                 }
-                var selected = _this15.state.selectedActionCard === name || _this15.state.selectedNumberCard === name ? "selectedCard" : "";
+                var selected = cardsEqual(_this15.state.selectedActionCard, name) || cardsEqual(_this15.state.selectedNumberCard, name) ? "selectedCard" : "";
                 return React.createElement(Card, { key: name.ID, onClick: function onClick(i) {return _this15.handleCardClick(i);}, selected: selected, display: active, card: name });
             });
         } }, { key: "isActive", value: function isActive(
