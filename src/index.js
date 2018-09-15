@@ -50,10 +50,26 @@ function Header(props) {
     return <p>{myTurn}</p>
 }
 
-function OtherHands(props) {
-    return <div className="otherHands">
-        {props.played}
-    </div>;
+class OtherHands extends React.Component {
+    renderSingleHands() {
+        let returnMe = [];
+        for (let i = 0; i < this.props.players.length; i++) {
+            if (i != this.props.pid) {
+                returnMe.push(<div className="otherHands">
+                    <label>{this.props.players[i].name + ": " + this.props.points[i] + " Points"}</label>
+                    <div className="otherHandsPlayed">
+                        {this.props.played[i]}
+                    </div>
+                </div>);
+            }
+        }
+        return returnMe;
+    }
+    render() {
+        return <div className="otherHands">
+            {this.renderSingleHands()}
+        </div>;
+    }
 }
 
 function PlayedTiles(props) {
@@ -186,9 +202,7 @@ class Display extends React.Component {
 
     renderOtherHands() {
         let hands = [];
-        for (let i = 0; i < this.props.allPlayed.length; i++) {
-            hands.push(<OtherHands played={this.props.allPlayed[i]}/>);
-        }
+        hands.push(<OtherHands pid={this.props.pid} points={this.props.points} players={this.props.players} played={this.props.allPlayed}/>);
         return hands;
     }
 
@@ -655,9 +669,19 @@ class Game extends React.Component {
         })
     }
 
+    modifyPoints() {
+        let points = this.props.points.slice();
+        let played = this.props.allPlayed.slice();
+        for (let i = 0; i < points.length; i++) {
+            for (let j = 0; j < played[i].length; j++) {
+                points[i] += played[i][j].points;
+            }
+        }
+        return points;
+    }
+
     render() {
         let allPlayed = this.props.allPlayed.slice();
-        allPlayed.splice(this.props.pid, 1);
         for (let i = 0; i < allPlayed.length; i++) {
             allPlayed[i] = this.updateActiveCards(this.props.spaces, allPlayed[i]);
         }
@@ -673,6 +697,9 @@ class Game extends React.Component {
             myTurn={this.props.pid === this.props.currentPlayer}
             gameState={this.props.gameState}
             allPlayed={allPlayed}
+            pid={this.props.pid}
+            players={this.props.players}
+            points={this.modifyPoints()}
         />;
         let waiting = <Waiting id={this.props.id} players={this.props.players}/>;
         let showMe = this.props.gameState === "prestart" ? waiting : display;
@@ -763,6 +790,7 @@ function renderGame(data, socket) {
         processCode={data.processCode}
         players={data.players}
         id={data.id}
+        points={data.points}
 
         />, document.getElementById("root"));
 }

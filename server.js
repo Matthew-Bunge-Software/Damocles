@@ -78,6 +78,7 @@ io.on('connection', function(socket) {
             deck: deck,
             players: players,
             ready: 0,
+            points: [0],
             gameState: "prestart",
             played: played,
             numDiscarded: 0,
@@ -105,7 +106,8 @@ io.on('connection', function(socket) {
             chat: [],
             played: newInstance.played,
             id: newInstance.id,
-            pid: newInstance.players.length - 1
+            pid: newInstance.players.length - 1,
+            points: newInstance.points
         });
         gameId += 1;
     });
@@ -113,6 +115,7 @@ io.on('connection', function(socket) {
         let joinedInstance = gameInstances[data.id];
         let user = data.user;
         joinedInstance.players.push({ name: user, ready: false});
+        joinedInstance.points.push(0);
         joinedInstance.played.push([]);
         joinedInstance.pid++;
         socket.leave('lobby');
@@ -132,12 +135,13 @@ io.on('connection', function(socket) {
             selectCards: joinedInstance.deck.splice(0,8),
             gameState: joinedInstance.gameState,
             id: joinedInstance.id,
-            pid: joinedInstance.players.length - 1
+            pid: joinedInstance.players.length - 1,
         });
         io.to('' + data.id).emit("userjoined", {
             players: joinedInstance.players,
             chat: joinedInstance.chat,
             played: joinedInstance.played,
+            points: joinedInstance.points
         });
 
     });
@@ -172,6 +176,7 @@ io.on('connection', function(socket) {
                 played: instance.played,
                 processCode: null,
                 discardCount: 2,
+                points: instance.points
             });
         }
     });
@@ -242,6 +247,7 @@ io.on('connection', function(socket) {
         let instance = gameInstances[data.id];
         let newPlayed = instance.played[data.pid].slice();
         let interacted = handleCardInteractions(data.newPlayed, data.oldPlayed, data.id);
+        instance.points[data.pid] += interacted.combust;
         newPlayed = newPlayed.concat(interacted.played);
         instance.played[data.pid] = newPlayed;
         socket.emit('cardUpdate', {
@@ -273,7 +279,8 @@ io.on('connection', function(socket) {
         gameInstances[data.id] = instance;
         io.to('' + data.id).emit('cardPlayed', {
             played: instance.played,
-            gameState: instance.gameState
+            gameState: instance.gameState,
+            points: instance.points
         });
     });
     socket.on("abandonRoom", function(data) {
@@ -311,13 +318,14 @@ var selectCards = cards.map(card => {
     let intAdded = false;
     let randInt = -1;
     let spaces = Array(7).fill(null);
-    if (card.one != null) { spaces[0] = card.one; }
-    if (card.two != null) { spaces[1] = card.two; }
-    if (card.three != null) { spaces[2] = card.three; }
-    if (card.four != null) { spaces[3] = card.four; }
-    if (card.five != null) { spaces[4] = card.five; }
-    if (card.six != null) { spaces[5] = card.six; }
-    if (card.seven != null) { spaces[6] = card.seven; }
+    let points = 0;
+    if (card.one != null) { spaces[0] = card.one; points++; }
+    if (card.two != null) { spaces[1] = card.two; points++; }
+    if (card.three != null) { spaces[2] = card.three; points++; }
+    if (card.four != null) { spaces[3] = card.four; points++; }
+    if (card.five != null) { spaces[4] = card.five; points++; }
+    if (card.six != null) { spaces[5] = card.six; points++; }
+    if (card.seven != null) { spaces[6] = card.seven; points++; }
     while (!intAdded) {
         randInt = Math.floor(Math.random() * 100000);
         if (!IDS.has(randInt)) {
@@ -327,6 +335,7 @@ var selectCards = cards.map(card => {
     }
     card.ID = randInt;
     card.spaces = spaces;
+    card.points = points;
     return card;
 });
 
@@ -357,7 +366,8 @@ function handleCardInteractions(played, oldPlayed, id) {
     let returnMe = {
         newCards: [],
         processCode: null,
-        played: []
+        played: [],
+        combust: 0
     }
     let num = null;
     let action = null;
@@ -371,6 +381,8 @@ function handleCardInteractions(played, oldPlayed, id) {
         }
         if (current.type != 'C') {
             returnToPublic.push(current);
+        } else {
+            returnMe.combust += current.points;
         }
     }
     for (let i = 0; i < oldPlayed.length; i++) {
