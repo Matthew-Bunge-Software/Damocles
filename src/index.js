@@ -85,10 +85,15 @@ class MyHand extends React.Component {
         }
     }
 
+    renderDiscard() {
+        return <button disabled={(!this.props.myTurn || this.props.gameState === "setup" || this.props.gameState === "discardphase")} onClick={() => this.props.nextTurn() }>{ "Finish Turn" }</button>
+    }
+
     render() {
         return <div className="hand">
             {this.props.cards}
             {this.renderButton()}
+            {this.renderDiscard()}
         </div>;
     }
 }
@@ -219,9 +224,11 @@ class Display extends React.Component {
                 <PlayedTiles played={this.props.played} />
                 <MyHand playClicked={() => this.props.playClicked()} 
                         discardClicked={() => this.props.discardClicked()}
+                        nextTurn = {() => this.props.nextTurn()}
                         cards={this.props.cards} 
                         myTurn={this.props.myTurn}
                         gameState={this.props.gameState}
+                        id={this.props.id}
                 />
             </div>
         );
@@ -241,6 +248,8 @@ class Game extends React.Component {
             index: null,
             rawCards: selectCards,
             cards: cards,
+            selectedActionCard: null,
+            selectedNumberCard: null
         };
     }
 
@@ -314,80 +323,110 @@ class Game extends React.Component {
         let playedToRecycle = this.props.played.slice();
         let cardsToRemove = this.props.selectCards.slice();
         let reflexused = false;
-        if (number != null && action != null) {
-            if (this.isActive(spaceState, number) && this.isActive(spaceState, action) && (action.type != "A" && action.type != "R" && action.type != "H")) {
-                let j = 0;
-                while (j < cardsToRemove.length) {
-                    if (cardsEqual(cardsToRemove[j], number) || cardsEqual(cardsToRemove[j], action)) {
-                        tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
-                    } else {
+        if (this.props.gameState === "hasteCheck") {
+            if (number === null && action != null && action.type === "H") {
+                if (this.isActive(spaceState, action)) {
+                    let j = 0;
+                    while (j < cardsToRemove.length) {
+                        if (cardsEqual(cardsToRemove[j], number) || cardsEqual(cardsToRemove[j], action)) {
+                            tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
+                        } else {
+                            j++;
+                        }
+                    }
+                    j = 0;
+                    while (j < playedToRecycle.length) {
+                        if (cardsEqual(playedToRecycle[j], number) || cardsEqual(playedToRecycle[j], action)) {
+                            oldPlayed.push(playedToRecycle[j]);
+                        }
                         j++;
                     }
-                }
-                j = 0;
-                while (j < playedToRecycle.length) {
-                    if (cardsEqual(playedToRecycle[j], number) || cardsEqual(playedToRecycle[j], action)) {
-                        oldPlayed.push(playedToRecycle[j]);
-                    }
-                    j++;
-                }
-            } else if (this.props.gameState === "reflexed" && 
-                        (this.isActiveReflexed(spaceState, number) && this.isActive(spaceState, action) ||
-                        this.isActive(spaceState, number) && this.isActiveReflexed(spaceState, action)) &&
-                        (action.type != "A" && action.type != "R" && action.type != "H")) {
-                let j = 0;
-                reflexused = true;
-                while (j < cardsToRemove.length) {
-                    if (cardsEqual(cardsToRemove[j], number) || cardsEqual(cardsToRemove[j], action)) {
-                        tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
-                    } else {
-                        j++;
-                    }
-                }
-                if (cardsToRemove.length === this.props.selectCards.length) {
+                } else {
                     return false;
                 }
-                j = 0;
-                while (j < playedToRecycle.length) {
-                    if (cardsEqual(playedToRecycle[j], number) || cardsEqual(playedToRecycle[j], action)) {
-                        oldPlayed.push(playedToRecycle[j]);
-                    }
-                    j++;
-                }
-            }
-        } else if (action != null) {
-            if (this.isActive(spaceState, action) && (action.type === "A" || action.type === "R" || action.type === "H")) {
-                let j = 0;
-                while (j < cardsToRemove.length) {
-                    if (cardsEqual(cardsToRemove[j], action)) {
-                        tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
-                    } else {
-                        j++;
-                    }
-                }
-                j = 0;
-                while (j < playedToRecycle.length) {
-                    if (cardsEqual(playedToRecycle[j], action)) {
-                        oldPlayed.push(playedToRecycle[j]);
-                    }
-                    j++;
-                }
-            } else if (this.props.gameState === "reflexed" && this.isActiveReflexed(spaceState, action) && (action.type === "A" || action.type === "R" || action.type === "H")) {
-                let j = 0;
-                reflexused = true;
-                while (j < cardsToRemove.length) {
-                    if (cardsEqual(cardsToRemove[j], action)) {
-                        tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
-                    } else {
-                        j++;
-                    }
-                }
-                if (cardsToRemove.length === this.props.selectCards.length) {
-                    return false;
-                }
+            } else {
+                return false;
             }
         } else {
-            return false;
+            if (number != null && action != null) {
+                if (this.isActive(spaceState, number) && this.isActive(spaceState, action) && (action.type != "A" && action.type != "R" && action.type != "H")) {
+                    let j = 0;
+                    while (j < cardsToRemove.length) {
+                        if (cardsEqual(cardsToRemove[j], number) || cardsEqual(cardsToRemove[j], action)) {
+                            tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
+                        } else {
+                            j++;
+                        }
+                    }
+                    j = 0;
+                    while (j < playedToRecycle.length) {
+                        if (cardsEqual(playedToRecycle[j], number) || cardsEqual(playedToRecycle[j], action)) {
+                            oldPlayed.push(playedToRecycle[j]);
+                        }
+                        j++;
+                    }
+                } else if (this.props.gameState === "reflexed" && 
+                            (this.isActiveReflexed(spaceState, number) && this.isActive(spaceState, action) ||
+                            this.isActive(spaceState, number) && this.isActiveReflexed(spaceState, action)) &&
+                            (action.type != "A" && action.type != "R" && action.type != "H")) {
+                    let j = 0;
+                    reflexused = true;
+                    while (j < cardsToRemove.length) {
+                        if (cardsEqual(cardsToRemove[j], number) || cardsEqual(cardsToRemove[j], action)) {
+                            tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
+                        } else {
+                            j++;
+                        }
+                    }
+                    if (cardsToRemove.length === this.props.selectCards.length) {
+                        return false;
+                    }
+                    j = 0;
+                    while (j < playedToRecycle.length) {
+                        if (cardsEqual(playedToRecycle[j], number) || cardsEqual(playedToRecycle[j], action)) {
+                            oldPlayed.push(playedToRecycle[j]);
+                        }
+                        j++;
+                    }
+                } else {
+                    return false;
+                }
+            } else if (action != null) {
+                if (this.isActive(spaceState, action) && (action.type === "A" || action.type === "R")) {
+                    let j = 0;
+                    while (j < cardsToRemove.length) {
+                        if (cardsEqual(cardsToRemove[j], action)) {
+                            tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
+                        } else {
+                            j++;
+                        }
+                    }
+                    j = 0;
+                    while (j < playedToRecycle.length) {
+                        if (cardsEqual(playedToRecycle[j], action)) {
+                            oldPlayed.push(playedToRecycle[j]);
+                        }
+                        j++;
+                    }
+                } else if (this.props.gameState === "reflexed" && this.isActiveReflexed(spaceState, action) && (action.type === "A" || action.type === "R")) {
+                    let j = 0;
+                    reflexused = true;
+                    while (j < cardsToRemove.length) {
+                        if (cardsEqual(cardsToRemove[j], action)) {
+                            tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
+                        } else {
+                            j++;
+                        }
+                    }
+                    if (cardsToRemove.length === this.props.selectCards.length) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         }
         this.setState({
             selectedNumberCard: null,
@@ -540,7 +579,7 @@ class Game extends React.Component {
                         gameState: setupcomplete ? "" : "setup"
                     });
                 }
-            } else {
+            } else if (this.props.gameState === "bonusswap" || this.props.gameState === "boardChange") {
                 if (prevState.index === index) {
                     //Selecting already selected deselects
                     this.setState({
@@ -666,7 +705,13 @@ class Game extends React.Component {
         socket.emit("abandonRoom", {
             id: this.props.id,
             user: getCookie()
-        })
+        });
+    }
+
+    nextTurn() {
+        socket.emit('nextPhase', { 
+            id: this.props.id 
+        });
     }
 
     modifyPoints() {
@@ -700,6 +745,8 @@ class Game extends React.Component {
             pid={this.props.pid}
             players={this.props.players}
             points={this.modifyPoints()}
+            id={this.props.id}
+            nextTurn={() => this.nextTurn()}
         />;
         let waiting = <Waiting id={this.props.id} players={this.props.players}/>;
         let showMe = this.props.gameState === "prestart" ? waiting : display;
@@ -772,6 +819,10 @@ var socket = io.connect(connectTo);
         renderGame(localData, socket);
     });
     socket.on('userready', function(data) {
+        Object.assign(localData, data);
+        renderGame(localData, socket);
+    });
+    socket.on('nextTurn', function(data) {
         Object.assign(localData, data);
         renderGame(localData, socket);
     });

@@ -202,12 +202,32 @@ io.on('connection', function(socket) {
             });
         }
     });
+    socket.on('nextPhase', function(data) {
+        let instance = gameInstances[data.id];
+        if (instance.gameState === 'hasteCheck') {
+            instance.gameState = "boardChange";
+        } else if (instance.gameState === 'playCards') {
+            instance.currentPlayer = ((instance.currentPlayer + 1) % instance.players.length);
+            instance.gameState = "hasteCheck";
+        }
+        gameInstances[data.id] = instance;
+        io.to('' + data.id).emit('nextTurn', {
+            gameState: instance.gameState,
+            currentPlayer: instance.currentPlayer
+        });
+    });
     socket.on('boardChange', function(data) {
         let instance = gameInstances[data.id];
         instance.spaces = data.newSpaces;
         instance.colorCounts = data.newCounts;
-        instance.currentPlayer = ((instance.currentPlayer + 1) % instance.players.length);
-        instance.gameState = instance.spaces.includes(null) ? instance.gameState : "";
+        if (instance.gameState === "setup") {
+            instance.currentPlayer = ((instance.currentPlayer + 1) % instance.players.length);
+            if (!instance.spaces.includes(null)) {
+                instance.gameState = "hasteCheck";
+            }
+        } else {
+            instance.gameState = "playCards";
+        }
         gameInstances[data.id] = instance;
         io.to('' + data.id).emit('boardChange', {  
             spaces: instance.spaces,
@@ -220,7 +240,7 @@ io.on('connection', function(socket) {
         let instance = gameInstances[data.id];
         instance.spaces = data.newSpaces;
         instance.colorCounts = data.newCounts;
-        instance.gameState = "";
+        instance.gameState = "boardChange";
         gameInstances[data.id] = instance;
         io.to('' + data.id).emit('boardChange', {  
             spaces: instance.spaces,
