@@ -84,6 +84,7 @@ io.on('connection', function(socket) {
             numDiscarded: 0,
             spaces: Array(7).fill(null),
             colorCounts: colorNames.map(name => ({ color: name, count: 4 })),
+            turn: 0
         };
         let newPublicInstance = {
             creator: data.creator,
@@ -206,9 +207,15 @@ io.on('connection', function(socket) {
         let instance = gameInstances[data.id];
         if (instance.gameState === 'hasteCheck') {
             instance.gameState = "boardChange";
-        } else if (instance.gameState === 'playCards') {
-            instance.currentPlayer = ((instance.currentPlayer + 1) % instance.players.length);
-            instance.gameState = "hasteCheck";
+        } else if (instance.gameState === 'playCards' || instance.gameState === 'reflexed') {
+            instance.turn++;
+            if (instance.turn === instance.players.length * 8) {
+                instance.currentPlayer = null;
+                instance.gameState = "gameover";
+            } else {
+                instance.currentPlayer = ((instance.currentPlayer + 1) % instance.players.length);
+                instance.gameState = "hasteCheck";
+            }
         }
         gameInstances[data.id] = instance;
         io.to('' + data.id).emit('nextTurn', {
@@ -249,16 +256,13 @@ io.on('connection', function(socket) {
         });
     });
     socket.on('discardNormalHand', function(data) {
-        //TODO: Figure out turn order
         let instance = gameInstances[data.id];
-        instance.currentPlayer = ((instance.currentPlayer  + 1) % instance.players.length);
-        instance.gameState = instance.spaces.includes(null) ? instance.gameState : "";
+        instance.gameState = "playCards";
         let tempCards = data.hand.slice();
         socket.emit('boardChange', {
             selectCards: tempCards
         });
         io.to('' + data.id).emit('boardChange', {
-            currentPlayer: instance.currentPlayer,
             gameState: instance.gameState,
 
         });
@@ -274,7 +278,7 @@ io.on('connection', function(socket) {
             selectCards: data.rest.concat(interacted.newCards)
         });
         if (interacted.processCode != null) {
-            instance.gameState = 'discardphase';
+            instance.gameState = 'discardNormal';
             socket.emit('discardphase', {
                 gameState: instance.gameState,
                 processCode: interacted.processCode,

@@ -78,7 +78,7 @@ function PlayedTiles(props) {
 
 class MyHand extends React.Component {
     renderButton() {
-        if (this.props.gameState === 'discardphase') {
+        if (this.props.gameState === 'discardphase' || (this.props.gameState === 'discardNormal' && this.props.myTurn)) {
             return <button onClick={() => this.props.discardClicked()} className={"playbutton"}>{"DiscardTiles"}</button>
         } else {
             return <button disabled={(this.props.gameState === "setup") || !this.props.myTurn} onClick={() => this.props.playClicked()} className={"playbutton"}>{"Play Tiles"}</button>
@@ -249,7 +249,8 @@ class Game extends React.Component {
             rawCards: selectCards,
             cards: cards,
             selectedActionCard: null,
-            selectedNumberCard: null
+            selectedNumberCard: null,
+            playedThisTurn: []
         };
     }
 
@@ -307,7 +308,7 @@ class Game extends React.Component {
                 });
             } else {
                 socket.emit('discardNormalHand', {
-                    hand:cardsToRemove,
+                    hand: cardsToRemove,
                     id: this.props.id
                 });
             }
@@ -323,6 +324,12 @@ class Game extends React.Component {
         let playedToRecycle = this.props.played.slice();
         let cardsToRemove = this.props.selectCards.slice();
         let reflexused = false;
+        let playedThisTurn = this.state.playedThisTurn.slice();
+        for (let i = 0; i < playedThisTurn.length; i++) {
+            if (cardsEqual(playedThisTurn[i].action, action) && cardsEqual(playedThisTurn[i].number, number)) {
+                return false;
+            }
+        }
         if (this.props.gameState === "hasteCheck") {
             if (number === null && action != null && action.type === "H") {
                 if (this.isActive(spaceState, action)) {
@@ -428,9 +435,14 @@ class Game extends React.Component {
                 return false;
             }
         }
+        playedThisTurn.push({
+            action: action,
+            number: number
+        });
         this.setState({
             selectedNumberCard: null,
             selectedActionCard: null,
+            playedThisTurn: playedThisTurn
         });
         socket.emit('cardPlayed', {
             newPlayed: tempPlayed,
@@ -709,6 +721,11 @@ class Game extends React.Component {
     }
 
     nextTurn() {
+        if (this.props.gameState === 'playCards' || this.props.gameState === 'reflexed') {
+            this.setState({
+                playedThisTurn: []
+            })
+        }
         socket.emit('nextPhase', { 
             id: this.props.id 
         });
@@ -866,7 +883,7 @@ function logMeIn(user, pass) {
 }
 
 function cardsEqual(a, b) {
-    return (a != null && b != null && a.one === b.one &&
+    return ((a === null && b === null) || a != null && b != null && a.one === b.one &&
             a.two === b.two &&
             a.three === b.three &&
             a.four === b.four &&
