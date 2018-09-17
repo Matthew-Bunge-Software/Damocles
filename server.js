@@ -84,7 +84,8 @@ io.on('connection', function(socket) {
             numDiscarded: 0,
             spaces: Array(7).fill(null),
             colorCounts: colorNames.map(name => ({ color: name, count: 4 })),
-            turn: 0
+            turn: 0,
+            chat: []
         };
         let newPublicInstance = {
             creator: data.creator,
@@ -104,11 +105,11 @@ io.on('connection', function(socket) {
             selectCards: deck.splice(0, 8),
             gameState: newInstance.gameState,
             players: newInstance.players,
-            chat: [],
+            chat: newInstance.chat,
             played: newInstance.played,
             id: newInstance.id,
             pid: newInstance.players.length - 1,
-            points: newInstance.points
+            points: newInstance.points,
         });
         gameId += 1;
     });
@@ -145,6 +146,14 @@ io.on('connection', function(socket) {
             points: joinedInstance.points
         });
 
+    });
+    socket.on("sendChat", function(data) {
+        let instance = gameInstances[data.id];
+        instance.chat.push({user: data.user, message: data.message});
+        gameInstances[data.id] = instance;
+        io.to('' + data.id).emit("messageSent", {
+            chat: instance.chat
+        });
     });
     socket.on('userreadied', function(data) {
         let instance = gameInstances[data.id];
@@ -297,7 +306,7 @@ io.on('connection', function(socket) {
             });
         } else {
             if (instance.gameState === 'reflexed' && data.reflexused === true) {
-                instance.gameState = '';
+                instance.gameState = 'playCards';
             }
         }
         gameInstances[data.id] = instance;
@@ -438,7 +447,9 @@ function handleCardInteractions(played, oldPlayed, id) {
         }
     } else {
         if (action === "A") { //use opponents revealed
-
+            Object.assign(returnMe, {
+                stateEdit: "A"
+            })
         } else if (action === "R") { //use relative position
             Object.assign(returnMe, {
                 stateEdit: "R"
@@ -447,6 +458,8 @@ function handleCardInteractions(played, oldPlayed, id) {
             Object.assign(returnMe, {
                 stateEdit: "H"
             });
+        } else {
+            console.log("Something went wrong");
         }
     }
     return returnMe;

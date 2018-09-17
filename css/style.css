@@ -95,6 +95,9 @@
 
 .display {
   position: relative;
+  max-width: 900px;
+  display: inline-block;
+  vertical-align: top;
 }
 
 .card {
@@ -209,4 +212,26 @@
 
 .otherHandsPlayed {
   display: block;
+}
+
+#Chat {
+  display: inline-block;
+  vertical-align: top;
+}
+
+#chatBox {
+  overflow: auto;
+  width: 400px;
+  height: 500px;
+  display: block;
+}
+
+.Waiting {
+  display: inline-block;
+  vertical-align: top;
+}
+
+#backbutton {
+  display: inline-block;
+  vertical-align: top;
 }

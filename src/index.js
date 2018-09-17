@@ -1,8 +1,50 @@
-
-
 const NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
 
 const HEPINDEX = NAMES.map(name => name + "hep");
+
+class ChatBox extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+          current: ""
+      }
+    }
+    renderChat() {
+      let chats = [];
+      for (let i = 0; i < this.props.chat.length; i++) {
+        chats.push(<p>{this.props.chat[i].user + ": " + this.props.chat[i].message}</p>);
+      }
+      return chats;
+    }
+    
+    addMessage() {
+        socket.emit("sendChat", {
+            user: getCookie(),
+            id: this.props.id,
+            message: this.state.current
+        })
+        $("#message").val("");
+        this.setState({
+            current: ""
+        })
+    }
+
+    updateInput(e) {
+        this.setState({
+            current: e.target.value
+        });
+    }
+
+    render() {
+        return (<div id="Chat">
+            <div id="chatBox">
+                {this.renderChat()}
+            </div>
+            <input id="message" type="text" onChange={(e) => this.updateInput(e)}></input>
+            <button onClick={() =>  this.addMessage() }>{"Send"}</button>
+        </div>);
+    }
+  }
 
 class Card extends React.Component {
     constructor(props) {
@@ -770,6 +812,7 @@ class Game extends React.Component {
         return (<div id={"game"}>
                     <button id={"backbutton"} type={'button'} onClick={() => this.abandonRoom()}>{"Back"}</button>
                     {showMe}
+                    <ChatBox id={this.props.id} chat={this.props.chat}/>
                 </div>);
     }
 }
@@ -802,6 +845,10 @@ var socket = io.connect(connectTo);
         Object.assign(localData, data);
         renderGame(localData, socket);
     });
+    socket.on('messageSent', function(data) {
+        Object.assign(localData, data);
+        renderGame(localData, socket);
+    });
     socket.on('discardphase', function(data) {
         Object.assign(localData, data);
         renderGame(localData, socket);
@@ -828,6 +875,7 @@ var socket = io.connect(connectTo);
         renderLobby(localData, socket);
     });
     socket.on('lobify', function(data) {
+        localData = {};
         Object.assign(localData, data);
         renderLobby(localData, socket);
     });
@@ -859,6 +907,7 @@ function renderGame(data, socket) {
         players={data.players}
         id={data.id}
         points={data.points}
+        chat={data.chat}
 
         />, document.getElementById("root"));
 }
