@@ -2,10 +2,10 @@ var {colors} = require('./cards');
 var {cards} = require('./cards');
 const { Client } = require('pg');
 
+//Postgres database connection
 const client = new Client({
   connectionString: process.env.DATABASE_URL || "postgres://matthew:cadenza@localhost:5432/tempdb",
 });
-
 client.connect();
 var express = require('express'),
     http = require('http');
@@ -13,12 +13,16 @@ var app = express();
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 
+//Port server runs on
 var port = process.env.PORT || 3000;
 
+//Host the main page
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
+const MIN_PLAYERS = 2;
+//On initial connection
 io.on('connection', function(socket) {
     console.log('a user connected');
     socket.on('refreshCookie', function(data) {
@@ -29,6 +33,7 @@ io.on('connection', function(socket) {
             availableGames: publicInstances
         });
     });
+    //Login via database if available
     socket.on('login', function(data) {
         //const text = 'SELECT * FROM login WHERE username = $1 AND password = $2';
         const text = 'SELECT * FROM login WHERE username = $1';
@@ -40,6 +45,7 @@ io.on('connection', function(socket) {
             }
             if (res.rows.length > 0) {
                 socket.join('lobby');
+                //emit lobby state
                 socket.emit("cookify", {
                     cookie: setCookie(res.rows[0].username),
                     gameState: "lobby",
@@ -62,6 +68,7 @@ io.on('connection', function(socket) {
             }
         });
     });
+    //Create a new game room
     socket.on('roomcreated', function(data) {
         let id = gameId;
         let deck = shuffle(selectCards.slice());
@@ -168,7 +175,7 @@ io.on('connection', function(socket) {
                 break;
             }
         }
-        if (instance.ready === instance.players.length && instance.ready >= 3) {
+        if (instance.ready === instance.players.length && instance.ready >= MIN_PLAYERS) {
             for (let i = 0; i < publicInstances.length; i++) {
                 if (publicInstances[i].id === data.id) {
                     publicInstances.splice(i, 1);

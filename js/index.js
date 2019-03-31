@@ -372,10 +372,11 @@ Game = function (_React$Component8) {_inherits(Game, _React$Component8);
                     return false;
                 }
             }
-            if (this.props.gameState === "hasteCheck") {
+            if (this.props.gameState === "hasteCheck") {//Only haste can be played
                 if (number === null && action != null && action.type === "H") {
                     if (this.isActive(spaceState, action)) {
                         var j = 0;
+                        // Search Hand
                         while (j < cardsToRemove.length) {
                             if (cardsEqual(cardsToRemove[j], number) || cardsEqual(cardsToRemove[j], action)) {
                                 tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
@@ -384,6 +385,7 @@ Game = function (_React$Component8) {_inherits(Game, _React$Component8);
                             }
                         }
                         j = 0;
+                        // Search Played
                         while (j < playedToRecycle.length) {
                             if (cardsEqual(playedToRecycle[j], number) || cardsEqual(playedToRecycle[j], action)) {
                                 oldPlayed.push(playedToRecycle[j]);
@@ -396,7 +398,8 @@ Game = function (_React$Component8) {_inherits(Game, _React$Component8);
                 } else {
                     return false;
                 }
-            } else {
+            } else {// Anything can be played
+                //TODO: Make haste playable but have it not do anything
                 if (number != null && action != null) {
                     if (this.isActive(spaceState, number) && this.isActive(spaceState, action) && action.type != "A" && action.type != "R" && action.type != "H") {
                         var _j = 0;
@@ -1023,6 +1026,7 @@ Lobby = function (_React$Component9) {_inherits(Lobby, _React$Component9);
                 React.createElement("div", { id: "newroommaxplayerdiv" },
                     React.createElement("label", { id: "maxplayer" }, "MAX PLAYERS"),
                     React.createElement("select", _defineProperty({ id: "playeroptions", onChange: function onChange(e) {return _this23.selectChange(e);} }, "id", "max_val"),
+                        React.createElement("option", { value: "2" }, "2"),
                         React.createElement("option", { value: "3" }, "3"),
                         React.createElement("option", { value: "4" }, "4"),
                         React.createElement("option", { value: "5" }, "5"),
