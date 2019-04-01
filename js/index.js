@@ -820,8 +820,8 @@ Game = function (_React$Component8) {_inherits(Game, _React$Component8);
         } }]);return Game;}(React.Component);
 
 
-//var connectTo = 'https://damoclesgame.herokuapp.com';
-var connectTo = 'http://localhost:3000';
+var connectTo = 'https://damoclesgame.herokuapp.com';
+//var connectTo = 'http://localhost:3000';
 var socket = io.connect(connectTo);
 
 var currentCookie = getCookie();
