@@ -16,9 +16,11 @@ var io = require('socket.io').listen(server);
 //Port server runs on
 var port = process.env.PORT || 3000;
 
+app.use("/css", express.static('./css/'));
+app.use("/js", express.static('./js/'));
 //Host the main page
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/blueberry.html');
+  res.sendFile(__dirname + '/index.html');
 });
 
 const MIN_PLAYERS = 2;
