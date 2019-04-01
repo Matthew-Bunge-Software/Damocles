@@ -18,7 +18,7 @@ var port = process.env.PORT || 3000;
 
 //Host the main page
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/blueberry.html');
 });
 
 const MIN_PLAYERS = 2;
