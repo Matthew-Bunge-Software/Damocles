@@ -527,7 +527,7 @@ Game = function (_React$Component8) {_inherits(Game, _React$Component8);
                     break;
                 }
             }
-            if (this.props.gameState === 'discardphase') {
+            if (this.props.gameState === 'discardphase' || this.props.gameState === 'discardNormal') {
                 var tempDiscard = this.state.queuedForDiscard.slice();
                 if (selectCardsIndex >= selectCards.length - accessable) {
                     var found = false;
@@ -816,7 +816,7 @@ Game = function (_React$Component8) {_inherits(Game, _React$Component8);
                 , cards: this.state.cards //[<Cards>]
                 , played: this.state.played //[<Cards>]
                 , playClicked: function playClicked() {return _this20.handlePlayClick();} //function
-                , dicardCount: this.props.discardCount,
+                , discardCount: this.props.discardCount,
                 discardClicked: function discardClicked() {return _this20.handleDiscardClick();},
                 myTurn: this.props.pid === this.props.currentPlayer,
                 gameState: this.props.gameState,
