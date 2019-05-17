@@ -88,7 +88,19 @@ Card = function (_React$Component2) {_inherits(Card, _React$Component2);
 
 
 function Header(props) {
-    var myTurn = props.myTurn ? "My turn" : "Not my turn";
+    var myTurn = "";
+    switch (props.gameState) {
+        case "discardphase":
+        case "discardNormal":
+            myTurn = "Please discard " + props.discardCount + " cards";
+            break;
+        case "standby":
+            myTurn = "Waiting for other players";
+            break;
+        default:
+            myTurn = props.myTurn ? "My turn" : "Not my turn";
+            break;}
+
     return React.createElement("p", null, myTurn);
 }var
 
@@ -257,7 +269,11 @@ Display = function (_React$Component7) {_inherits(Display, _React$Component7);fu
             return (
                 React.createElement("div", { className: "display" },
                     this.renderOtherHands(),
-                    React.createElement(Header, { myTurn: this.props.myTurn }),
+                    React.createElement(Header, { myTurn: this.props.myTurn,
+                        gameState: this.props.gameState,
+                        discardCount: this.props.discardCount }),
+
+
                     this.renderSelector(),
                     React.createElement(Board, {
                         onClick: function onClick(i, j) {return _this15.props.boardClick(i, j);},
@@ -800,7 +816,8 @@ Game = function (_React$Component8) {_inherits(Game, _React$Component8);
                 , cards: this.state.cards //[<Cards>]
                 , played: this.state.played //[<Cards>]
                 , playClicked: function playClicked() {return _this20.handlePlayClick();} //function
-                , discardClicked: function discardClicked() {return _this20.handleDiscardClick();},
+                , dicardCount: this.props.discardCount,
+                discardClicked: function discardClicked() {return _this20.handleDiscardClick();},
                 myTurn: this.props.pid === this.props.currentPlayer,
                 gameState: this.props.gameState,
                 allPlayed: allPlayed,
@@ -968,7 +985,7 @@ Lobby = function (_React$Component9) {_inherits(Lobby, _React$Component9);
         props));
         _this21.state = {
             available: [],
-            selected: 3,
+            selected: 2,
             name: null };return _this21;
 
     }_createClass(Lobby, [{ key: "selectChange", value: function selectChange(
