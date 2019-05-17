@@ -88,7 +88,19 @@ class Card extends React.Component {
 }
 
 function Header(props) {
-    let myTurn = props.myTurn ? "My turn" : "Not my turn";
+    let myTurn = "";
+    switch (props.gameState) {
+        case "discardphase":
+        case "discardNormal":
+            myTurn = "Please discard " + props.discardCount + " cards"
+            break;
+        case "standby":
+            myTurn = "Waiting for other players";
+            break;
+        default: 
+            myTurn = props.myTurn ? "My turn" : "Not my turn";
+            break;
+    }
     return <p>{myTurn}</p>
 }
 
@@ -257,7 +269,11 @@ class Display extends React.Component {
         return (
             <div className="display">
                 {this.renderOtherHands()}
-                <Header myTurn={this.props.myTurn}/>
+                <Header myTurn={this.props.myTurn}
+                        gameState={this.props.gameState}
+                        discardCount={this.props.discardCount}
+
+                />
                 {this.renderSelector()}
                 <Board
                     onClick={(i, j) => this.props.boardClick(i, j)}
@@ -800,6 +816,7 @@ class Game extends React.Component {
             cards={this.state.cards} //[<Cards>]
             played={this.state.played}//[<Cards>]
             playClicked={() => this.handlePlayClick()} //function
+            dicardCount={this.props.discardCount}
             discardClicked={() => this.handleDiscardClick()}
             myTurn={this.props.pid === this.props.currentPlayer}
             gameState={this.props.gameState}
@@ -968,7 +985,7 @@ class Lobby extends React.Component {
       super(props);
       this.state = {
         available: [],
-        selected: 3,
+        selected: 2,
         name: null
       }
     }

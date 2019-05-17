@@ -198,7 +198,7 @@ const CARDS = [
         one: gold,
         three: gold
     },
-    {
+    /* {
         type: conquer,
         one: green,
         two: blue
@@ -222,7 +222,7 @@ const CARDS = [
         type: conquer,
         one: gold,
         two: green
-    },
+    }, */
     {
         type: haste,
         one: gold,
