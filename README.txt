@@ -1,1 +1,1 @@
-Implementation of an original board game designed by Joseph Mohammed, a moran.
+Implementation of an original board game designed by Joseph Mohammed, a moranic moran.
