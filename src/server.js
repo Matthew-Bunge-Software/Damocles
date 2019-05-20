@@ -1,6 +1,7 @@
-var {colors} = require('./cards');
-var {cards} = require('./cards');
+var {colors} = require('../cards');
+var {cards} = require('../cards');
 const { Client } = require('pg');
+var path = require('path');
 
 //Postgres database connection
 const client = new Client({
@@ -16,11 +17,11 @@ var io = require('socket.io').listen(server);
 //Port server runs on
 var port = process.env.PORT || 3000;
 
-app.use("/css", express.static('./css/'));
-app.use("/js", express.static('./js/'));
+app.use("/css", express.static(path.resolve(__dirname + '/../css/')));
+app.use("/src", express.static('./src/'));
 //Host the main page
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(path.resolve(__dirname + ('/../index.html')));
 });
 
 const MIN_PLAYERS = 2;

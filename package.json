@@ -1,7 +1,6 @@
 {
   "name": "damocles",
   "version": "1.0.0",
-  "description": "A Pen created at CodePen.io. You can find this one at https://codepen.io/mattb555/pen/LBqZLK.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
