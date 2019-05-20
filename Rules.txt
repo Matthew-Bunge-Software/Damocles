@@ -1,0 +1,78 @@
+DAMOCLES
+
+--OVERVIEW--
+
+For between 2-6 players. Players take turns manipulating a central circle containing seven tokens. The tokens resemble five of the Greek gods:
+Hades (red), Poseidon (blue), Artemis (green), Demeter (gold) and Nyx (black). Players also own tiles called codices. The codices become
+active when the position of the tokens on the codex match the position present in the central circle. Codices have different functions, but
+all are concerned with the generation of more codices. When a codex is successfully played, the number of pips is counted and added to the
+player's score. The game ends after each player has made ten turns. The player with the highest score wins and seizes control of Damocles,
+allowing them to rule and subjugate Earth with an iron fist.
+
+--SETUP MECHANICS--
+
+1. Deal eight codices to all players. Each player discards two codices. Each player begins the game with six codices.
+2. Each player takes turns placing a token in the central circle until the circle is filled. The first cycle begins with the turn of the next
+player upon the central circle being filled. The game lasts ten complete cycles.
+
+--TURN MECHANICS--
+
+1. Play Haste, if available.
+2. Perform one (two with Haste) internal or external swap on the central circle. An internal swap is an exchange between two tokens currently
+in the central circle. An external swap is an exchange between one token currently in the central circle and one token in an external bank.
+The external bank contains four of each type of token.
+3. Play Manipulaton codices (except Haste), if available. Enact the effects of these codices.
+4. Play other codices.
+5. Discard all consumable codices that were played.
+
+--SCORING--
+
+Each codex is worth the number of pips on the codex. For example, Nyx (1,3) is worth two points. Generate, Combust, and Oracle codices are 
+worth three points. One/Two/Three codices are worth 2/3/4 points, respectively. Haste codices are worth one point. Reflex and Annex codices 
+are worth two points. Lyse, Sacrifice, and Eviscerate (all future additions) are worth 3/4/5 points, respectively. Codices are scored upon
+their initial play; they cannot be scored twice.
+
+--CODEX TYPES--
+
+Symbols: Generate (G), Combust (C), Oracle (O), 1/2/3, Haste (H), Reflex (R), [Annex (A), Lyse (L), Sacrifice (S), Eviscerate (E)] (future)
+
+Definitions: 
+Permanent: Presence throughout the game is unaffected by whether it is played or activated.
+Consumed: Upon initial play, the codex is immediately discarded, not to be used again.
+
+Generate - A Production type codex. Permanent. Playing this simultaneously with a Number type codex grants the player N codices, where N is 
+determined by the Number codex played. Cannot be played alone. Can be played more than once per turn if multiple Number codices are valid.
+
+Combust - A Production type codex. Consumed. Playing this simultaneously with a Number type codex grants the player N + 1 codices, where N 
+is determined by the Number codex played. The Combust codex is scored, then discarded and may not be used again. Cannot be played alone.
+
+Oracle - A Production type codex. Permanent. Playing this simultaneously with a Number type codex grants the player N + 2 codices, from which
+the player must choose N to keep and two to discard. Cannot be played alone. Can be played more than once per turn if multiple Number codices
+are valid.
+
+1/2/3 - Number type codices. Permanent. Playing these simultaneously with Production type codices grants the player N codices, defined by the
+value of the Number codex. Can be played more than once per turn if multiple Production codices are valid.
+
+Haste - A Manipulaton type codex. Consumed. If Haste is played prior to any other action on a player's turn, that player may perform two
+internal or external swaps instead of one. The Haste codex is then discarded, not to be used again. After performing two swaps, the player
+may play other codices. Haste may be played after swapping, but this is generally inferior as this confers no extra swap bonus and only makes
+sense to do if the player has multiple Hastes with limited turns remaining. Hastes do not stack.
+
+Reflex - A Manipulaton type codex. Consumed. After swapping, Reflex may be played. Reflex allows one subsequent codex of any type to be played
+ignoring any blank space indicated by the codex. For example, a One Number codex of Demeter (1,4) may be played if the central board state is
+Demeter (1,2) or Demeter (1,3). Number and Production codices still must be played in conjunction, but other codices (such as additional
+Reflex codices, Annex, or future codices) may also be played with this qualifier. After use, the Reflex codex is then discarded.
+
+Annex (unused) - A Manipulaton type codex. Consumed. After swapping, Annex may be played. Annex allows the player to use an opponent's played
+Production or Number codex in conjunction with their own codex, facilitating playing of a codex. For example, Annex allows a player to play
+a Combust Production codex of [Hades (1), Nyx (3,6)] using an opponent's One Number codex of Hades (1,4) rather than one's own Number codex.
+Annex codices do not stack.
+
+Lyse (future) - A Destruction type codex. Consumed. After swapping, Lyse may be played. Lyse allows the player to destroy one of each 
+opponent's played codices.
+
+Sacrifice (future) - A Destruction type codex. Consumed. After swapping, Sacrifice may be played. The player selects a played Codex to
+discard, then destroys two of each opponent's played codices.
+
+Eviscerate (future) - A Destruction type codex. Consumed. After swapping, Eviscerate may be played. Eviscerate allows the player to destroy 
+two of each opponent's played codices.
