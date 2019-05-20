@@ -18,6 +18,7 @@ var io = require('socket.io').listen(server);
 var port = process.env.PORT || 3000;
 
 app.use("/css", express.static(path.resolve(__dirname + '/../css/')));
+app.use("/static", express.static(path.resolve(__dirname + '/../static/')));
 app.use("/src", express.static('./src/'));
 //Host the main page
 app.get('/', function(req, res){
