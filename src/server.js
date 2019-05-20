@@ -401,7 +401,7 @@ function setCookie(user) {
     var d = new Date();
     d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
     var expires = "expires=" + d.toUTCString();
-    return ("Damocles=" + user + ", " + expires + ", path=/");
+    return ("Damocles=" + user + "; " + expires + "; path=/");
 }
 
 function handleCardInteractions(played, oldPlayed, id) {
