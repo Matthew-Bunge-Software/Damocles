@@ -4,10 +4,10 @@ const { Client } = require('pg');
 var path = require('path');
 
 //Postgres database connection
-const client = new Client({
+/* const client = new Client({
   connectionString: process.env.DATABASE_URL || "postgres://matthew:cadenza@localhost:5432/tempdb",
 });
-client.connect();
+client.connect(); */
 var express = require('express'),
     http = require('http');
 var app = express();
@@ -39,37 +39,13 @@ io.on('connection', function(socket) {
     });
     //Login via database if available
     socket.on('login', function(data) {
-        //const text = 'SELECT * FROM login WHERE username = $1 AND password = $2';
-        const text = 'SELECT * FROM login WHERE username = $1';
-        //const values = [data.username, data.password];
+
         const values = [data.username];
-        client.query(text, values, (err, res) => {
-            if (err) {
-                console.log(err.stack);
-            }
-            if (res.rows.length > 0) {
-                socket.join('lobby');
-                //emit lobby state
-                socket.emit("cookify", {
-                    cookie: setCookie(res.rows[0].username),
-                    gameState: "lobby",
-                    availableGames: publicInstances
-                });
-            } else {
-                const textTwo = 'INSERT INTO login (username, password, email) VALUES ($1, $1, $1)';
-                client.query(textTwo, values, (err, res) => {
-                    if (err) {
-                        console.log(err.stack);
-                    } else {
-                        socket.join('lobby');
-                        socket.emit("cookify", {
-                            cookie: setCookie(data.username),
-                            gameState: "lobby",
-                            availableGames: publicInstances
-                        });
-                    }
-                });
-            }
+        socket.join('lobby');
+        socket.emit("cookify", {
+            cookie: setCookie(values[0]),
+            gameState: "lobby",
+            availableGames: publicInstances
         });
     });
     //Create a new game room
