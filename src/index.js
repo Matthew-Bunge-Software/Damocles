@@ -173,7 +173,7 @@ function Board(props) {
             className={"dot " + color + " " + HEPINDEX[index]}
             key={index}
             onClick={() => props.onClick(color, index)}
-        >{}</button>
+        >{'BANQUET'.charAt(index)}</button>
     ));
     return <ul className="board">{listBoard}</ul>;
 }
