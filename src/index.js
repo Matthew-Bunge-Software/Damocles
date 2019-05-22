@@ -722,9 +722,12 @@ class Game extends React.Component {
     }
 
     isActive(newState, name) {
-        let rotation = newState.slice();
-        let nameSpaces = name.spaces.slice();
-        return this.arraysAreRotations(nameSpaces, rotation);
+        if (name.spaces != null && newState != null) {
+            let rotation = newState.slice();
+            let nameSpaces = name.spaces.slice();
+            return this.arraysAreRotations(nameSpaces, rotation);
+        }
+        return false;
     }
 
     isActiveReflexed(newState, name) {
@@ -967,7 +970,7 @@ function cardsEqual(a, b) {
 function getCookie() {
     var name = "Damocles=";
     var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(",");
+    var ca = decodedCookie.split(";");
     for(var i = 0; i < ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0) == ' ') {

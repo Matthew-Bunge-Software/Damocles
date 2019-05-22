@@ -4,10 +4,10 @@ const { Client } = require('pg');
 var path = require('path');
 
 //Postgres database connection
-const client = new Client({
+/* const client = new Client({
   connectionString: process.env.DATABASE_URL || "postgres://matthew:cadenza@localhost:5432/tempdb",
 });
-client.connect();
+client.connect(); */
 var express = require('express'),
     http = require('http');
 var app = express();
@@ -18,6 +18,7 @@ var io = require('socket.io').listen(server);
 var port = process.env.PORT || 3000;
 
 app.use("/css", express.static(path.resolve(__dirname + '/../css/')));
+app.use("/static", express.static(path.resolve(__dirname + '/../static/')));
 app.use("/src", express.static('./src/'));
 //Host the main page
 app.get('/', function(req, res){
@@ -38,37 +39,13 @@ io.on('connection', function(socket) {
     });
     //Login via database if available
     socket.on('login', function(data) {
-        //const text = 'SELECT * FROM login WHERE username = $1 AND password = $2';
-        const text = 'SELECT * FROM login WHERE username = $1';
-        //const values = [data.username, data.password];
+
         const values = [data.username];
-        client.query(text, values, (err, res) => {
-            if (err) {
-                console.log(err.stack);
-            }
-            if (res.rows.length > 0) {
-                socket.join('lobby');
-                //emit lobby state
-                socket.emit("cookify", {
-                    cookie: setCookie(res.rows[0].username),
-                    gameState: "lobby",
-                    availableGames: publicInstances
-                });
-            } else {
-                const textTwo = 'INSERT INTO login (username, password, email) VALUES ($1, $1, $1)';
-                client.query(textTwo, values, (err, res) => {
-                    if (err) {
-                        console.log(err.stack);
-                    } else {
-                        socket.join('lobby');
-                        socket.emit("cookify", {
-                            cookie: setCookie(data.username),
-                            gameState: "lobby",
-                            availableGames: publicInstances
-                        });
-                    }
-                });
-            }
+        socket.join('lobby');
+        socket.emit("cookify", {
+            cookie: setCookie(values[0]),
+            gameState: "lobby",
+            availableGames: publicInstances
         });
     });
     //Create a new game room
@@ -77,18 +54,31 @@ io.on('connection', function(socket) {
         let deck = shuffle(selectCards.slice());
         let creator = data.creator;
         let players = [];
-        players.push({ name: creator, ready: false });
+        let maxPlayers = data.players;
         let played = [];
+        let points = [0];
+        let ready = 0;
+        if (data.name === "p555test") {
+            players.push({ name: 'B-9', ready: true});
+            played.push(deck.splice(0, 8));
+            points.push(0);
+            players.push({ name: 'The Iron Giant', ready: true});
+            played.push(deck.splice(0, 8));
+            points.push(0);
+            ready = 2;
+            maxPlayers = 3;
+        }
         played.push([]);
+        players.push({ name: creator, ready: false });
         let newInstance = {
             creator: data.creator,
             name: data.name,
-            maxPlayers: data.players,
+            maxPlayers: maxPlayers,
             id: gameId,
             deck: deck,
             players: players,
-            ready: 0,
-            points: [0],
+            ready: ready,
+            points: points,
             gameState: "prestart",
             played: played,
             numDiscarded: 0,
@@ -101,7 +91,7 @@ io.on('connection', function(socket) {
             creator: data.creator,
             name: data.name,
             maxPlayers: data.players,
-            currentPlayers: 1,
+            currentPlayers: players.length,
             id: gameId
         };
         gameInstances[id] = newInstance;
@@ -401,7 +391,7 @@ function setCookie(user) {
     var d = new Date();
     d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
     var expires = "expires=" + d.toUTCString();
-    return ("Damocles=" + user + ", " + expires + ", path=/");
+    return ("Damocles=" + user + "; " + expires + "; path=/");
 }
 
 function handleCardInteractions(played, oldPlayed, id) {
