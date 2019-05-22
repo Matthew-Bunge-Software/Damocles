@@ -54,18 +54,31 @@ io.on('connection', function(socket) {
         let deck = shuffle(selectCards.slice());
         let creator = data.creator;
         let players = [];
-        players.push({ name: creator, ready: false });
+        let maxPlayers = data.players;
         let played = [];
+        let points = [0];
+        let ready = 0;
+        if (data.name === "p555test") {
+            players.push({ name: 'B-9', ready: true});
+            played.push(deck.splice(0, 8));
+            points.push(0);
+            players.push({ name: 'The Iron Giant', ready: true});
+            played.push(deck.splice(0, 8));
+            points.push(0);
+            ready = 2;
+            maxPlayers = 3;
+        }
         played.push([]);
+        players.push({ name: creator, ready: false });
         let newInstance = {
             creator: data.creator,
             name: data.name,
-            maxPlayers: data.players,
+            maxPlayers: maxPlayers,
             id: gameId,
             deck: deck,
             players: players,
-            ready: 0,
-            points: [0],
+            ready: ready,
+            points: points,
             gameState: "prestart",
             played: played,
             numDiscarded: 0,
@@ -78,7 +91,7 @@ io.on('connection', function(socket) {
             creator: data.creator,
             name: data.name,
             maxPlayers: data.players,
-            currentPlayers: 1,
+            currentPlayers: players.length,
             id: gameId
         };
         gameInstances[id] = newInstance;

@@ -722,9 +722,12 @@ class Game extends React.Component {
     }
 
     isActive(newState, name) {
-        let rotation = newState.slice();
-        let nameSpaces = name.spaces.slice();
-        return this.arraysAreRotations(nameSpaces, rotation);
+        if (name.spaces != null && newState != null) {
+            let rotation = newState.slice();
+            let nameSpaces = name.spaces.slice();
+            return this.arraysAreRotations(nameSpaces, rotation);
+        }
+        return false;
     }
 
     isActiveReflexed(newState, name) {
@@ -837,8 +840,8 @@ class Game extends React.Component {
     }
 }
 
-var connectTo = 'https://damoclesgame.herokuapp.com';
-//var connectTo = 'http://localhost:3000';
+//var connectTo = 'https://damoclesgame.herokuapp.com';
+var connectTo = 'http://localhost:3000';
 var socket = io.connect(connectTo);
 
     let currentCookie = getCookie();
