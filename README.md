@@ -2,7 +2,7 @@
 An original multiplayer game designed by Joe Mohammed.
 
 
-##
+## Dev
 Requires node. For running local server the command is
 ```
 node src/server.js
