@@ -5,9 +5,9 @@ An original multiplayer game designed by Joe Mohammed.
 ## Dev
 Requires node. For running local server the command is
 ```
-node src/server.js
+node run dev
 ```
-The local server is hosted at localhost:3000.
+The hot front end server is hosted at localhost:8080.
 
 
 Local dev server currently only for visual improvements as no AI to play the game.

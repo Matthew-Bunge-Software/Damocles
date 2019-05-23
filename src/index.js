@@ -1,3 +1,5 @@
+const gameStates = require("./gameStates.js");
+
 const NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
 
 const HEPINDEX = NAMES.map(name => name + "hep");
@@ -90,7 +92,7 @@ class Card extends React.Component {
 function Header(props) {
     let myTurn = "";
     switch (props.gameState) {
-        case "discardphase":
+        case gameStates.initialDiscard:
         case "discardNormal":
             myTurn = "Please discard " + props.discardCount + " cards"
             break;
@@ -132,7 +134,7 @@ function PlayedTiles(props) {
 
 class MyHand extends React.Component {
     renderButton() {
-        if (this.props.gameState === 'discardphase' || (this.props.gameState === 'discardNormal' && this.props.myTurn)) {
+        if (this.props.gameState === gameStates.initialDiscard || (this.props.gameState === 'discardNormal' && this.props.myTurn)) {
             return <button onClick={() => this.props.discardClicked()} className={"playbutton"}>{"DiscardTiles"}</button>
         } else {
             return <button disabled={(this.props.gameState === "setup") || !this.props.myTurn} onClick={() => this.props.playClicked()} className={"playbutton"}>{"Play Tiles"}</button>
@@ -140,7 +142,7 @@ class MyHand extends React.Component {
     }
 
     renderDiscard() {
-        return <button disabled={(!this.props.myTurn || this.props.gameState === "setup" || this.props.gameState === "discardphase")} onClick={() => this.props.nextTurn() }>{ "Finish Turn" }</button>
+        return <button disabled={(!this.props.myTurn || this.props.gameState === "setup" || this.props.gameState === gameStates.initialDiscard)} onClick={() => this.props.nextTurn() }>{ "Finish Turn" }</button>
     }
 
     render() {
@@ -388,7 +390,7 @@ class Game extends React.Component {
                 return false;
             }
         }
-        if (this.props.gameState === "hasteCheck") { //Only haste can be played
+        if (this.props.gameState === gameStates.hasteCheck) { //Only haste can be played
             if (number === null && action != null && action.type === "H") {
                 if (this.isActive(spaceState, action)) {
                     let j = 0;
@@ -433,7 +435,7 @@ class Game extends React.Component {
                         }
                         j++;
                     }
-                } else if (this.props.gameState === "reflexed" && 
+                } else if (this.props.gameState === gameStates.reflexed && 
                             (this.isActiveReflexed(spaceState, number) && this.isActive(spaceState, action) ||
                             this.isActive(spaceState, number) && this.isActiveReflexed(spaceState, action)) &&
                             (action.type != "A" && action.type != "R" && action.type != "H")) {
@@ -476,7 +478,7 @@ class Game extends React.Component {
                         }
                         j++;
                     }
-                } else if (this.props.gameState === "reflexed" && this.isActiveReflexed(spaceState, action) && (action.type === "A" || action.type === "R")) {
+                } else if (this.props.gameState === gameStates.reflexed && this.isActiveReflexed(spaceState, action) && (action.type === "A" || action.type === "R")) {
                     let j = 0;
                     reflexused = true;
                     while (j < cardsToRemove.length) {
@@ -527,7 +529,7 @@ class Game extends React.Component {
                 break;
             }
         }
-        if (this.props.gameState === 'discardphase' || this.props.gameState === 'discardNormal') {
+        if (this.props.gameState === gameStates.initialDiscard || this.props.gameState === 'discardNormal') {
             let tempDiscard = this.state.queuedForDiscard.slice();
             if (selectCardsIndex >= selectCards.length - accessable) {
                 let found = false;
@@ -569,7 +571,7 @@ class Game extends React.Component {
                         let active = "";
                         if (this.isActive(this.props.spaces, name)) {
                             active = "active";
-                        } else if ((this.props.gameState === "reflexed" && this.props.currentPlayer === this.props.pid) && this.isActiveReflexed(this.props.spaces, name)) {
+                        } else if ((this.props.gameState === gameStates.reflexed && this.props.currentPlayer === this.props.pid) && this.isActiveReflexed(this.props.spaces, name)) {
                             active = "activeReflexed";
                         }
                         let selected = (cardsEqual(name, newSelected) || cardsEqual(name, this.state.selectedActionCard)) ? "selectedCard" : "";
@@ -589,7 +591,7 @@ class Game extends React.Component {
                         let active = "";
                         if (this.isActive(this.props.spaces, name)) {
                             active = "active";
-                        } else if ((this.props.gameState === "reflexed" && this.props.currentPlayer === this.props.pid) && this.isActiveReflexed(this.props.spaces, name)) {
+                        } else if ((this.props.gameState === gameStates.reflexed && this.props.currentPlayer === this.props.pid) && this.isActiveReflexed(this.props.spaces, name)) {
                             active = "activeReflexed";
                         }
                         let selected = (cardsEqual(name, newSelected) || cardsEqual(name, this.state.selectedNumberCard)) ? "selectedCard" : "";
@@ -652,7 +654,7 @@ class Game extends React.Component {
                         gameState: setupcomplete ? "" : "setup"
                     });
                 }
-            } else if (this.props.gameState === "bonusswap" || this.props.gameState === "boardChange") {
+            } else if (this.props.gameState === gameStates.hasted || this.props.gameState === gameStates.swapBoard) {
                 if (prevState.index === index) {
                     //Selecting already selected deselects
                     this.setState({
@@ -676,7 +678,7 @@ class Game extends React.Component {
                             newCounts[j].count++;
                         }
                     }
-                    let emitCheck = this.props.gameState === 'bonusswap' ? 'bonusswap' : 'boardChange';
+                    let emitCheck = this.props.gameState === gameStates.hasted ? 'bonusswap' : 'boardChange';
                     socket.emit(emitCheck, {newSpaces: newSpaces, newCounts: newCounts, id: this.props.id});
                     this.setState({
                         selectedColor: null,
@@ -689,7 +691,7 @@ class Game extends React.Component {
                     let temp = newSpaces[index];
                     newSpaces[index] = newSpaces[prevState.index];
                     newSpaces[prevState.index] = temp;
-                    let emitCheck = this.props.gameState === 'bonusswap' ? 'bonusswap' : 'boardChange';
+                    let emitCheck = this.props.gameState === gameStates.hasted ? 'bonusswap' : 'boardChange';
                     socket.emit(emitCheck, {newSpaces: newSpaces, newCounts: this.props.colorCounts, id: this.props.id});
                     this.setState({
                         selectColor: null,
@@ -713,7 +715,7 @@ class Game extends React.Component {
             let active = "";
             if (this.isActive(newState, name)) {
                 active = "active";
-            } else if ((this.props.gameState === "reflexed" && this.props.currentPlayer === this.props.pid) && this.isActiveReflexed(newState, name)) {
+            } else if ((this.props.gameState === gameStates.reflexed && this.props.currentPlayer === this.props.pid) && this.isActiveReflexed(newState, name)) {
                 active = "activeReflexed";
             }
             let selected = (cardsEqual(this.state.selectedActionCard, name) || cardsEqual(this.state.selectedNumberCard, name)) ? "selectedCard" : "";
@@ -785,7 +787,7 @@ class Game extends React.Component {
     }
 
     nextTurn() {
-        if (this.props.gameState === 'playCards' || this.props.gameState === 'reflexed') {
+        if (this.props.gameState === 'playCards' || this.props.gameState === gameStates.reflexed) {
             this.setState({
                 playedThisTurn: []
             })
@@ -831,7 +833,7 @@ class Game extends React.Component {
             nextTurn={() => this.nextTurn()}
         />;
         let waiting = <Waiting id={this.props.id} players={this.props.players}/>;
-        let showMe = this.props.gameState === "prestart" ? waiting : display;
+        let showMe = this.props.gameState === gameStates.preGameLobby ? waiting : display;
         return (<div id={"game"}>
                     <button id={"backbutton"} type={'button'} onClick={() => this.abandonRoom()}>{"Back"}</button>
                     {showMe}

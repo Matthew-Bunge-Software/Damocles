@@ -779,7 +779,7 @@ class Game extends React.Component {
     let lobby = <Lobby
                   onClick={() => this.startGame()}
                   />;
-    let showMe = this.state.gameState === "lobby" ? lobby : display;
+    let showMe = this.state.gameState === gameStates.mainLobby ? lobby : display;
     return (showMe);
   }
 }
