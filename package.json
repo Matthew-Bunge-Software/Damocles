@@ -4,7 +4,6 @@
   "main": "src/index.js",
   "scripts": {
     "start": "webpack --mode production && node src/server",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "concurrently \"nodemon --exec babel-node src/server.js\" \"webpack-dev-server --mode development --hot"
   },
   "author": "",

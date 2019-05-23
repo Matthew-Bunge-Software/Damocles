@@ -1,7 +1,8 @@
 module.exports = {
     entry: "./src/index.js",
     output: {
-        filename: 'bundle-index.js'
+        filename: 'bundle-index.js',
+        publicPath: '/dist/'
     },
     devServer: {
         watchContentBase: true
