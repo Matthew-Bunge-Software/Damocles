@@ -1,4 +1,5 @@
 const gameStates = require("./gameStates.js");
+const courrier = require("./courrier.js");
 
 const NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
 
@@ -129,20 +130,39 @@ class OtherHands extends React.Component {
 }
 
 function PlayedTiles(props) {
-    return <div className="playedtiles">{props.played}</div>;
+    return <div className="playedtiles">
+                {props.played}
+            </div>;
 }
 
 class MyHand extends React.Component {
     renderButton() {
-        if (this.props.gameState === gameStates.initialDiscard || (this.props.gameState === 'discardNormal' && this.props.myTurn)) {
-            return <button onClick={() => this.props.discardClicked()} className={"playbutton"}>{"DiscardTiles"}</button>
+        if (discardValid(this.props.gameState, this.props.myTurn)) {
+            return <button
+                        onClick={() => this.props.discardClicked()} 
+                        className={"playbutton"}>
+                        
+                        {"Discard Tiles"}
+                    </button>
         } else {
-            return <button disabled={(this.props.gameState === "setup") || !this.props.myTurn} onClick={() => this.props.playClicked()} className={"playbutton"}>{"Play Tiles"}</button>
+            return <button 
+                        disabled={(this.props.gameState === "setup") || !this.props.myTurn} 
+                        onClick={() => this.props.playClicked()} 
+                        className={"playbutton"}>
+                        
+                        {"Play Tiles"}
+                    </button>
         }
     }
 
     renderDiscard() {
-        return <button disabled={(!this.props.myTurn || this.props.gameState === "setup" || this.props.gameState === gameStates.initialDiscard)} onClick={() => this.props.nextTurn() }>{ "Finish Turn" }</button>
+        // TODO: Differentiate Finish Turn and Next Phases
+        return <button 
+                    disabled={(!this.props.myTurn || this.props.gameState === "setup" || this.props.gameState === gameStates.initialDiscard)} 
+                    onClick={() => this.props.nextTurn() }>
+                    
+                    { "Finish Turn" }
+                </button>
     }
 
     render() {
@@ -175,7 +195,9 @@ function Board(props) {
             className={"dot " + color + " " + HEPINDEX[index]}
             key={index}
             onClick={() => props.onClick(color, index)}
-        >{'BANQUET'.charAt(index)}</button>
+        >
+        
+        {'BANQUET'.charAt(index)}</button>
     ));
     return <ul className="board">{listBoard}</ul>;
 }
@@ -263,7 +285,12 @@ class Display extends React.Component {
 
     renderOtherHands() {
         let hands = [];
-        hands.push(<OtherHands pid={this.props.pid} points={this.props.points} players={this.props.players} played={this.props.allPlayed}/>);
+        hands.push(<OtherHands 
+                        pid={this.props.pid} 
+                        points={this.props.points} 
+                        players={this.props.players} 
+                        played={this.props.allPlayed}
+                    />);
         return hands;
     }
 
@@ -390,8 +417,8 @@ class Game extends React.Component {
                 return false;
             }
         }
-        if (this.props.gameState === gameStates.hasteCheck) { //Only haste can be played
-            if (number === null && action != null && action.type === "H") {
+        if (stateIsHaste(this.props.gameState)) { //Only haste can be played
+            if (validHasteSelected(number, action)) {
                 if (this.isActive(spaceState, action)) {
                     let j = 0;
                     // Search Hand
@@ -529,7 +556,7 @@ class Game extends React.Component {
                 break;
             }
         }
-        if (this.props.gameState === gameStates.initialDiscard || this.props.gameState === 'discardNormal') {
+        if (discardValid(this.props.gameState, this.props.pid === this.props.currentPlayer)) {
             let tempDiscard = this.state.queuedForDiscard.slice();
             if (selectCardsIndex >= selectCards.length - accessable) {
                 let found = false;
@@ -563,7 +590,7 @@ class Game extends React.Component {
                 })
             }
         } else {
-            if (cardType === "1" || cardType === "2" || cardType === "3") {
+            if (cardIsNumber(cardType)) {
                 let newSelected = (i === this.state.selectedNumberCard) ? null : i;
                 this.setState({
                     selectedNumberCard: newSelected,
@@ -890,29 +917,29 @@ var socket = io.connect(connectTo);
         Object.assign(localData, data);
         renderGame(localData, socket);
     });
-    socket.on('cookify', function(data) {
+    socket.on(courrier.cookify, function(data) {
         document.cookie = data.cookie;
         Object.assign(localData, data);
         renderLobby(localData, socket);
     });
-    socket.on('newroom', function(data) {
+    socket.on(courrier.newRoom, function(data) {
         Object.assign(localData, data);
         renderLobby(localData, socket);
     });
-    socket.on('lobify', function(data) {
+    socket.on(courrier.returnToLobby, function(data) {
         localData = {};
         Object.assign(localData, data);
         renderLobby(localData, socket);
     });
-    socket.on('userjoined', function(data) {
+    socket.on(courrier.userJoined, function(data) {
         Object.assign(localData, data);
         renderGame(localData, socket);
     });
-    socket.on('userready', function(data) {
+    socket.on(courrier.userReadied, function(data) {
         Object.assign(localData, data);
         renderGame(localData, socket);
     });
-    socket.on('nextTurn', function(data) {
+    socket.on(courrier.nextPlayer, function(data) {
         Object.assign(localData, data);
         renderGame(localData, socket);
     });
@@ -1060,4 +1087,20 @@ class Lobby extends React.Component {
             </div> 
           );
     }
+}
+
+function discardValid(gameState, myTurn) {
+    return gameState === gameStates.initialDiscard || (gameState === 'discardNormal' && myTurn);
+}
+
+function stateIsHaste(gameState) {
+    return gameState === gameStates.hasteCheck;
+}
+
+function validHasteSelected(number, action) {
+    return number === null && action != null && action.type === "H";
+}
+
+function cardIsNumber(cardType) {
+    return cardType === "1" || cardType === "2" || cardType === "3";
 }

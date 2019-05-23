@@ -1,4 +1,5 @@
 const gameStates = require("./gameStates.js");
+const courrier = require("./courrier.js");
 var {colors} = require('../cards');
 var {cards} = require('../cards');
 const { Client } = require('pg');
@@ -33,7 +34,7 @@ io.on('connection', function(socket) {
     console.log('a user connected');
     socket.on('refreshCookie', function(data) {
         socket.join('lobby');
-        socket.emit("cookify", { 
+        socket.emit(courrier.cookify, { 
             cookie: setCookie(data),
             gameState: gameStates.mainLobby,
             availableGames: publicInstances
@@ -44,7 +45,7 @@ io.on('connection', function(socket) {
 
         const values = [data.username];
         socket.join('lobby');
-        socket.emit("cookify", {
+        socket.emit(courrier.cookify, {
             cookie: setCookie(values[0]),
             gameState: gameStates.mainLobby,
             availableGames: publicInstances
@@ -98,12 +99,12 @@ io.on('connection', function(socket) {
         };
         gameInstances[id] = newInstance;
         publicInstances.push(newPublicInstance);
-        io.to('lobby').emit("newroom", {
+        io.to('lobby').emit(courrier.newRoom, {
             availableGames: publicInstances
         });
         socket.leave('lobby');
         socket.join('' + gameId);
-        socket.emit('userjoined', {
+        socket.emit(courrier.userJoined, {
             selectCards: deck.splice(0, 8),
             gameState: newInstance.gameState,
             players: newInstance.players,
@@ -128,14 +129,14 @@ io.on('connection', function(socket) {
             for (let i = 0; i < publicInstances.length; i++) {
                 if (publicInstances[i].id === data.id) {
                     publicInstances.splice(i, 1);
-                    io.to('lobby').emit('newroom', {
+                    io.to('lobby').emit(courrier.newRoom, {
                         availableGames: publicInstances
                     })
                 }
             }
         }
         gameInstances[data.id] = joinedInstance;
-        socket.emit('userjoined', {
+        socket.emit(courrier.userJoined, {
             selectCards: joinedInstance.deck.splice(0,8),
             gameState: joinedInstance.gameState,
             id: joinedInstance.id,
@@ -164,7 +165,7 @@ io.on('connection', function(socket) {
             if (instance.players[i].name === data.user) {
                 instance.players[i].ready = true;
                 gameInstances[data.id] = instance;
-                io.to('' + data.id).emit("userready", {
+                io.to('' + data.id).emit(courrier.userReadied, {
                     players: instance.players
                 });
                 break;
@@ -174,7 +175,7 @@ io.on('connection', function(socket) {
             for (let i = 0; i < publicInstances.length; i++) {
                 if (publicInstances[i].id === data.id) {
                     publicInstances.splice(i, 1);
-                    io.to('lobby').emit('newroom', {
+                    io.to('lobby').emit(courrier.newRoom, {
                         availableGames: publicInstances
                     })
                 }
@@ -229,7 +230,7 @@ io.on('connection', function(socket) {
             }
         }
         gameInstances[data.id] = instance;
-        io.to('' + data.id).emit('nextTurn', {
+        io.to('' + data.id).emit(courrier.nextPlayer, {
             gameState: instance.gameState,
             currentPlayer: instance.currentPlayer
         });
@@ -331,12 +332,12 @@ io.on('connection', function(socket) {
             let socket = io.in('' + gameId).connected[client];
             socket.leave('' + gameId);
             socket.join('lobby');
-            socket.emit("lobify", {
+            socket.emit(courrier.returnToLobby, {
                 gameState: gameStates.mainLobby,
                 availableGames: publicInstances
             });
         });
-        io.to('lobby').emit('newroom', {
+        io.to('lobby').emit(courrier.newRoom, {
             availableGames: publicInstances
         });
     });
