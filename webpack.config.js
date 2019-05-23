@@ -3,6 +3,9 @@ module.exports = {
     output: {
         filename: 'bundle-index.js'
     },
+    devServer: {
+        watchContentBase: true
+    },
     module: {
         rules: [{
             test: /\.(js|jsx)$/,
