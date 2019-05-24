@@ -148,11 +148,13 @@
 }
 
 .readied {
-  color: green
+  background-color: green
+  font-weight: 700
 }
 
 .notreadied {
-  color: red;
+  background-color: red;
+  font-weight: 700
 }
 
 .pregameListItem {
@@ -234,3 +236,62 @@
   display: inline-block;
   vertical-align: top;
 }
+
+#login {
+  display: flex;              /* establish flex container */
+  flex-direction: column;     /* stack flex items vertically */
+  justify-content: center;    /* center items vertically, in this case */
+  align-items: center;        /* center items horizontally, in this case */
+  height: 200px;
+  
+  background-color: rgb(228, 236, 235);
+  height: 300px;
+  width: 300px;
+  padding: 50px;
+  border-radius: 1.5em;
+  box-shadow: 0px 0px 20px 0px black;
+  text-align: center;
+}
+
+.Login {
+  display:flex;
+  flex-direction: column;
+  justify-content:center;
+  align-items:center;
+  margin: 50px;
+}
+
+label[type=sign] {
+  font-size: 22px;
+  color: black;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+input[type=text] {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 30px;
+  border-radius: 20px;
+  text-align: center;
+  background-color: rgb(205, 214, 213);
+}
+
+button[type=button] {
+  background: linear-gradient(to right, rgb(41, 100, 93), rgb(89, 160, 152));
+  border: none;
+  color: white;
+  padding: 15px 38px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 20px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 0.35em;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button[type=button]:hover {
+  background: linear-gradient(to right, rgb(89, 160, 152), rgb(41, 100, 93));
+}
+
