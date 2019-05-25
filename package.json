@@ -20,6 +20,7 @@
     "concurrently": "^4.0.0",
     "lodash": ">=4.17.11",
     "nodemon": "^1.19.0",
+    "run": "^1.4.0",
     "webpack": "^4.32.2",
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.3"
