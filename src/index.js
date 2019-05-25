@@ -869,8 +869,8 @@ class Game extends React.Component {
     }
 }
 
-//var connectTo = 'https://damoclesgame.herokuapp.com';
-var connectTo = 'http://localhost:3000';
+var connectTo = 'https://damoclesgame.herokuapp.com';
+//var connectTo = 'http://localhost:3000';
 var socket = io.connect(connectTo);
 
     let currentCookie = getCookie();
