@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "scripts": {
+    "heroku-prebuild": "npm install --dev",
     "start": "webpack --mode production && node src/server",
     "dev": "concurrently \"nodemon --exec babel-node src/server.js\" \"webpack-dev-server --mode development --hot"
   },
