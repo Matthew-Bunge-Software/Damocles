@@ -142,7 +142,7 @@ io.on('connection', function(socket) {
             id: joinedInstance.id,
             pid: joinedInstance.players.length - 1,
         });
-        io.to('' + data.id).emit("userjoined", {
+        io.to('' + data.id).emit(courrier.userJoined, {
             players: joinedInstance.players,
             chat: joinedInstance.chat,
             played: joinedInstance.played,
@@ -154,7 +154,7 @@ io.on('connection', function(socket) {
         let instance = gameInstances[data.id];
         instance.chat.push({user: data.user, message: data.message});
         gameInstances[data.id] = instance;
-        io.to('' + data.id).emit("messageSent", {
+        io.to('' + data.id).emit(courrier.newMessage, {
             chat: instance.chat
         });
     });
@@ -208,9 +208,9 @@ io.on('connection', function(socket) {
                 currentPlayer: instance.currentPlayer,
             });
         } else {
-            instance.gameState = "standby";
+            instance.gameState = gameStates.standby;
             gameInstances[data.id] = instance;
-            socket.emit("standby", {
+            socket.emit(courrier.waiting, {
                 gameState: instance.gameState
             });
         }
@@ -290,7 +290,7 @@ io.on('connection', function(socket) {
             selectCards: data.rest.concat(interacted.newCards)
         });
         if (interacted.processCode != null) {
-            instance.gameState = 'discardNormal';
+            instance.gameState = gameStates.discardNormal;
             socket.emit('discardphase', {
                 gameState: instance.gameState,
                 processCode: interacted.processCode,

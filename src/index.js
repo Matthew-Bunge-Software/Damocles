@@ -94,10 +94,10 @@ function Header(props) {
     let myTurn = "";
     switch (props.gameState) {
         case gameStates.initialDiscard:
-        case "discardNormal":
+        case gameStates.discardNormal:
             myTurn = "Please discard " + props.discardCount + " cards"
             break;
-        case "standby":
+        case gameStates.standby:
             myTurn = "Waiting for other players";
             break;
         default: 
@@ -881,7 +881,7 @@ var socket = io.connect(connectTo);
     } else {
         renderLogin(localData, socket);
     }
-    socket.on('standby', function(data) {
+    socket.on(courrier.waiting, function(data) {
         Object.assign(localData, data);
         renderGame(localData, socket);
     });
@@ -897,7 +897,7 @@ var socket = io.connect(connectTo);
         Object.assign(localData, data);
         renderGame(localData, socket);
     });
-    socket.on('messageSent', function(data) {
+    socket.on(courrier.newMessage, function(data) {
         Object.assign(localData, data);
         renderGame(localData, socket);
     });
@@ -1090,7 +1090,7 @@ class Lobby extends React.Component {
 }
 
 function discardValid(gameState, myTurn) {
-    return gameState === gameStates.initialDiscard || (gameState === 'discardNormal' && myTurn);
+    return gameState === gameStates.initialDiscard || (gameState === gameStates.discardNormal && myTurn);
 }
 
 function stateIsHaste(gameState) {
