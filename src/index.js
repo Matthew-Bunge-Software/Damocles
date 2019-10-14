@@ -1,75 +1,14 @@
-const gameStates = require("./gameStates.js");
-const courrier = require("./courrier.js");
+import gameStates from "./gamestates.js";
+import courrier from "./courrier.js";
 import OtherHands from "./otherhands.js";
 import ChatBox from "./chatbox.js";
+import Card from "./card.js";
+import PlayedTiles from "./playedtiles.js";
+import Header from "./header.js";
 
 const NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
 
 const HEPINDEX = NAMES.map(name => name + "hep");
-
-class Card extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            spaces: props.card.spaces,
-            card: props.card,
-        }
-    }
-
-    rotateDisplay(event) {
-        let temp = this.state.spaces.slice();
-        if (event.keyCode === 81) {
-            let hold = temp[0];
-            for (var i = 0; i < 6; i++) {
-                temp[i] = temp[i + 1];
-            }
-            temp[6] = hold;
-        } else if (event.keyCode === 69) {
-            let hold = temp[6];
-            for (var i = 6; i > 0; i--) {
-                temp[i] = temp[i - 1];
-            }
-            temp[0] = hold;
-        }
-        this.setState({
-            spaces: temp
-        })
-    }
-
-    render() {
-        let newSpaces = this.state.spaces.map((color, index) => <li key={index} className={"dot small " + color + " " + HEPINDEX[index]}>{}</li>);
-        newSpaces.push(<li key={7} className="cardType">{this.props.card.type}</li>);
-        return (<div onKeyDown={(e) => this.rotateDisplay(e)}
-            tabIndex="0"
-            className="cardRotateContainer">
-            <ul onClick={() => this.props.onClick(this.state.card)}
-                className={"card " + this.props.display + " " + this.props.selected}
-            >  {newSpaces} </ul></div>);
-    }
-}
-
-function Header(props) {
-    let myTurn = "";
-    switch (props.gameState) {
-        case gameStates.initialDiscard:
-        case gameStates.discardNormal:
-            myTurn = "Please discard " + props.discardCount + " cards"
-            break;
-        case gameStates.standby:
-            myTurn = "Waiting for other players";
-            break;
-        default: 
-            myTurn = props.myTurn ? "My turn" : "Not my turn";
-            break;
-    }
-    return <p>{myTurn}</p>
-}
-
-function PlayedTiles(props) {
-    return <div className="playedtiles">
-                {props.played}
-            </div>;
-}
 
 class MyHand extends React.Component {
     renderButton() {

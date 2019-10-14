@@ -1,4 +1,4 @@
-module.exports = {
+const gameStates = {
     mainLobby:      "Main Lobby",
     preGameLobby:   "Pre-Game Lobby",
     standby:        "Standby",
@@ -9,3 +9,5 @@ module.exports = {
     hasted:         "Hasted",
     reflexed:       "Reflexed",
 }
+
+export default gameStates;
