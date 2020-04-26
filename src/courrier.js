@@ -1,4 +1,4 @@
-const courrier = {
+const COURRIER = {
     cookify: "Login Cookie Sent",
     newRoom: "New Room Created",
     newMessage: "Message Sent",
@@ -9,4 +9,6 @@ const courrier = {
     returnToLobby: "Bounce to Lobby",
 }
 
-export default courrier;
+module.exports = {
+    courrier: COURRIER
+}

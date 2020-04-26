@@ -5,7 +5,7 @@
   "scripts": {
     "heroku-prebuild": "npm install --dev",
     "start": "webpack --mode production && node src/server",
-    "dev": "concurrently \"nodemon --exec babel-node src/server.js\" \"webpack-dev-server --mode development --hot"
+    "dev": "concurrently \"nodemon --exec babel-node src/server.js\" \"webpack-dev-server --mode=development --hot\""
   },
   "engines": {
     "node": ">=8.0.0 <11.0.0",

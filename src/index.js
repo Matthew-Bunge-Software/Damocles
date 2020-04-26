@@ -1,5 +1,5 @@
-import gameStates from "./gameStates.js";
-import courrier from "./courrier.js";
+const gameStates = require("./gameStates.js");
+const courrier = require("./courrier.js");
 import Board from "./Board.js";
 import Card from "./Card.js";
 import ChatBox from "./ChatBox.js";
@@ -22,79 +22,80 @@ const HEPINDEX = NAMES.map(name => name + "hep");
 var connectTo = 'http://localhost:3000';
 var socket = io.connect(connectTo);
 
-    let currentCookie = getCookie();
-    let localData = {};
-    if (currentCookie != "") {
-        console.log(currentCookie);
-        socket.emit('refreshCookie', currentCookie);
-    } else {
-        renderLogin(localData, socket);
-    }
-    socket.on(courrier.waiting, function(data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on('boardChange', function(data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on('setupphase', function(data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on('cardUpdate', function(data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on(courrier.newMessage, function(data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on('discardphase', function(data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on('cardPlayed', function(data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on('bonusswap', function(data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on('reflexed', function(data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on(courrier.cookify, function(data) {
-        document.cookie = data.cookie;
-        Object.assign(localData, data);
-        renderLobby(localData, socket);
-    });
-    socket.on(courrier.newRoom, function(data) {
-        Object.assign(localData, data);
-        renderLobby(localData, socket);
-    });
-    socket.on(courrier.returnToLobby, function(data) {
-        localData = {};
-        Object.assign(localData, data);
-        renderLobby(localData, socket);
-    });
-    socket.on(courrier.userJoined, function(data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on(courrier.userReadied, function(data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
-    socket.on(courrier.nextPlayer, function(data) {
-        Object.assign(localData, data);
-        renderGame(localData, socket);
-    });
+let currentCookie = getCookie();
+let localData = {};
+if (currentCookie != "") {
+    console.log(currentCookie);
+    socket.emit('refreshCookie', currentCookie);
+} else {
+    renderLogin(localData, socket);
+}
+socket.on(courrier.waiting, function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on('boardChange', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on('setupphase', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on('cardUpdate', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on(courrier.newMessage, function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on('discardphase', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on('cardPlayed', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on('bonusswap', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on('reflexed', function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on(courrier.cookify, function (data) {
+    console.log("cool jesus");
+    document.cookie = data.cookie;
+    Object.assign(localData, data);
+    renderLobby(localData, socket);
+});
+socket.on(courrier.newRoom, function (data) {
+    Object.assign(localData, data);
+    renderLobby(localData, socket);
+});
+socket.on(courrier.returnToLobby, function (data) {
+    localData = {};
+    Object.assign(localData, data);
+    renderLobby(localData, socket);
+});
+socket.on(courrier.userJoined, function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on(courrier.userReadied, function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
+socket.on(courrier.nextPlayer, function (data) {
+    Object.assign(localData, data);
+    renderGame(localData, socket);
+});
 
 function renderGame(data, socket) {
-    ReactDOM.render(<Game   spaces={data.spaces} 
+    ReactDOM.render(<Game spaces={data.spaces}
         colorCounts={data.colorCounts}
         selectCards={data.selectCards}
         gameState={data.gameState}
@@ -110,10 +111,11 @@ function renderGame(data, socket) {
         points={data.points}
         chat={data.chat}
 
-        />, document.getElementById("root"));
+    />, document.getElementById("root"));
 }
 
 function renderLobby(data, socket) {
+    console.log("Cool guy");
     ReactDOM.render(<Lobby
         available={data.availableGames}
     />, document.getElementById("root"));
@@ -121,8 +123,8 @@ function renderLobby(data, socket) {
 
 function renderLogin() {
     ReactDOM.render(<Login
-            onClick={(user, pass) => logMeIn(user, pass)}
-        />, document.getElementById("root"));
+        onClick={(user, pass) => logMeIn(user, pass)}
+    />, document.getElementById("root"));
 }
 
 function logMeIn(user, pass) {
@@ -134,14 +136,14 @@ function logMeIn(user, pass) {
 
 function cardsEqual(a, b) {
     return ((a === null && b === null) || a != null && b != null && a.one === b.one &&
-            a.two === b.two &&
-            a.three === b.three &&
-            a.four === b.four &&
-            a.five === b.five &&
-            a.six === b.six &&
-            a.seven === b.seven &&
-            a.type === b.type &&
-            a.id === b.id
+        a.two === b.two &&
+        a.three === b.three &&
+        a.four === b.four &&
+        a.five === b.five &&
+        a.six === b.six &&
+        a.seven === b.seven &&
+        a.type === b.type &&
+        a.id === b.id
     );
 }
 
@@ -149,7 +151,7 @@ function getCookie() {
     var name = "Damocles=";
     var decodedCookie = decodeURIComponent(document.cookie);
     var ca = decodedCookie.split(";");
-    for(var i = 0; i < ca.length; i++) {
+    for (var i = 0; i < ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0) == ' ') {
             c = c.substring(1);
