@@ -1,14 +1,14 @@
 class Waiting extends React.Component {
     userReady() {
         socket.emit("userreadied", {
-            user: getCookie(),
+            user: this.props.getCookie(),
             id: this.props.id
         });
     }
 
     buttonStatus() {
         let player = this.props.players.slice();
-        let user = getCookie();
+        let user = this.props.getCookie();
         for (let i = 0; i < player.length; i++) {
             if (player[i].name === user) {
                 return player[i].ready;

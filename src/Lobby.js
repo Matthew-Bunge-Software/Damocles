@@ -21,19 +21,20 @@ class Lobby extends React.Component {
     }
     
     createNewValues() {
+      console.log("Trying to create")
         let name = this.state.name;
         if (name != null) {
-            socket.emit("roomcreated", {
+            this.props.socket.emit("roomcreated", {
                 name: name,
                 players: this.state.selected,
-                creator: getCookie()
+                creator: this.props.getCookie()
             });
         }
     }
 
     joinRoom(id) {
         socket.emit('roomjoined', {
-            user: getCookie(),
+            user: this.props.getCookie(),
             id: id
         });
     }

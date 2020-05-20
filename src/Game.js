@@ -1,3 +1,9 @@
+const gameStates = require("./gameStates.js");
+import Card from "./Card.js";
+import ChatBox from "./ChatBox.js";
+import Display from "./Display.js";
+import Waiting from "./Waiting.js";
+
 class Game extends React.Component {
     constructor(props) {
         super(props);
@@ -535,14 +541,17 @@ class Game extends React.Component {
             id={this.props.id}
             nextTurn={() => this.nextTurn()}
         />;
-        let waiting = <Waiting id={this.props.id} players={this.props.players}/>;
+        let waiting = <Waiting id={this.props.id} 
+                               players={this.props.players}
+                               getCookie={this.props.getCookie}
+                        />;
         let showMe = this.props.gameState === gameStates.preGameLobby ? waiting : display;
         return (<div id={"game"}>
                     <button id={"backbutton"} type={'button'} onClick={() => this.abandonRoom()}>{"Back"}</button>
                     {showMe}
                     <ChatBox id={this.props.id} 
                             chat={this.props.chat}
-                            socket={socket}
+                            socket={this.props.socket}
                     />
                 </div>);
     }

@@ -1,10 +1,7 @@
 const gameStates = require("./gameStates.js");
 const courrier = require("./courrier.js");
 import Board from "./Board.js";
-import Card from "./Card.js";
-import ChatBox from "./ChatBox.js";
 import Community from "./Community.js";
-import Display from "./Display.js";
 import Game from "./Game.js";
 import Header from "./Header.js";
 import Lobby from "./Lobby.js";
@@ -12,7 +9,6 @@ import Login from "./Login.js";
 import MyHand from "./MyHand.js";
 import OtherHands from "./OtherHands.js";
 import PlayedTiles from "./PlayedTiles.js";
-import Waiting from "./Waiting.js";
 
 const NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
 
@@ -110,7 +106,8 @@ function renderGame(data, socket) {
         id={data.id}
         points={data.points}
         chat={data.chat}
-
+        socket={socket}
+        getCookie={() => getCookie()}
     />, document.getElementById("root"));
 }
 
@@ -118,6 +115,8 @@ function renderLobby(data, socket) {
     console.log("Cool guy");
     ReactDOM.render(<Lobby
         available={data.availableGames}
+        socket={socket}
+        getCookie={() => getCookie()}
     />, document.getElementById("root"));
 }
 

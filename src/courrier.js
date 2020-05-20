@@ -1,4 +1,4 @@
-const COURRIER = {
+module.exports = {
     cookify: "Login Cookie Sent",
     newRoom: "New Room Created",
     newMessage: "Message Sent",
@@ -7,8 +7,4 @@ const COURRIER = {
     waiting: "Waiting for Other Players",
     nextPlayer: "Current Player Turn Finished",
     returnToLobby: "Bounce to Lobby",
-}
-
-module.exports = {
-    courrier: COURRIER
 }
