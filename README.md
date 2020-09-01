@@ -34,7 +34,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/mattb555"><img src="https://avatars1.githubusercontent.com/u/10692492?v=4" width="100px;" alt=""/><br /><sub><b>Matthew Bunge</b></sub></a><br /><a href="https://github.com/Matthew-Bunge-Software/Damocles/commits?author=mattb555" title="Code">💻</a> <a href="https://github.com/Matthew-Bunge-Software/Damocles/issues?q=author%3Amattb555" title="Bug reports">🐛</a> <a href="#tool-mattb555" title="Tools">🔧</a></td>
+    <td align="center"><a href="https://github.com/mattb555"><img src="https://avatars1.githubusercontent.com/u/10692492?v=4" width="100px;" alt=""/><br /><sub><b>Matthew Bunge</b></sub></a><br /><a href="https://github.com/Matthew-Bunge-Software/Damocles/commits?author=mattb555" title="Code">💻</a> <a href="https://github.com/Matthew-Bunge-Software/Damocles/issues?q=author%3Amattb555" title="Bug reports">🐛</a> <a href="#tool-mattb555" title="Tools">🔧</a> <a href="#infra-mattb555" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#maintenance-mattb555" title="Maintenance">🚧</a></td>
   </tr>
 </table>
 
