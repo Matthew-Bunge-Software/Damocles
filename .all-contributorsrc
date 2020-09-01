@@ -13,7 +13,9 @@
       "contributions": [
         "code",
         "bug",
-        "tool"
+        "tool",
+        "infra",
+        "maintenance"
       ]
     },
     {
