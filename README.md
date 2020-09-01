@@ -1,6 +1,6 @@
 # Project Damocles
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 An original multiplayer game designed by Joe Mohammed.
 
@@ -35,6 +35,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://github.com/mattb555"><img src="https://avatars1.githubusercontent.com/u/10692492?v=4" width="100px;" alt=""/><br /><sub><b>Matthew Bunge</b></sub></a><br /><a href="https://github.com/Matthew-Bunge-Software/Damocles/commits?author=mattb555" title="Code">💻</a> <a href="https://github.com/Matthew-Bunge-Software/Damocles/issues?q=author%3Amattb555" title="Bug reports">🐛</a> <a href="#tool-mattb555" title="Tools">🔧</a></td>
+    <td align="center"><a href="https://github.com/nicob524"><img src="https://avatars0.githubusercontent.com/u/35251409?v=4" width="100px;" alt=""/><br /><sub><b>nicob524</b></sub></a><br /><a href="https://github.com/Matthew-Bunge-Software/Damocles/commits?author=nicob524" title="Code">💻</a> <a href="#design-nicob524" title="Design">🎨</a></td>
   </tr>
 </table>
 
