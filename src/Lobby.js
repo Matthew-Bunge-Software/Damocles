@@ -33,7 +33,7 @@ class Lobby extends React.Component {
     }
 
     joinRoom(id) {
-        socket.emit('roomjoined', {
+        this.props.socket.emit('roomjoined', {
             user: this.props.getCookie(),
             id: id
         });

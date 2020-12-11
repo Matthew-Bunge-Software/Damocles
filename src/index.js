@@ -144,11 +144,3 @@ function getCookie() {
     }
     return "";
 }
-
-function stateIsHaste(gameState) {
-    return gameState === gameStates.hasteCheck;
-}
-
-function validHasteSelected(number, action) {
-    return number === null && action != null && action.type === "H";
-}

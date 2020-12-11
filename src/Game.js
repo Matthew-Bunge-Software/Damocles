@@ -103,8 +103,8 @@ class Game extends React.Component {
                 return false;
             }
         }
-        if (stateIsHaste(this.props.gameState)) { //Only haste can be played
-            if (validHasteSelected(number, action)) {
+        if (this.stateIsHaste(this.props.gameState)) { //Only haste can be played
+            if (this.validHasteSelected(number, action)) {
                 if (this.isActive(spaceState, action)) {
                     let j = 0;
                     // Search Hand
@@ -455,6 +455,14 @@ class Game extends React.Component {
         return gameState === gameStates.initialDiscard || (gameState === gameStates.discardNormal && myTurn);
     }
 
+    stateIsHaste(gameState) {
+        return gameState === gameStates.hasteCheck;
+    }
+
+    validHasteSelected(number, action) {
+        return number === null && action != null && action.type === "H";
+    }
+
     arraysAreRotations(cardSpaces, boardSpaces) {
         let active = true;
         for (let j = 0; j < boardSpaces.length; j++) {
@@ -575,6 +583,7 @@ class Game extends React.Component {
                     <ChatBox id={this.props.id} 
                             chat={this.props.chat}
                             socket={this.props.socket}
+                            getCookie={this.props.getCookie}
                     />
                 </div>);
     }
