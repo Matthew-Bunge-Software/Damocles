@@ -1,4 +1,6 @@
 export default function Board(props) {
+    const NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
+    const HEPINDEX = NAMES.map(name => name + "hep");
     const spaces = props.spaces;
     const listBoard = spaces.map((color, index) => (
         <button

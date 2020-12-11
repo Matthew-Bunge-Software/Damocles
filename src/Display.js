@@ -1,3 +1,10 @@
+import OtherHands from "./OtherHands.js";
+import Board from "./Board.js";
+import Community from "./Community.js";
+import Header from "./Header.js";
+import MyHand from "./MyHand.js";
+import PlayedTiles from "./PlayedTiles.js";
+
 class Display extends React.Component {
     renderSelector() {
         return (
@@ -36,6 +43,7 @@ class Display extends React.Component {
                 <PlayedTiles played={this.props.played} />
                 <MyHand playClicked={() => this.props.playClicked()} 
                         discardClicked={() => this.props.discardClicked()}
+                        discardValid={(i, j) => this.props.discardValid(i, j)}
                         nextTurn = {() => this.props.nextTurn()}
                         cards={this.props.cards} 
                         myTurn={this.props.myTurn}

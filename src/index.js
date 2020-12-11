@@ -10,10 +10,6 @@ import MyHand from "./MyHand.js";
 import OtherHands from "./OtherHands.js";
 import PlayedTiles from "./PlayedTiles.js";
 
-const NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
-
-const HEPINDEX = NAMES.map(name => name + "hep");
-
 //var connectTo = 'https://damoclesgame.herokuapp.com';
 var connectTo = 'http://localhost:3000';
 var socket = io.connect(connectTo);
@@ -133,19 +129,6 @@ function logMeIn(user, pass) {
     });
 }
 
-function cardsEqual(a, b) {
-    return ((a === null && b === null) || a != null && b != null && a.one === b.one &&
-        a.two === b.two &&
-        a.three === b.three &&
-        a.four === b.four &&
-        a.five === b.five &&
-        a.six === b.six &&
-        a.seven === b.seven &&
-        a.type === b.type &&
-        a.id === b.id
-    );
-}
-
 function getCookie() {
     var name = "Damocles=";
     var decodedCookie = decodeURIComponent(document.cookie);
@@ -162,18 +145,10 @@ function getCookie() {
     return "";
 }
 
-function discardValid(gameState, myTurn) {
-    return gameState === gameStates.initialDiscard || (gameState === gameStates.discardNormal && myTurn);
-}
-
 function stateIsHaste(gameState) {
     return gameState === gameStates.hasteCheck;
 }
 
 function validHasteSelected(number, action) {
     return number === null && action != null && action.type === "H";
-}
-
-function cardIsNumber(cardType) {
-    return cardType === "1" || cardType === "2" || cardType === "3";
 }

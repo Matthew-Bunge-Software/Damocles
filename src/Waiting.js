@@ -1,6 +1,6 @@
 class Waiting extends React.Component {
     userReady() {
-        socket.emit("userreadied", {
+        this.props.socket.emit("userreadied", {
             user: this.props.getCookie(),
             id: this.props.id
         });

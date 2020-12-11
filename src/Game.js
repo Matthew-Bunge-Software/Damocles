@@ -57,7 +57,7 @@ class Game extends React.Component {
             while (j < cardsToRemove.length) {
                 let matched = false;
                 for (let k = 0; k < cardsToDiscard.length; k++) {
-                    if (cardsEqual(cardsToRemove[j], cardsToDiscard[k])) {
+                    if (this.cardsEqual(cardsToRemove[j], cardsToDiscard[k])) {
                         cardsToRemove.splice(j, 1);
                         cardsToDiscard.splice(k, 1);
                         matched = true;
@@ -69,19 +69,23 @@ class Game extends React.Component {
                 }
             }
             if (this.props.processCode === null) {
-                socket.emit('discardPresetup', {
+                this.props.socket.emit('discardPresetup', {
                     newHand: cardsToRemove,
-                    user: getCookie(),
+                    user: this.props.getCookie(),
                     id: this.props.id
 
                 });
             } else {
-                socket.emit('discardNormalHand', {
+                this.props.socket.emit('discardNormalHand', {
                     hand: cardsToRemove,
                     id: this.props.id
                 });
             }
         }
+    }
+
+    cardIsNumber(cardType) {
+        return cardType === "1" || cardType === "2" || cardType === "3";
     }
 
     handlePlayClick() {
@@ -95,7 +99,7 @@ class Game extends React.Component {
         let reflexused = false;
         let playedThisTurn = this.state.playedThisTurn.slice();
         for (let i = 0; i < playedThisTurn.length; i++) {
-            if (cardsEqual(playedThisTurn[i].action, action) && cardsEqual(playedThisTurn[i].number, number)) {
+            if (this.cardsEqual(playedThisTurn[i].action, action) && this.cardsEqual(playedThisTurn[i].number, number)) {
                 return false;
             }
         }
@@ -105,7 +109,7 @@ class Game extends React.Component {
                     let j = 0;
                     // Search Hand
                     while (j < cardsToRemove.length) {
-                        if (cardsEqual(cardsToRemove[j], number) || cardsEqual(cardsToRemove[j], action)) {
+                        if (this.cardsEqual(cardsToRemove[j], number) || this.cardsEqual(cardsToRemove[j], action)) {
                             tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
                         } else {
                             j++;
@@ -114,7 +118,7 @@ class Game extends React.Component {
                     j = 0;
                     // Search Played
                     while (j < playedToRecycle.length) {
-                        if (cardsEqual(playedToRecycle[j], number) || cardsEqual(playedToRecycle[j], action)) {
+                        if (this.cardsEqual(playedToRecycle[j], number) || this.cardsEqual(playedToRecycle[j], action)) {
                             oldPlayed.push(playedToRecycle[j]);
                         }
                         j++;
@@ -131,7 +135,7 @@ class Game extends React.Component {
                 if (this.isActive(spaceState, number) && this.isActive(spaceState, action) && (action.type != "A" && action.type != "R" && action.type != "H")) {
                     let j = 0;
                     while (j < cardsToRemove.length) {
-                        if (cardsEqual(cardsToRemove[j], number) || cardsEqual(cardsToRemove[j], action)) {
+                        if (this.cardsEqual(cardsToRemove[j], number) || this.cardsEqual(cardsToRemove[j], action)) {
                             tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
                         } else {
                             j++;
@@ -139,7 +143,7 @@ class Game extends React.Component {
                     }
                     j = 0;
                     while (j < playedToRecycle.length) {
-                        if (cardsEqual(playedToRecycle[j], number) || cardsEqual(playedToRecycle[j], action)) {
+                        if (this.cardsEqual(playedToRecycle[j], number) || this.cardsEqual(playedToRecycle[j], action)) {
                             oldPlayed.push(playedToRecycle[j]);
                         }
                         j++;
@@ -151,7 +155,7 @@ class Game extends React.Component {
                     let j = 0;
                     reflexused = true;
                     while (j < cardsToRemove.length) {
-                        if (cardsEqual(cardsToRemove[j], number) || cardsEqual(cardsToRemove[j], action)) {
+                        if (this.cardsEqual(cardsToRemove[j], number) || this.cardsEqual(cardsToRemove[j], action)) {
                             tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
                         } else {
                             j++;
@@ -162,7 +166,7 @@ class Game extends React.Component {
                     }
                     j = 0;
                     while (j < playedToRecycle.length) {
-                        if (cardsEqual(playedToRecycle[j], number) || cardsEqual(playedToRecycle[j], action)) {
+                        if (this.cardsEqual(playedToRecycle[j], number) || this.cardsEqual(playedToRecycle[j], action)) {
                             oldPlayed.push(playedToRecycle[j]);
                         }
                         j++;
@@ -174,7 +178,7 @@ class Game extends React.Component {
                 if (this.isActive(spaceState, action) && (action.type === "A" || action.type === "R")) {
                     let j = 0;
                     while (j < cardsToRemove.length) {
-                        if (cardsEqual(cardsToRemove[j], action)) {
+                        if (this.cardsEqual(cardsToRemove[j], action)) {
                             tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
                         } else {
                             j++;
@@ -182,7 +186,7 @@ class Game extends React.Component {
                     }
                     j = 0;
                     while (j < playedToRecycle.length) {
-                        if (cardsEqual(playedToRecycle[j], action)) {
+                        if (this.cardsEqual(playedToRecycle[j], action)) {
                             oldPlayed.push(playedToRecycle[j]);
                         }
                         j++;
@@ -191,7 +195,7 @@ class Game extends React.Component {
                     let j = 0;
                     reflexused = true;
                     while (j < cardsToRemove.length) {
-                        if (cardsEqual(cardsToRemove[j], action)) {
+                        if (this.cardsEqual(cardsToRemove[j], action)) {
                             tempPlayed.push(cardsToRemove.splice(j, 1)[0]);
                         } else {
                             j++;
@@ -216,7 +220,7 @@ class Game extends React.Component {
             selectedActionCard: null,
             playedThisTurn: playedThisTurn
         });
-        socket.emit('cardPlayed', {
+        this.props.socket.emit('cardPlayed', {
             newPlayed: tempPlayed,
             oldPlayed: oldPlayed,
             rest: cardsToRemove,
@@ -233,17 +237,17 @@ class Game extends React.Component {
         let accessable = this.props.processCode === null ? selectCards.length : this.props.processCode;
         let selectCardsIndex = -1;
         for (let j = 0; j < selectCards.length; j++) {
-            if (cardsEqual(i, selectCards[j])) {
+            if (this.cardsEqual(i, selectCards[j])) {
                 selectCardsIndex = j;
                 break;
             }
         }
-        if (discardValid(this.props.gameState, this.props.pid === this.props.currentPlayer)) {
+        if (this.discardValid(this.props.gameState, this.props.pid === this.props.currentPlayer)) {
             let tempDiscard = this.state.queuedForDiscard.slice();
             if (selectCardsIndex >= selectCards.length - accessable) {
                 let found = false;
                 for (let j = 0; j < tempDiscard.length; j++) {
-                    if (cardsEqual(tempDiscard[j], i)) {
+                    if (this.cardsEqual(tempDiscard[j], i)) {
                         tempDiscard[j] = null;
                         found = true;
                         break;
@@ -262,7 +266,7 @@ class Game extends React.Component {
                     cards: selectCards.map((name) => {
                         let selected = "";
                         for (let j = 0; j < tempDiscard.length; j++) {
-                            if (cardsEqual(tempDiscard[j], name)) {
+                            if (this.cardsEqual(tempDiscard[j], name)) {
                                 selected = "selectedCard";
                                 break;
                             }
@@ -272,7 +276,7 @@ class Game extends React.Component {
                 })
             }
         } else {
-            if (cardIsNumber(cardType)) {
+            if (this.cardIsNumber(cardType)) {
                 let newSelected = (i === this.state.selectedNumberCard) ? null : i;
                 this.setState({
                     selectedNumberCard: newSelected,
@@ -283,12 +287,12 @@ class Game extends React.Component {
                         } else if ((this.props.gameState === gameStates.reflexed && this.props.currentPlayer === this.props.pid) && this.isActiveReflexed(this.props.spaces, name)) {
                             active = "activeReflexed";
                         }
-                        let selected = (cardsEqual(name, newSelected) || cardsEqual(name, this.state.selectedActionCard)) ? "selectedCard" : "";
+                        let selected = (this.cardsEqual(name, newSelected) || this.cardsEqual(name, this.state.selectedActionCard)) ? "selectedCard" : "";
                         return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name} />);
                     }),
                     played: played.map((name) => {
                         let active = this.isActive(this.props.spaces, name) ? "active" : "";
-                        let selected = (cardsEqual(name, newSelected) || cardsEqual(name, this.state.selectedActionCard)) ? "selectedCard" : "";
+                        let selected = (this.cardsEqual(name, newSelected) || this.cardsEqual(name, this.state.selectedActionCard)) ? "selectedCard" : "";
                         return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name} />);
                     })
                 });
@@ -303,12 +307,12 @@ class Game extends React.Component {
                         } else if ((this.props.gameState === gameStates.reflexed && this.props.currentPlayer === this.props.pid) && this.isActiveReflexed(this.props.spaces, name)) {
                             active = "activeReflexed";
                         }
-                        let selected = (cardsEqual(name, newSelected) || cardsEqual(name, this.state.selectedNumberCard)) ? "selectedCard" : "";
+                        let selected = (this.cardsEqual(name, newSelected) || this.cardsEqual(name, this.state.selectedNumberCard)) ? "selectedCard" : "";
                         return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name} />);
                     }),
                     played: played.map((name) => {
                         let active = this.isActive(this.props.spaces, name) ? "active" : "";
-                        let selected = (cardsEqual(name, newSelected) || cardsEqual(name, this.state.selectedNumberCard)) ? "selectedCard" : "";
+                        let selected = (this.cardsEqual(name, newSelected) || this.cardsEqual(name, this.state.selectedNumberCard)) ? "selectedCard" : "";
                         return (<Card key={name.ID} selected={selected} onClick={(i) => this.handleCardClick(i)} display={active} card={name} />);
                     })
                 })
@@ -355,7 +359,7 @@ class Game extends React.Component {
                             newCounts[j].count++;
                         }
                     }
-                    socket.emit('boardChange', {newSpaces: newSpaces, newCounts: newCounts, id: this.props.id });
+                    this.props.socket.emit('boardChange', {newSpaces: newSpaces, newCounts: newCounts, id: this.props.id });
                     this.setState({
                         selectedColor: null,
                         isSwap: false,
@@ -388,7 +392,7 @@ class Game extends React.Component {
                         }
                     }
                     let emitCheck = this.props.gameState === gameStates.hasted ? 'bonusswap' : 'boardChange';
-                    socket.emit(emitCheck, {newSpaces: newSpaces, newCounts: newCounts, id: this.props.id});
+                    this.props.socket.emit(emitCheck, {newSpaces: newSpaces, newCounts: newCounts, id: this.props.id});
                     this.setState({
                         selectedColor: null,
                         isSwap: false,
@@ -401,7 +405,7 @@ class Game extends React.Component {
                     newSpaces[index] = newSpaces[prevState.index];
                     newSpaces[prevState.index] = temp;
                     let emitCheck = this.props.gameState === gameStates.hasted ? 'bonusswap' : 'boardChange';
-                    socket.emit(emitCheck, {newSpaces: newSpaces, newCounts: this.props.colorCounts, id: this.props.id});
+                    this.props.socket.emit(emitCheck, {newSpaces: newSpaces, newCounts: this.props.colorCounts, id: this.props.id});
                     this.setState({
                         selectColor: null,
                         isSwap: false,
@@ -427,7 +431,7 @@ class Game extends React.Component {
             } else if ((this.props.gameState === gameStates.reflexed && this.props.currentPlayer === this.props.pid) && this.isActiveReflexed(newState, name)) {
                 active = "activeReflexed";
             }
-            let selected = (cardsEqual(this.state.selectedActionCard, name) || cardsEqual(this.state.selectedNumberCard, name)) ? "selectedCard" : "";
+            let selected = (this.cardsEqual(this.state.selectedActionCard, name) || this.cardsEqual(this.state.selectedNumberCard, name)) ? "selectedCard" : "";
             return (<Card key={name.ID} onClick={(i) => this.handleCardClick(i)} selected={selected} display={active} card={name} />);
         }));
     }
@@ -445,6 +449,10 @@ class Game extends React.Component {
         let rotation = this.purgeNull(newState);
         let nameSpaces = this.purgeNull(name.spaces);
         return this.arraysAreRotations(nameSpaces, rotation);
+    }
+
+    discardValid(gameState, myTurn) {
+        return gameState === gameStates.initialDiscard || (gameState === gameStates.discardNormal && myTurn);
     }
 
     arraysAreRotations(cardSpaces, boardSpaces) {
@@ -489,9 +497,9 @@ class Game extends React.Component {
     }
 
     abandonRoom() {
-        socket.emit("abandonRoom", {
+        this.props.socket.emit("abandonRoom", {
             id: this.props.id,
-            user: getCookie()
+            user: this.props.getCookie()
         });
     }
 
@@ -501,7 +509,7 @@ class Game extends React.Component {
                 playedThisTurn: []
             })
         }
-        socket.emit('nextPhase', { 
+        this.props.socket.emit('nextPhase', { 
             id: this.props.id 
         });
     }
@@ -515,6 +523,19 @@ class Game extends React.Component {
             }
         }
         return points;
+    }
+
+    cardsEqual(a, b) {
+        return ((a === null && b === null) || a != null && b != null && a.one === b.one &&
+            a.two === b.two &&
+            a.three === b.three &&
+            a.four === b.four &&
+            a.five === b.five &&
+            a.six === b.six &&
+            a.seven === b.seven &&
+            a.type === b.type &&
+            a.id === b.id
+        );
     }
 
     render() {
@@ -540,10 +561,12 @@ class Game extends React.Component {
             points={this.modifyPoints()}
             id={this.props.id}
             nextTurn={() => this.nextTurn()}
+            discardValid={(i, j) => this.discardValid(i, j)}
         />;
         let waiting = <Waiting id={this.props.id} 
                                players={this.props.players}
                                getCookie={this.props.getCookie}
+                               socket={this.props.socket}
                         />;
         let showMe = this.props.gameState === gameStates.preGameLobby ? waiting : display;
         return (<div id={"game"}>

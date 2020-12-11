@@ -1,6 +1,7 @@
+const gameStates = require("./gameStates.js");
 class MyHand extends React.Component {
     renderButton() {
-        if (discardValid(this.props.gameState, this.props.myTurn)) {
+        if (this.props.discardValid(this.props.gameState, this.props.myTurn)) {
             return <button
                         onClick={() => this.props.discardClicked()} 
                         className={"playbutton"}>
