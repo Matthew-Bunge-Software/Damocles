@@ -1,4 +1,7 @@
 class Card extends React.Component {
+    NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
+    HEPINDEX = this.NAMES.map(name => name + "hep");
+
     constructor(props) {
         super(props);
         this.state = {
@@ -28,7 +31,7 @@ class Card extends React.Component {
     }
 
     render() {
-        let newSpaces = this.state.spaces.map((color, index) => <li key={index} className={"dot small " + color + " " + HEPINDEX[index]}>{}</li>);
+        let newSpaces = this.state.spaces.map((color, index) => <li key={index} className={"dot small " + color + " " + this.HEPINDEX[index]}>{}</li>);
         newSpaces.push(<li key={7} className="cardType">{this.props.card.type}</li>);
         return (<div onKeyDown={(e) => this.rotateDisplay(e)}
             tabIndex="0"

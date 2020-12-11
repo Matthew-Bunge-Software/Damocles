@@ -15,7 +15,7 @@ class ChatBox extends React.Component {
     
     addMessage() {
         this.props.socket.emit("sendChat", {
-            user: getCookie(),
+            user: this.props.getCookie(),
             id: this.props.id,
             message: this.state.current
         })

@@ -42,7 +42,6 @@ io.on('connection', function(socket) {
     });
     //Login via database if available
     socket.on('login', function(data) {
-
         const values = [data.username];
         socket.join('lobby');
         socket.emit(courrier.cookify, {
