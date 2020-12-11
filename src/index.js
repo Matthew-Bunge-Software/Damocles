@@ -10,8 +10,8 @@ import MyHand from "./MyHand.js";
 import OtherHands from "./OtherHands.js";
 import PlayedTiles from "./PlayedTiles.js";
 
-//var connectTo = 'https://damoclesgame.herokuapp.com';
-var connectTo = 'http://localhost:3000';
+var connectTo = 'https://damoclesgame.herokuapp.com';
+//var connectTo = 'http://localhost:3000';
 var socket = io.connect(connectTo);
 
 let currentCookie = getCookie();
