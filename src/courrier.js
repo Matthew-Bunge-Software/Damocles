@@ -1,4 +1,4 @@
-const courrier = {
+module.exports = {
     cookify: "Login Cookie Sent",
     newRoom: "New Room Created",
     newMessage: "Message Sent",
@@ -8,5 +8,3 @@ const courrier = {
     nextPlayer: "Current Player Turn Finished",
     returnToLobby: "Bounce to Lobby",
 }
-
-export default courrier;

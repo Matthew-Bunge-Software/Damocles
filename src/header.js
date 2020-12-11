@@ -1,3 +1,5 @@
+const gameStates = require("./gameStates.js");
+
 export default function Header(props) {
     let myTurn = "";
     switch (props.gameState) {
