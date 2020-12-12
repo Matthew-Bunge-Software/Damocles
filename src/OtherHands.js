@@ -1,3 +1,4 @@
+import React from 'react';
 class OtherHands extends React.Component {
     renderSingleHands() {
         let returnMe = [];

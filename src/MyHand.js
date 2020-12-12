@@ -1,4 +1,5 @@
 const gameStates = require("./gameStates.js");
+import React from 'react';
 class MyHand extends React.Component {
     renderButton() {
         if (this.props.discardValid(this.props.gameState, this.props.myTurn)) {

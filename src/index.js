@@ -1,5 +1,8 @@
+import 'bootstrap/dist/css/bootstrap.css';
 const gameStates = require("./gameStates.js");
 const courrier = require("./courrier.js");
+import React from 'react';
+import ReactDOM from 'react-dom';
 import Board from "./Board.js";
 import Community from "./Community.js";
 import Game from "./Game.js";
@@ -10,8 +13,8 @@ import MyHand from "./MyHand.js";
 import OtherHands from "./OtherHands.js";
 import PlayedTiles from "./PlayedTiles.js";
 
-var connectTo = 'https://damoclesgame.herokuapp.com';
-//var connectTo = 'http://localhost:3000';
+//var connectTo = 'https://damoclesgame.herokuapp.com';
+var connectTo = 'http://localhost:3000';
 var socket = io.connect(connectTo);
 
 let currentCookie = getCookie();

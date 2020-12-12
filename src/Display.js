@@ -1,3 +1,4 @@
+import React from 'react';
 import OtherHands from "./OtherHands.js";
 import Board from "./Board.js";
 import Community from "./Community.js";

@@ -1,3 +1,4 @@
+import React from 'react';
 class Waiting extends React.Component {
     userReady() {
         this.props.socket.emit("userreadied", {

@@ -1,4 +1,5 @@
 const gameStates = require("./gameStates.js");
+import React from 'react';
 import Card from "./Card.js";
 import ChatBox from "./ChatBox.js";
 import Display from "./Display.js";

@@ -1,3 +1,5 @@
+import React from 'react';
+
 class Card extends React.Component {
     NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
     HEPINDEX = this.NAMES.map(name => name + "hep");

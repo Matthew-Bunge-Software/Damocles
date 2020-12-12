@@ -1,3 +1,7 @@
+import React from 'react';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+
 class Login extends React.Component {
 
     constructor(props) {
@@ -21,14 +25,23 @@ class Login extends React.Component {
     }
     
     render() {
-        //<label htmlFor={"passw"}><b>{"Password"}</b></label>
-        //<input type={"password"} id={"passw"} placeholder={"Enter Password"} onChange={(e) => this.updatePassword(e)}></input>
         return <div className={"Login"}>
-            <form id="login">
+            <Form id="login">
                 <label type={"sign"} htmlFor={"uname"}><b>{"Play NARREK!"}</b></label>
-                <input type={"text"} id={"uname"} placeholder={"username"} onChange={(e) => this.updateUsername(e)}></input>
-                <button onClick={() => this.props.onClick(this.state.username, this.state.password)} type={"button"}>{"Login"}</button>
-            </form>
+                <Form.Group>
+                    <Form.Label>Username</Form.Label>
+                    <Form.Control id="uname" 
+                                  type="text" 
+                                  placeholder="Enter username" 
+                                  value={this.state.username}
+                                  onChange={e => this.setState({ username: e.target.value})}/>
+                </Form.Group>
+                <Button variant="primary"
+                        onClick={() => this.props.onClick(this.state.username, this.state.password)} 
+                        type="button">Login
+                </Button>
+                        
+            </Form>
         </div>;
     }
 }
