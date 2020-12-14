@@ -35,16 +35,16 @@ class Waiting extends React.Component {
             <Col xs={6} className={"Waiting"}>
                 {this.renderPlayers()}
                 <Row>
-                    <Col xs={3}>
-                        <Button variant="primary" 
+                    <Col xs={6} md={4} lg={3} xl={2}>
+                        <Button variant="damocles-primary" 
                                 disabled={this.buttonStatus()} 
                                 onClick={() => this.userReady()} 
                                 type={"button"}>
                             {"Ready"}
                         </Button>
                     </Col>
-                    <Col xs={3}>
-                        <Button variant="primary" 
+                    <Col xs={6} md={4} lg={3} xl={2}>
+                        <Button variant="damocles-danger" 
                                 id={"backbutton"} 
                                 type={'button'} 
                                 onClick={() => this.props.abandonRoom()}>

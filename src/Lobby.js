@@ -76,7 +76,7 @@ class Lobby extends React.Component {
                       </Col>
                       <Col xs={6}>
                         <Form.Group id={"new-room-max-player-div"}>
-                            <Form.Label id={"max-player"}>{"MAX PLAYERS"}</Form.Label>
+                            <Form.Label id={"max-player"}>{"Max Players"}</Form.Label>
                             <Form.Control as="select" 
                                           id={"player-options"} 
                                           onChange={(e) => this.selectChange(e)}>
@@ -89,7 +89,7 @@ class Lobby extends React.Component {
                         </Form.Group>
                       </Col>
                     </Row>
-                    <Button variant="primary"
+                    <Button variant="damocles-primary"
                             id={"new-room-button"} 
                             type="button" 
                             onClick={() => this.createNewValues()}>

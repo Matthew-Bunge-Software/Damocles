@@ -38,7 +38,7 @@ class Login extends React.Component {
                                   value={this.state.username}
                                   onChange={e => this.setState({ username: e.target.value})}/>
                 </Form.Group>
-                <Button variant="primary"
+                <Button variant="damocles-primary"
                         onClick={() => this.props.onClick(this.state.username, this.state.password)} 
                         type="button">Login
                 </Button>   

@@ -1,3 +1,17 @@
+body {
+  background-color: #fff1e6;
+}
+
+.btn-damocles-primary {
+  background-color: #a5a58d;
+  color: black;
+}
+
+.btn-damocles-danger {
+  background-color: #cb997e;
+  color: black;
+}
+
 .dot {
   height: 75px;
   width: 75px;
@@ -144,12 +158,12 @@
 }
 
 .readied {
-  background-color: green;
+  background-color: #a5a58d;
   font-weight: 700
 }
 
 .notreadied {
-  background-color: red;
+  background-color: #cb997e;
   font-weight: 700
 }
 
