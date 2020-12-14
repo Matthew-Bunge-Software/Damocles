@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function Community(props) {
     const basin = props.colorCounts;
     const listBasin = basin.map(color => (

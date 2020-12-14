@@ -157,12 +157,6 @@
   list-style: none;
 }
 
-.lobbylist {
-  display: table;
-  list-style: none;
-  transition: 1s;
-}
-
 .lobbylist:hover {
   background-color: lightcoral;
 }
@@ -171,32 +165,12 @@
   cursor: pointer;
 }
 
-#newroomlabel {
-  display: inline-block;
-}
-
-#newroominput {
-  display: inline;
-}
-
 #maxplayer {
   display: inline-block;
 }
 
 #playeroptions {
   display: inline;
-}
-
-#newroombutton {
-  display: block;
-}
-
-#newroomlabeldiv {
-  display: block;
-}
-
-#newroommaxplayerdiv {
-  display: block;
 }
 
 #backbutton {
@@ -226,5 +200,22 @@
 .Waiting {
   display: inline-block;
   vertical-align: top;
+}
+
+.Login {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
+  padding: 20px;
+}
+
+#LoginTitle {
+  padding: 20px;
+}
+
+#new-room {
 }
 

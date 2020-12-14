@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function Board(props) {
     const NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
     const HEPINDEX = NAMES.map(name => name + "hep");

@@ -1,4 +1,8 @@
 import React from 'react';
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
 
 class ChatBox extends React.Component {
     constructor(props) {
@@ -34,13 +38,13 @@ class ChatBox extends React.Component {
     }
 
     render() {
-        return (<div id="Chat">
+        return (<Col xs={6} id="Chat">
             <div id="chatBox">
                 {this.renderChat()}
             </div>
             <input id="message" type="text" onChange={(e) => this.updateInput(e)}></input>
             <button onClick={() =>  this.addMessage() }>{"Send"}</button>
-        </div>);
+        </Col>);
     }
   }
 

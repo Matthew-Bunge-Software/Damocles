@@ -1,4 +1,8 @@
 import React from 'react';
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
 
 class Lobby extends React.Component {
     constructor(props) {
@@ -51,29 +55,50 @@ class Lobby extends React.Component {
                 onDoubleClick={(e) => this.joinRoom(parseInt(e.target.id))}
             >{games[i].name + " - " + games[i].maxPlayers}</li>);
         }
-        return (<div className="browser"><label>{"Currently Available Rooms"}</label><ul>{lobbies}</ul></div>
+        return (<Col xs={6}><label>{"Currently Available Rooms"}</label><ul>{lobbies}</ul></Col>
         );
     }
     
     render() {
-      return (<div id="lobby">
-                <div id={"newroomlabeldiv"}>
-                    <label id={"newroomlabel"}>{"New Room Name"}</label>
-                    <input id={"newroominput"} onInput={(e) => this.nameChange(e)} type="text"></input>
-                </div>
-                <div id={"newroommaxplayerdiv"}>
-                    <label id={"maxplayer"}>{"MAX PLAYERS"}</label>
-                    <select id={"playeroptions"} onChange={(e) => this.selectChange(e)} id="max_val">
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                    </select>
-                </div>
-                <button id={"newroombutton"} type="button" onClick={() => this.createNewValues()}>{"New Instance"}</button>
+      return (<Row id="lobby">
+                <Col xs={6} id="new-room">
+                  <Form>
+                    <Row>
+                      <Col xs={6}>
+                        <Form.Group id={"new-room-label-div"}>
+                            <Form.Label id={"new-room-label"}>
+                              {"New Room Name"}
+                            </Form.Label>
+                            <Form.Control id={"new-room-input"} 
+                                          onInput={(e) => this.nameChange(e)} 
+                                          type="text"/>
+                        </Form.Group>
+                      </Col>
+                      <Col xs={6}>
+                        <Form.Group id={"new-room-max-player-div"}>
+                            <Form.Label id={"max-player"}>{"MAX PLAYERS"}</Form.Label>
+                            <Form.Control as="select" 
+                                          id={"player-options"} 
+                                          onChange={(e) => this.selectChange(e)}>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                            </Form.Control>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Button variant="primary"
+                            id={"new-room-button"} 
+                            type="button" 
+                            onClick={() => this.createNewValues()}>
+                      {"New Instance"}
+                    </Button>
+                  </Form>
+                </Col>
             {this.renderAvailable()}
-            </div> 
+            </Row> 
           );
     }
 }

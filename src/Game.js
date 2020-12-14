@@ -4,6 +4,10 @@ import Card from "./Card.js";
 import ChatBox from "./ChatBox.js";
 import Display from "./Display.js";
 import Waiting from "./Waiting.js";
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
 
 class Game extends React.Component {
     constructor(props) {
@@ -576,17 +580,17 @@ class Game extends React.Component {
                                players={this.props.players}
                                getCookie={this.props.getCookie}
                                socket={this.props.socket}
+                               abandonRoom={() => this.abandonRoom()}
                         />;
         let showMe = this.props.gameState === gameStates.preGameLobby ? waiting : display;
-        return (<div id={"game"}>
-                    <button id={"backbutton"} type={'button'} onClick={() => this.abandonRoom()}>{"Back"}</button>
+        return (<Row id={"game"}>
                     {showMe}
                     <ChatBox id={this.props.id} 
                             chat={this.props.chat}
                             socket={this.props.socket}
                             getCookie={this.props.getCookie}
                     />
-                </div>);
+                </Row>);
     }
 }
 

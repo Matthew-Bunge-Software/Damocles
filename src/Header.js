@@ -1,4 +1,5 @@
 const gameStates = require("./gameStates.js");
+import React from 'react';
 
 export default function Header(props) {
     let myTurn = "";

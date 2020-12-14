@@ -26,8 +26,10 @@ class Login extends React.Component {
     
     render() {
         return <div className={"Login"}>
+            <div id="LoginTitle" class="text-center">
+                    <h1>{"Play Damocles"}</h1>
+            </div>
             <Form id="login">
-                <label type={"sign"} htmlFor={"uname"}><b>{"Play NARREK!"}</b></label>
                 <Form.Group>
                     <Form.Label>Username</Form.Label>
                     <Form.Control id="uname" 
@@ -39,8 +41,7 @@ class Login extends React.Component {
                 <Button variant="primary"
                         onClick={() => this.props.onClick(this.state.username, this.state.password)} 
                         type="button">Login
-                </Button>
-                        
+                </Button>   
             </Form>
         </div>;
     }
