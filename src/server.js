@@ -62,13 +62,19 @@ io.on('connection', function(socket) {
         let ready = 0;
         if (data.name === "p555test") {
             players.push({ name: 'B-9', ready: true});
-            played.push(deck.splice(0, 8));
+            played.push(deck.splice(0, 4));
             points.push(0);
             players.push({ name: 'The Iron Giant', ready: true});
-            played.push(deck.splice(0, 8));
+            played.push(deck.splice(0, 12));
             points.push(0);
-            ready = 2;
-            maxPlayers = 3;
+            players.push({ name: 'Robbie', ready: true});
+            played.push(deck.splice(0, 6));
+            points.push(0);
+            players.push({ name: 'Gigantor', ready: true});
+            played.push(deck.splice(0, 10));
+            points.push(0);
+            ready = 4;
+            maxPlayers = 5;
         }
         played.push([]);
         players.push({ name: creator, ready: false });
@@ -104,7 +110,7 @@ io.on('connection', function(socket) {
         socket.leave('lobby');
         socket.join('' + gameId);
         socket.emit(courrier.userJoined, {
-            selectCards: deck.splice(0, 8),
+            selectCards: deck.splice(0, 20),
             gameState: newInstance.gameState,
             players: newInstance.players,
             chat: newInstance.chat,

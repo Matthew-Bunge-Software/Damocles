@@ -38,12 +38,29 @@ class ChatBox extends React.Component {
     }
 
     render() {
-        return (<Col xs={6} id="Chat">
-            <div id="chatBox">
-                {this.renderChat()}
-            </div>
-            <input id="message" type="text" onChange={(e) => this.updateInput(e)}></input>
-            <button onClick={() =>  this.addMessage() }>{"Send"}</button>
+        return (<Col xs={3} id="Chat">
+            <Form>
+                <Row>
+                    <Col xs={10}>
+                        <Form.Control id="message"
+                            type="text"
+                            onChange={(e) => this.updateInput(e)}>
+                        </Form.Control>
+                    </Col>
+                    <Col xs={2}>
+                        <Button variant="damocles-primary"
+                                onClick={() => this.addMessage()}
+                                type="button">
+                            {"Send"}
+                        </Button>
+                    </Col>
+                </Row>
+                <Row>
+                    <Form.Group id="chatBox">
+                        {this.renderChat()}
+                    </Form.Group>
+                </Row>
+            </Form>
         </Col>);
     }
   }

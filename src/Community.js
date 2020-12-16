@@ -7,6 +7,7 @@ export default function Community(props) {
             className={"dot " + color.color}
             key={color.color}
             onClick={() => props.onClick(color)}
+            type="button"
         >
             {color.count}
         </button>

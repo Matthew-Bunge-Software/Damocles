@@ -108,7 +108,7 @@ body {
 
 .display {
   position: relative;
-  max-width: 900px;
+  width: 100%;
   display: inline-block;
   vertical-align: top;
 }
@@ -230,6 +230,6 @@ body {
   padding: 20px;
 }
 
-#new-room {
+#display-board {
+  justify-content: center;
 }
-
