@@ -9,7 +9,7 @@ class MyHand extends React.Component {
         if (this.props.discardValid(this.props.gameState, this.props.myTurn)) {
             return <button
                         onClick={() => this.props.discardClicked()} 
-                        className={"playbutton"}
+                        className={"play-button"}
                         type="button">
                         
                         {"Discard Tiles"}
@@ -18,7 +18,7 @@ class MyHand extends React.Component {
             return <button 
                         disabled={(this.props.gameState === "setup") || !this.props.myTurn} 
                         onClick={() => this.props.playClicked()} 
-                        className={"playbutton"}
+                        className={"play-button"}
                         type="button">
                         
                         {"Play Tiles"}

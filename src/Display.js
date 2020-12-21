@@ -7,7 +7,6 @@ import MyHand from "./MyHand.js";
 import PlayedTiles from "./PlayedTiles.js";
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 class Display extends React.Component {
     renderSelector() {
