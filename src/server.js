@@ -1,23 +1,23 @@
 const gameStates = require("./gameStates.js");
 const courrier = require("./courrier.js");
-var {colors} = require('../cards');
-var {cards} = require('../cards');
-const { Client } = require('pg');
-var path = require('path');
+const {colors} = require('../cards');
+const {cards} = require('../cards');
+//const { Client } = require('pg');
+const path = require('path');
 
 //Postgres database connection
 /* const client = new Client({
   connectionString: process.env.DATABASE_URL || "postgres://matthew:cadenza@localhost:5432/tempdb",
 });
 client.connect(); */
-var express = require('express'),
+const express = require('express'),
     http = require('http');
-var app = express();
-var server = http.createServer(app);
-var io = require('socket.io').listen(server);
+const app = express();
+const server = http.createServer(app);
+const io = require('socket.io').listen(server);
 
 //Port server runs on
-var port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
 app.use("/css", express.static(path.resolve(__dirname + '/../css/')));
 app.use("/static", express.static(path.resolve(__dirname + '/../static/')));
@@ -29,6 +29,9 @@ app.get('/', function(req, res){
 });
 
 const MIN_PLAYERS = 2;
+let gameId = 1;
+const gameInstances = [];
+const publicInstances = [];
 //On initial connection
 io.on('connection', function(socket) {
     console.log('a user connected');
@@ -62,13 +65,19 @@ io.on('connection', function(socket) {
         let ready = 0;
         if (data.name === "p555test") {
             players.push({ name: 'B-9', ready: true});
-            played.push(deck.splice(0, 8));
+            played.push(deck.splice(0, 4));
             points.push(0);
             players.push({ name: 'The Iron Giant', ready: true});
-            played.push(deck.splice(0, 8));
+            played.push(deck.splice(0, 12));
             points.push(0);
-            ready = 2;
-            maxPlayers = 3;
+            players.push({ name: 'Robbie', ready: true});
+            played.push(deck.splice(0, 6));
+            points.push(0);
+            players.push({ name: 'Gigantor', ready: true});
+            played.push(deck.splice(0, 10));
+            points.push(0);
+            ready = 4;
+            maxPlayers = 5;
         }
         played.push([]);
         players.push({ name: creator, ready: false });
@@ -104,7 +113,7 @@ io.on('connection', function(socket) {
         socket.leave('lobby');
         socket.join('' + gameId);
         socket.emit(courrier.userJoined, {
-            selectCards: deck.splice(0, 8),
+            selectCards: deck.splice(0, 20),
             gameState: newInstance.gameState,
             players: newInstance.players,
             chat: newInstance.chat,
@@ -321,12 +330,12 @@ io.on('connection', function(socket) {
     socket.on("abandonRoom", function(data) {
         gameInstances[data.id] = [];
         for(let i = 0; i < publicInstances.length; i++) {
-            if (publicInstances[i].id == data.id) {
+            if (publicInstances[i].id === data.id) {
                 publicInstances.splice(i ,1);
                 break;
             }
         }
-        var users = io.sockets.adapter.rooms['' + data.id].sockets;
+        const users = io.sockets.adapter.rooms['' + data.id].sockets;
         Object.keys(users).forEach(function(client) {
             let socket = io.in('' + gameId).connected[client];
             socket.leave('' + gameId);
@@ -347,9 +356,9 @@ server.listen(port, function() {
 });
 
 const colorNames = Object.values(colors);
-var IDS = new Set();
+const IDS = new Set();
 
-var selectCards = cards.map(card => {
+const selectCards = cards.map(card => {
     let intAdded = false;
     let randInt = -1;
     let spaces = Array(7).fill(null);
@@ -374,10 +383,6 @@ var selectCards = cards.map(card => {
     return card;
 });
 
-var gameId = 1;
-var gameInstances = [];
-var publicInstances = [];
-
 function shuffle(toShuffle) {
     let arr = toShuffle.slice();
     for (let i = arr.length - 1; i > 0; i--) {
@@ -390,9 +395,9 @@ function shuffle(toShuffle) {
 }
 
 function setCookie(user) {
-    var d = new Date();
+    const d = new Date();
     d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
-    var expires = "expires=" + d.toUTCString();
+    const expires = "expires=" + d.toUTCString();
     return ("Damocles=" + user + "; " + expires + "; path=/");
 }
 
@@ -414,7 +419,7 @@ function handleCardInteractions(played, oldPlayed, id) {
         else {
             action = current.type;
         }
-        if (current.type != 'C') {
+        if (current.type !== 'C') {
             returnToPublic.push(current);
         } else {
             returnMe.combust += current.points;

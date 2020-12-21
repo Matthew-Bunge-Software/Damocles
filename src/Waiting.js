@@ -1,3 +1,7 @@
+import React from 'react';
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button'
 class Waiting extends React.Component {
     userReady() {
         this.props.socket.emit("userreadied", {
@@ -27,10 +31,27 @@ class Waiting extends React.Component {
 
     render() {
         return (
-            <div className={"Waiting"}>
+            <Col xs={6} className={"Waiting"}>
                 {this.renderPlayers()}
-                <button disabled={this.buttonStatus()} onClick={() => this.userReady()} type={"button"}>{"Ready"}</button>
-            </div>);
+                <Row>
+                    <Col xs={6} md={4} lg={3} xl={2}>
+                        <Button variant="damocles-primary" 
+                                disabled={this.buttonStatus()} 
+                                onClick={() => this.userReady()} 
+                                type={"button"}>
+                            {"Ready"}
+                        </Button>
+                    </Col>
+                    <Col xs={6} md={4} lg={3} xl={2}>
+                        <Button variant="damocles-danger" 
+                                id={"backbutton"} 
+                                type={'button'} 
+                                onClick={() => this.props.abandonRoom()}>
+                            {"Back"}
+                        </Button>
+                    </Col>
+                </Row>
+            </Col>);
     }
 }
 

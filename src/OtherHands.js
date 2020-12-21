@@ -1,8 +1,9 @@
+import React from 'react';
 class OtherHands extends React.Component {
     renderSingleHands() {
         let returnMe = [];
         for (let i = 0; i < this.props.players.length; i++) {
-            if (i != this.props.pid) {
+            if (i !== this.props.pid) {
                 returnMe.push(<div className="otherHands">
                     <label>{this.props.players[i].name + ": " + this.props.points[i] + " Points"}</label>
                     <div className="otherHandsPlayed">
