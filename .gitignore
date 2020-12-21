@@ -19,6 +19,9 @@ $RECYCLE.BIN/
 .vs/
 .vscode/
 
+#WebStorm files
+.idea/
+
 # Windows shortcuts
 *.lnk
 
