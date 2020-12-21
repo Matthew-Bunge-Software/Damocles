@@ -6,21 +6,20 @@ const COLORS = {
     GOLD: "gold"
 };
 
-var gold = COLORS.GOLD;
-var generate = "G";
-var blue = COLORS.BLUE;
-var red = COLORS.RED;
-var green = COLORS.GREEN;
-var gold = COLORS.GOLD;
-var black = COLORS.BLACK;
-var combust = "C";
-var oracle = "O";
-var reflex = "R";
-var conquer = "A";
-var haste = "H";
-var one = "1";
-var two = "2";
-var three = "3";
+const blue = COLORS.BLUE;
+const red = COLORS.RED;
+const green = COLORS.GREEN;
+const gold = COLORS.GOLD;
+const black = COLORS.BLACK;
+const generate = "G";
+const combust = "C";
+const oracle = "O";
+const reflex = "R";
+const conquer = "A";
+const haste = "H";
+const one = "1";
+const two = "2";
+const three = "3";
 
 const CARDS = [
     {

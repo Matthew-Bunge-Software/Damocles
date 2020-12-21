@@ -1,7 +1,8 @@
 const gameStates = require("./gameStates.js");
+import React from 'react';
 
 export default function Header(props) {
-    let myTurn = "";
+    let myTurn;
     switch (props.gameState) {
         case gameStates.initialDiscard:
         case gameStates.discardNormal:

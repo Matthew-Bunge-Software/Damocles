@@ -1,3 +1,17 @@
+body {
+  background-color: #fff1e6;
+}
+
+.btn-damocles-primary {
+  background-color: #a5a58d;
+  color: black;
+}
+
+.btn-damocles-danger {
+  background-color: #cb997e;
+  color: black;
+}
+
 .dot {
   height: 75px;
   width: 75px;
@@ -40,7 +54,7 @@
 
 .onehep {
   position: absolute;
-  top: 0%;
+  top: 0;
   left: 45%;
 }
 
@@ -94,7 +108,7 @@
 
 .display {
   position: relative;
-  max-width: 900px;
+  width: 100%;
   display: inline-block;
   vertical-align: top;
 }
@@ -105,8 +119,8 @@
   width: 100px;
   height: 100px;
   border: 5px solid black;
-  padding: 0px 0px 0px 0px;
-  margin: 0px 5px 0px 0px;
+  padding: 0 0 0 0;
+  margin: 0 5px 0 0;
   user-select: none;
 }
 
@@ -123,12 +137,8 @@
   list-style-type: none;
   top: 40%;
   left: 47.5%;
-  font-family: 'Abel';
+  font-family: 'Abel', sans-serif;
 
-}
-
-.selectedButton {
-  
 }
 
 .selectedCard {
@@ -140,31 +150,25 @@
 }
 
 .cardRotateContainer:focus {
-  outline: 0px;
+  outline: 0;
 }
 
-.playbutton {
+.play-button {
   display: block;
 }
 
 .readied {
-  background-color: green
+  background-color: #a5a58d;
   font-weight: 700
 }
 
 .notreadied {
-  background-color: red;
+  background-color: #cb997e;
   font-weight: 700
 }
 
 .pregameListItem {
   list-style: none;
-}
-
-.lobbylist {
-  display: table;
-  list-style: none;
-  transition: 1s;
 }
 
 .lobbylist:hover {
@@ -175,32 +179,12 @@
   cursor: pointer;
 }
 
-#newroomlabel {
-  display: inline-block;
-}
-
-#newroominput {
-  display: inline;
-}
-
 #maxplayer {
   display: inline-block;
 }
 
 #playeroptions {
   display: inline;
-}
-
-#newroombutton {
-  display: block;
-}
-
-#newroomlabeldiv {
-  display: block;
-}
-
-#newroommaxplayerdiv {
-  display: block;
 }
 
 #backbutton {
@@ -232,66 +216,20 @@
   vertical-align: top;
 }
 
-#backbutton {
-  display: inline-block;
-  vertical-align: top;
-}
-
-#login {
-  display: flex;              /* establish flex container */
-  flex-direction: column;     /* stack flex items vertically */
-  justify-content: center;    /* center items vertically, in this case */
-  align-items: center;        /* center items horizontally, in this case */
-  height: 200px;
-  
-  background-color: rgb(228, 236, 235);
-  height: 300px;
-  width: 300px;
-  padding: 50px;
-  border-radius: 1.5em;
-  box-shadow: 0px 0px 20px 0px black;
-  text-align: center;
-}
-
 .Login {
-  display:flex;
+  display: flex;
+  align-items: center;
   flex-direction: column;
-  justify-content:center;
-  align-items:center;
-  margin: 50px;
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
+  padding: 20px;
 }
 
-label[type=sign] {
-  font-size: 22px;
-  color: black;
-  text-decoration: none;
-  font-family: Arial, Helvetica, sans-serif;
+#LoginTitle {
+  padding: 20px;
 }
 
-input[type=text] {
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 30px;
-  border-radius: 20px;
-  text-align: center;
-  background-color: rgb(205, 214, 213);
+#display-board {
+  justify-content: center;
 }
-
-button[type=button] {
-  background: linear-gradient(to right, rgb(41, 100, 93), rgb(89, 160, 152));
-  border: none;
-  color: white;
-  padding: 15px 38px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 20px;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 0.35em;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-button[type=button]:hover {
-  background: linear-gradient(to right, rgb(89, 160, 152), rgb(41, 100, 93));
-}
-

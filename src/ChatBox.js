@@ -1,3 +1,9 @@
+import React from 'react';
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
+
 class ChatBox extends React.Component {
     constructor(props) {
       super(props);
@@ -32,13 +38,30 @@ class ChatBox extends React.Component {
     }
 
     render() {
-        return (<div id="Chat">
-            <div id="chatBox">
-                {this.renderChat()}
-            </div>
-            <input id="message" type="text" onChange={(e) => this.updateInput(e)}></input>
-            <button onClick={() =>  this.addMessage() }>{"Send"}</button>
-        </div>);
+        return (<Col xs={3} id="Chat">
+            <Form>
+                <Row>
+                    <Col xs={10}>
+                        <Form.Control id="message"
+                            type="text"
+                            onChange={(e) => this.updateInput(e)}>
+                        </Form.Control>
+                    </Col>
+                    <Col xs={2}>
+                        <Button variant="damocles-primary"
+                                onClick={() => this.addMessage()}
+                                type="button">
+                            {"Send"}
+                        </Button>
+                    </Col>
+                </Row>
+                <Row>
+                    <Form.Group id="chatBox">
+                        {this.renderChat()}
+                    </Form.Group>
+                </Row>
+            </Form>
+        </Col>);
     }
   }
 

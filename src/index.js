@@ -1,22 +1,18 @@
-const gameStates = require("./gameStates.js");
+import 'bootstrap/dist/css/bootstrap.css';
 const courrier = require("./courrier.js");
-import Board from "./Board.js";
-import Community from "./Community.js";
+import React from 'react';
+import ReactDOM from 'react-dom';
 import Game from "./Game.js";
-import Header from "./Header.js";
 import Lobby from "./Lobby.js";
 import Login from "./Login.js";
-import MyHand from "./MyHand.js";
-import OtherHands from "./OtherHands.js";
-import PlayedTiles from "./PlayedTiles.js";
 
-var connectTo = 'https://damoclesgame.herokuapp.com';
-//var connectTo = 'http://localhost:3000';
-var socket = io.connect(connectTo);
+const connectTo = 'https://damoclesgame.herokuapp.com';
+//const connectTo = 'http://localhost:3000';
+const socket = io.connect(connectTo);
 
 let currentCookie = getCookie();
 let localData = {};
-if (currentCookie != "") {
+if (currentCookie !== "") {
     console.log(currentCookie);
     socket.emit('refreshCookie', currentCookie);
 } else {
@@ -102,7 +98,6 @@ function renderGame(data, socket) {
         id={data.id}
         points={data.points}
         chat={data.chat}
-        socket={socket}
         getCookie={() => getCookie()}
     />, document.getElementById("root"));
 }
@@ -130,15 +125,15 @@ function logMeIn(user, pass) {
 }
 
 function getCookie() {
-    var name = "Damocles=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(";");
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') {
+    const name = "Damocles=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(";");
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') {
             c = c.substring(1);
         }
-        if (c.indexOf(name) == 0) {
+        if (c.indexOf(name) === 0) {
             return c.substring(name.length, c.length);
         }
     }
