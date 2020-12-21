@@ -6,8 +6,8 @@ import Game from "./Game.js";
 import Lobby from "./Lobby.js";
 import Login from "./Login.js";
 
-//const connectTo = 'https://damoclesgame.herokuapp.com';
-const connectTo = 'http://localhost:3000';
+const connectTo = 'https://damoclesgame.herokuapp.com';
+//const connectTo = 'http://localhost:3000';
 const socket = io.connect(connectTo);
 
 let currentCookie = getCookie();
