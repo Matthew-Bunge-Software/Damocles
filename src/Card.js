@@ -1,12 +1,8 @@
 import React from 'react';
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
 
 class Card extends React.Component {
     NAMES = ["one", "two", "three", "four", "five", "six", "seven"];
-    HEPINDEX = this.NAMES.map(name => name + "hep");
+    HEP_INDEX = this.NAMES.map(name => name + "hep");
 
     constructor(props) {
         super(props);
@@ -20,13 +16,13 @@ class Card extends React.Component {
         let temp = this.state.spaces.slice();
         if (event.keyCode === 81) {
             let hold = temp[0];
-            for (var i = 0; i < 6; i++) {
+            for (let i = 0; i < 6; i++) {
                 temp[i] = temp[i + 1];
             }
             temp[6] = hold;
         } else if (event.keyCode === 69) {
             let hold = temp[6];
-            for (var i = 6; i > 0; i--) {
+            for (let i = 6; i > 0; i--) {
                 temp[i] = temp[i - 1];
             }
             temp[0] = hold;
@@ -37,7 +33,7 @@ class Card extends React.Component {
     }
 
     render() {
-        let newSpaces = this.state.spaces.map((color, index) => <li key={index} className={"dot small " + color + " " + this.HEPINDEX[index]}>{}</li>);
+        let newSpaces = this.state.spaces.map((color, index) => <li key={index} className={"dot small " + color + " " + this.HEP_INDEX[index]}>{}</li>);
         newSpaces.push(<li key={7} className="cardType">{this.props.card.type}</li>);
         return (<div onKeyDown={(e) => this.rotateDisplay(e)}
             tabIndex="0"

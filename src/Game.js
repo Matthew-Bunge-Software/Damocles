@@ -5,9 +5,6 @@ import ChatBox from "./ChatBox.js";
 import Display from "./Display.js";
 import Waiting from "./Waiting.js";
 import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
 
 class Game extends React.Component {
     constructor(props) {
@@ -137,7 +134,7 @@ class Game extends React.Component {
         } else { // Anything can be played
             //TODO: Make haste playable but have it not do anything
             if (number != null && action != null) {
-                if (this.isActive(spaceState, number) && this.isActive(spaceState, action) && (action.type != "A" && action.type != "R" && action.type != "H")) {
+                if (this.isActive(spaceState, number) && this.isActive(spaceState, action) && (action.type !== "A" && action.type !== "R" && action.type !== "H")) {
                     let j = 0;
                     while (j < cardsToRemove.length) {
                         if (this.cardsEqual(cardsToRemove[j], number) || this.cardsEqual(cardsToRemove[j], action)) {
@@ -156,7 +153,7 @@ class Game extends React.Component {
                 } else if (this.props.gameState === gameStates.reflexed && 
                             (this.isActiveReflexed(spaceState, number) && this.isActive(spaceState, action) ||
                             this.isActive(spaceState, number) && this.isActiveReflexed(spaceState, action)) &&
-                            (action.type != "A" && action.type != "R" && action.type != "H")) {
+                            (action.type !== "A" && action.type !== "R" && action.type !== "H")) {
                     let j = 0;
                     reflexused = true;
                     while (j < cardsToRemove.length) {
@@ -347,13 +344,13 @@ class Game extends React.Component {
                     newSpaces[index] = prevState.selectedColor;
                     let newCounts = this.props.colorCounts.slice();
                     let setupcomplete = true;
-                    for (var j = 0; j < 7; j++) {
+                    for (let j = 0; j < 7; j++) {
                         if (newSpaces[j] === null) {
                             setupcomplete = false;
                             break;
                         }
                     }
-                    for (var j = 0; j < newCounts.length; j++) {
+                    for (let j = 0; j < newCounts.length; j++) {
                         if (newCounts[j].color === prevState.selectedColor) {
                             newCounts[j].count--;
                         }

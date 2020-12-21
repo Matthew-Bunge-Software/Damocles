@@ -26,7 +26,7 @@ class Login extends React.Component {
     
     render() {
         return <div className={"Login"}>
-            <div id="LoginTitle" class="text-center">
+            <div id="LoginTitle" className="text-center">
                     <h1>{"Play Damocles"}</h1>
             </div>
             <Form id="login">

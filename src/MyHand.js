@@ -5,7 +5,6 @@ import React from 'react';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
 class MyHand extends React.Component {
     renderButton() {
         if (this.props.discardValid(this.props.gameState, this.props.myTurn)) {
