@@ -1,83 +1,82 @@
 import 'bootstrap/dist/css/bootstrap.css';
-const courrier = require("./courrier.js");
+import courier from "./courier";
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Game from "./Game.js";
 import Lobby from "./Lobby.js";
 import Login from "./Login.js";
 
-const connectTo = 'https://damoclesgame.herokuapp.com';
-//const connectTo = 'http://localhost:3000';
+//const connectTo = 'https://damoclesgame.herokuapp.com';
+const connectTo = 'http://localhost:3000';
 const socket = io.connect(connectTo);
 
 let currentCookie = getCookie();
 let localData = {};
 if (currentCookie !== "") {
     console.log(currentCookie);
-    socket.emit('refreshCookie', currentCookie);
+    socket.emit(courier.refreshCookie, currentCookie);
 } else {
     renderLogin(localData, socket);
 }
-socket.on(courrier.waiting, function (data) {
+socket.on(courier.waiting, function (data) {
     Object.assign(localData, data);
     renderGame(localData, socket);
 });
-socket.on('boardChange', function (data) {
+socket.on(courier.boardChange, function (data) {
     Object.assign(localData, data);
     renderGame(localData, socket);
 });
-socket.on('setupphase', function (data) {
+socket.on(courier.setupPhase, function (data) {
     Object.assign(localData, data);
     renderGame(localData, socket);
 });
-socket.on('cardUpdate', function (data) {
+socket.on(courier.cardUpdate, function (data) {
     Object.assign(localData, data);
     renderGame(localData, socket);
 });
-socket.on(courrier.newMessage, function (data) {
+socket.on(courier.newMessage, function (data) {
     Object.assign(localData, data);
     renderGame(localData, socket);
 });
-socket.on('discardphase', function (data) {
+socket.on(courier.discardPhase, function (data) {
     Object.assign(localData, data);
     renderGame(localData, socket);
 });
-socket.on('cardPlayed', function (data) {
+socket.on(courier.cardPlayed, function (data) {
     Object.assign(localData, data);
     renderGame(localData, socket);
 });
-socket.on('bonusswap', function (data) {
+socket.on(courier.bonusSwap, function (data) {
     Object.assign(localData, data);
     renderGame(localData, socket);
 });
-socket.on('reflexed', function (data) {
+socket.on(courier.reflex, function (data) {
     Object.assign(localData, data);
     renderGame(localData, socket);
 });
-socket.on(courrier.cookify, function (data) {
-    console.log("cool jesus");
+socket.on(courier.cookieSent, function (data) {
     document.cookie = data.cookie;
     Object.assign(localData, data);
     renderLobby(localData, socket);
 });
-socket.on(courrier.newRoom, function (data) {
+socket.on(courier.newRoom, function (data) {
     Object.assign(localData, data);
     renderLobby(localData, socket);
 });
-socket.on(courrier.returnToLobby, function (data) {
+socket.on(courier.returnToLobby, function (data) {
     localData = {};
     Object.assign(localData, data);
     renderLobby(localData, socket);
 });
-socket.on(courrier.userJoined, function (data) {
+socket.on(courier.userJoined, function (data) {
     Object.assign(localData, data);
     renderGame(localData, socket);
 });
-socket.on(courrier.userReadied, function (data) {
+socket.on(courier.userReadied, function (data) {
     Object.assign(localData, data);
     renderGame(localData, socket);
 });
-socket.on(courrier.nextPlayer, function (data) {
+socket.on(courier.nextPlayer, function (data) {
     Object.assign(localData, data);
     renderGame(localData, socket);
 });
@@ -103,7 +102,6 @@ function renderGame(data, socket) {
 }
 
 function renderLobby(data, socket) {
-    console.log("Cool guy");
     ReactDOM.render(<Lobby
         available={data.availableGames}
         socket={socket}
@@ -118,7 +116,7 @@ function renderLogin() {
 }
 
 function logMeIn(user, pass) {
-    socket.emit("login", {
+    socket.emit(courier.login, {
         username: user,
         password: pass
     });

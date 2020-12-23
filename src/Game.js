@@ -150,7 +150,7 @@ class Game extends React.Component {
                         }
                         j++;
                     }
-                } else if (this.props.gameState === gameStates.reflexed && 
+                } else if (this.props.gameState === gameStates.reflexActive &&
                             (this.isActiveReflexed(spaceState, number) && this.isActive(spaceState, action) ||
                             this.isActive(spaceState, number) && this.isActiveReflexed(spaceState, action)) &&
                             (action.type !== "A" && action.type !== "R" && action.type !== "H")) {
@@ -193,7 +193,7 @@ class Game extends React.Component {
                         }
                         j++;
                     }
-                } else if (this.props.gameState === gameStates.reflexed && this.isActiveReflexed(spaceState, action) && (action.type === "A" || action.type === "R")) {
+                } else if (this.props.gameState === gameStates.reflexActive && this.isActiveReflexed(spaceState, action) && (action.type === "A" || action.type === "R")) {
                     let j = 0;
                     reflexused = true;
                     while (j < cardsToRemove.length) {
@@ -286,7 +286,7 @@ class Game extends React.Component {
                         let active = "";
                         if (this.isActive(this.props.spaces, name)) {
                             active = "active";
-                        } else if ((this.props.gameState === gameStates.reflexed && this.props.currentPlayer === this.props.pid) && this.isActiveReflexed(this.props.spaces, name)) {
+                        } else if ((this.props.gameState === gameStates.reflexActive && this.props.currentPlayer === this.props.pid) && this.isActiveReflexed(this.props.spaces, name)) {
                             active = "activeReflexed";
                         }
                         let selected = (this.cardsEqual(name, newSelected) || this.cardsEqual(name, this.state.selectedActionCard)) ? "selectedCard" : "";
@@ -306,7 +306,7 @@ class Game extends React.Component {
                         let active = "";
                         if (this.isActive(this.props.spaces, name)) {
                             active = "active";
-                        } else if ((this.props.gameState === gameStates.reflexed && this.props.currentPlayer === this.props.pid) && this.isActiveReflexed(this.props.spaces, name)) {
+                        } else if ((this.props.gameState === gameStates.reflexActive && this.props.currentPlayer === this.props.pid) && this.isActiveReflexed(this.props.spaces, name)) {
                             active = "activeReflexed";
                         }
                         let selected = (this.cardsEqual(name, newSelected) || this.cardsEqual(name, this.state.selectedNumberCard)) ? "selectedCard" : "";
@@ -430,7 +430,7 @@ class Game extends React.Component {
             let active = "";
             if (this.isActive(newState, name)) {
                 active = "active";
-            } else if ((this.props.gameState === gameStates.reflexed && this.props.currentPlayer === this.props.pid) && this.isActiveReflexed(newState, name)) {
+            } else if ((this.props.gameState === gameStates.reflexActive && this.props.currentPlayer === this.props.pid) && this.isActiveReflexed(newState, name)) {
                 active = "activeReflexed";
             }
             let selected = (this.cardsEqual(this.state.selectedActionCard, name) || this.cardsEqual(this.state.selectedNumberCard, name)) ? "selectedCard" : "";
@@ -514,7 +514,7 @@ class Game extends React.Component {
     }
 
     nextTurn() {
-        if (this.props.gameState === 'playCards' || this.props.gameState === gameStates.reflexed) {
+        if (this.props.gameState === 'playCards' || this.props.gameState === gameStates.reflexActive) {
             this.setState({
                 playedThisTurn: []
             })

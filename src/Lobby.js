@@ -3,6 +3,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
+import courier from "./courier";
 
 class Lobby extends React.Component {
     constructor(props) {
@@ -26,11 +27,11 @@ class Lobby extends React.Component {
       });
     }
     
-    createNewValues() {
+    createNewRoom() {
       console.log("Trying to create")
         let name = this.state.name;
         if (name != null) {
-            this.props.socket.emit("roomcreated", {
+            this.props.socket.emit(courier.newRoom, {
                 name: name,
                 players: this.state.selected,
                 creator: this.props.getCookie()
@@ -39,7 +40,7 @@ class Lobby extends React.Component {
     }
 
     joinRoom(id) {
-        this.props.socket.emit('roomjoined', {
+        this.props.socket.emit(courier.userJoined, {
             user: this.props.getCookie(),
             id: id
         });
@@ -92,7 +93,7 @@ class Lobby extends React.Component {
                     <Button variant="damocles-primary"
                             id={"new-room-button"} 
                             type="button" 
-                            onClick={() => this.createNewValues()}>
+                            onClick={() => this.createNewRoom()}>
                       {"New Instance"}
                     </Button>
                   </Form>
